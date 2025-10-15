@@ -18,7 +18,7 @@ A Vue 3 drag-and-drop email builder component for crafting production-ready HTML
 ## Installation
 
 ```bash
-npm install @yourorg/email-builder
+npm install @riggerz29/email-builder
 ```
 
 ## Usage
@@ -39,7 +39,7 @@ npm install @yourorg/email-builder
 
 <script>
 import { ref } from 'vue'
-import EmailBuilder from '@yourorg/email-builder'
+import EmailBuilder from '@riggerz29/email-builder'
 
 export default {
   components: {
@@ -50,8 +50,13 @@ export default {
       blocks: [],
       bodySettings: {
         backgroundColor: '#f3f4f6',
+        textColor: '#000000',
+        linkColor: '#3b82f6',
         contentWidth: 600,
-        fontFamily: 'Arial, sans-serif'
+        contentAlignment: 'center',
+        fontFamily: 'Arial, sans-serif',
+        fontWeight: 'normal',
+        preheaderText: ''
       }
     })
 
@@ -177,8 +182,13 @@ Columns can contain any content blocks and support nested layouts.
   ],
   "bodySettings": {
     "backgroundColor": "#f3f4f6",
+    "textColor": "#000000",
+    "linkColor": "#3b82f6",
     "contentWidth": 600,
-    "fontFamily": "Arial, sans-serif"
+    "contentAlignment": "center",
+    "fontFamily": "Arial, sans-serif",
+    "fontWeight": "normal",
+    "preheaderText": "Preview text for email clients"
   }
 }
 ```

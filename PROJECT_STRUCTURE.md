@@ -299,7 +299,7 @@ npm run build
 npm link
 
 # In your test project
-npm link @yourorg/email-builder
+npm link @riggerz29/email-builder
 ```
 
 ## Styling Strategy

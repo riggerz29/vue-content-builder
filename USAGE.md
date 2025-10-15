@@ -5,7 +5,7 @@
 ### 1. Installation
 
 ```bash
-npm install @yourorg/email-builder
+npm install @riggerz29/email-builder
 ```
 
 ### 2. Import and Use
@@ -26,7 +26,7 @@ npm install @yourorg/email-builder
 
 <script>
 import { ref } from 'vue'
-import EmailBuilder from '@yourorg/email-builder'
+import EmailBuilder from '@riggerz29/email-builder'
 
 export default {
   components: {
@@ -86,7 +86,7 @@ export default {
 </script>
 
 <style>
-@import '@yourorg/email-builder/dist/email-builder.css';
+@import '@riggerz29/email-builder/dist/email-builder.css';
 </style>
 ```
 
@@ -290,7 +290,7 @@ Configure overall email appearance in the "Body" tab:
 
 ### Styles not applying
 
-- Check that you imported the CSS: `@import '@yourorg/email-builder/dist/email-builder.css'`
+- Check that you imported the CSS: `@import '@riggerz29/email-builder/dist/email-builder.css'`
 - Ensure Vue 3 is installed
 - Check browser console for errors
 

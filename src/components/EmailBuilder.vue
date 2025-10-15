@@ -64,17 +64,77 @@
         <div v-if="activeTab === 'body' && !selectedBlock" class="sidebar__content">
           <div class="content__section">
             <h3 class="section__title">Body Settings</h3>
+
             <div class="properties__group">
               <label>Background Color</label>
-              <input v-model="bodySettings.backgroundColor" type="color" />
+              <div class="input-with-color">
+                <input v-model="bodySettings.backgroundColor" type="color" class="color-input" />
+                <input v-model="bodySettings.backgroundColor" type="text" class="color-text" />
+              </div>
             </div>
+
+            <div class="properties__group">
+              <label>Text Color</label>
+              <div class="input-with-color">
+                <input v-model="bodySettings.textColor" type="color" class="color-input" />
+                <input v-model="bodySettings.textColor" type="text" class="color-text" />
+              </div>
+            </div>
+
+            <div class="properties__group">
+              <label>Link Color</label>
+              <div class="input-with-color">
+                <input v-model="bodySettings.linkColor" type="color" class="color-input" />
+                <input v-model="bodySettings.linkColor" type="text" class="color-text" />
+              </div>
+            </div>
+
             <div class="properties__group">
               <label>Content Width (px)</label>
-              <input v-model.number="bodySettings.contentWidth" type="number" />
+              <input v-model.number="bodySettings.contentWidth" type="number" min="320" max="800" />
             </div>
+
+            <div class="properties__group">
+              <label>Content Alignment</label>
+              <select v-model="bodySettings.contentAlignment">
+                <option value="center">Center</option>
+                <option value="left">Left</option>
+              </select>
+            </div>
+
             <div class="properties__group">
               <label>Font Family</label>
-              <input v-model="bodySettings.fontFamily" type="text" />
+              <select v-model="bodySettings.fontFamily">
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', monospace">Courier New</option>
+                <option value="Verdana, sans-serif">Verdana</option>
+                <option value="'Times New Roman', serif">Times New Roman</option>
+                <option value="Helvetica, sans-serif">Helvetica</option>
+                <option value="Tahoma, sans-serif">Tahoma</option>
+              </select>
+            </div>
+
+            <div class="properties__group">
+              <label>Font Weight</label>
+              <select v-model="bodySettings.fontWeight">
+                <option value="normal">Normal</option>
+                <option value="bold">Bold</option>
+                <option value="300">Light (300)</option>
+                <option value="500">Medium (500)</option>
+                <option value="600">Semi-Bold (600)</option>
+              </select>
+            </div>
+
+            <div class="properties__group">
+              <label>Preheader Text</label>
+              <textarea
+                v-model="bodySettings.preheaderText"
+                rows="3"
+                placeholder="Preview text that appears in email client..."
+                class="preheader-input"
+              ></textarea>
+              <small class="input-hint">This text appears in email previews but is hidden in the email body</small>
             </div>
           </div>
         </div>
@@ -97,6 +157,7 @@
       <div class="email-builder__canvas" :style="canvasStyle">
         <div
           class="canvas__container"
+          :style="canvasContainerStyle"
           @drop="onDrop($event, null)"
           @dragover.prevent
           @click="selectedBlock = null"
@@ -193,8 +254,13 @@ export default {
     const blocks = ref(props.initialData.blocks || [])
     const bodySettings = ref({
       backgroundColor: '#f3f4f6',
+      textColor: '#000000',
+      linkColor: '#3b82f6',
       contentWidth: 600,
+      contentAlignment: 'center',
       fontFamily: 'Arial, sans-serif',
+      fontWeight: 'normal',
+      preheaderText: '',
       ...props.initialData.bodySettings
     })
 
@@ -231,7 +297,15 @@ export default {
     }))
 
     const canvasStyle = computed(() => ({
-      backgroundColor: bodySettings.value.backgroundColor
+      backgroundColor: bodySettings.value.backgroundColor,
+      justifyContent: bodySettings.value.contentAlignment === 'center' ? 'center' : 'flex-start'
+    }))
+
+    const canvasContainerStyle = computed(() => ({
+      maxWidth: `${bodySettings.value.contentWidth}px`,
+      color: bodySettings.value.textColor,
+      fontFamily: bodySettings.value.fontFamily,
+      fontWeight: bodySettings.value.fontWeight
     }))
 
     let draggedBlock = null
@@ -529,6 +603,7 @@ export default {
       layoutBlocks,
       cssVars,
       canvasStyle,
+      canvasContainerStyle,
       onDragStart,
       onDrop,
       getBlockComponent,
@@ -733,6 +808,43 @@ export default {
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   font-size: 13px;
+}
+
+.input-with-color {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.color-input {
+  width: 50px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.color-text {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: monospace;
+}
+
+.preheader-input {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.input-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #9ca3af;
+  font-style: italic;
 }
 
 .email-builder__canvas {

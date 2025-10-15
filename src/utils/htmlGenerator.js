@@ -3,6 +3,14 @@
  */
 export function generateHTML(blocks, bodySettings) {
   const contentHtml = blocks.map(block => generateBlockHTML(block)).join('\n')
+  const preheaderHtml = bodySettings.preheaderText ? `
+  <!-- Preheader Text -->
+  <div style="display: none; max-height: 0px; overflow: hidden;">
+    ${escapeHtml(bodySettings.preheaderText)}
+  </div>
+  <!-- End Preheader -->` : ''
+
+  const contentAlignment = bodySettings.contentAlignment || 'center'
 
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -14,15 +22,17 @@ export function generateHTML(blocks, bodySettings) {
     body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
     table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
     img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+    a { color: ${bodySettings.linkColor || '#3b82f6'}; text-decoration: underline; }
   </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: ${bodySettings.backgroundColor}; font-family: ${bodySettings.fontFamily};">
+<body style="margin: 0; padding: 0; background-color: ${bodySettings.backgroundColor}; font-family: ${bodySettings.fontFamily}; font-weight: ${bodySettings.fontWeight || 'normal'}; color: ${bodySettings.textColor || '#000000'};">
+  ${preheaderHtml}
   <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: ${bodySettings.backgroundColor};">
     <tr>
-      <td align="center" style="padding: 20px 0;">
+      <td align="${contentAlignment}" style="padding: 20px 0;">
         <table border="0" cellpadding="0" cellspacing="0" width="${bodySettings.contentWidth}" style="max-width: ${bodySettings.contentWidth}px; background-color: #ffffff;">
           <tr>
-            <td>
+            <td style="font-family: ${bodySettings.fontFamily}; font-weight: ${bodySettings.fontWeight || 'normal'}; color: ${bodySettings.textColor || '#000000'};">
               ${contentHtml}
             </td>
           </tr>

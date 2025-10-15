@@ -181,7 +181,12 @@
   ],
   "bodySettings": {
     "backgroundColor": "#f3f4f6",
+    "textColor": "#1f2937",
+    "linkColor": "#3b82f6",
     "contentWidth": 600,
-    "fontFamily": "Arial, sans-serif"
+    "contentAlignment": "center",
+    "fontFamily": "Arial, sans-serif",
+    "fontWeight": "normal",
+    "preheaderText": "Thank you for subscribing! Check out our latest updates and exclusive offers."
   }
 }

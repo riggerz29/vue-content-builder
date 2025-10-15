@@ -21,7 +21,7 @@ Email Builder is a Vue 3 component package that provides a full-featured drag-an
 ### 1. Install
 
 ```bash
-npm install @yourorg/email-builder
+npm install @riggerz29/email-builder
 ```
 
 ### 2. Import in your Vue app
@@ -37,7 +37,7 @@ npm install @yourorg/email-builder
 
 <script>
 import { ref } from 'vue'
-import EmailBuilder from '@yourorg/email-builder'
+import EmailBuilder from '@riggerz29/email-builder'
 
 export default {
   components: { EmailBuilder },
@@ -58,7 +58,7 @@ export default {
 </script>
 
 <style>
-@import '@yourorg/email-builder/dist/email-builder.css';
+@import '@riggerz29/email-builder/dist/email-builder.css';
 </style>
 ```
 

@@ -1,5 +1,5 @@
 {
-  "name": "@yourorg/email-builder",
+  "name": "@riggerz29/email-builder",
   "version": "1.0.0",
   "description": "A Vue 3 drag-and-drop email builder component",
   "main": "dist/email-builder.umd.js",
