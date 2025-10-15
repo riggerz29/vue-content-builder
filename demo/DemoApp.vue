@@ -213,7 +213,7 @@ export default {
                     "properties": {
                         "icons": [
                             { "platform": "facebook", "url": "https://facebook.com" },
-                            { "platform": "twitter", "url": "https://twitter.com" },
+                            { "platform": "x", "url": "https://x.com" },
                             { "platform": "instagram", "url": "https://instagram.com" },
                             { "platform": "linkedin", "url": "https://linkedin.com" }
                         ],

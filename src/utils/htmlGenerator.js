@@ -172,7 +172,7 @@ function generateSocialHTML(block) {
 
   const socialIcons = {
     facebook: 'https://cdn-icons-png.flaticon.com/512/124/124010.png',
-    twitter: 'https://cdn-icons-png.flaticon.com/512/124/124021.png',
+    x: 'https://cdn-icons-png.flaticon.com/512/124/124021.png',
     instagram: 'https://cdn-icons-png.flaticon.com/512/174/174855.png',
     linkedin: 'https://cdn-icons-png.flaticon.com/512/174/174857.png',
     youtube: 'https://cdn-icons-png.flaticon.com/512/174/174883.png',

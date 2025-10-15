@@ -65,7 +65,7 @@ export default {
     const getPlatformIcon = (platform) => {
       const icons = {
         facebook: 'f',
-        twitter: 't',
+        x: 'X',
         instagram: 'i',
         linkedin: 'in',
         youtube: 'yt',
@@ -165,8 +165,8 @@ export default {
   background: #1877f2;
 }
 
-.social-icon--twitter {
-  background: #1da1f2;
+.social-icon--x {
+  background: #000000;
 }
 
 .social-icon--instagram {

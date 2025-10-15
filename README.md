@@ -141,7 +141,7 @@ export default {
 - Upload callback for thumbnail
 
 ### Social
-- Platform icons (Facebook, Twitter, Instagram, LinkedIn, YouTube, Pinterest)
+- Platform icons (Facebook, x, Instagram, LinkedIn, YouTube, Pinterest)
 - Icon size, spacing, alignment
 - Add/remove icons
 

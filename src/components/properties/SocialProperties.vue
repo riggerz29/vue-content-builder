@@ -1,73 +1,73 @@
 <template>
-  <div class="properties-panel">
-    <div class="properties__group">
-      <label>Icon Size</label>
-      <input v-model="localProps.iconSize" @input="emitUpdate" placeholder="32px" />
-    </div>
+    <div class="properties-panel">
+        <div class="properties__group">
+            <label>Icon Size</label>
+            <input v-model="localProps.iconSize" @input="emitUpdate" placeholder="32px" />
+        </div>
 
-    <div class="properties__group">
-      <label>Icon Spacing</label>
-      <input v-model="localProps.iconSpacing" @input="emitUpdate" placeholder="12px" />
-    </div>
+        <div class="properties__group">
+            <label>Icon Spacing</label>
+            <input v-model="localProps.iconSpacing" @input="emitUpdate" placeholder="12px" />
+        </div>
 
-    <div class="properties__group">
-      <label>Align</label>
-      <select v-model="localProps.align" @change="emitUpdate">
-        <option value="left">Left</option>
-        <option value="center">Center</option>
-        <option value="right">Right</option>
-      </select>
-    </div>
-
-    <div class="properties__section">
-      <h4>Social Icons</h4>
-      <div v-for="(icon, index) in localProps.icons" :key="index" class="icon-item">
-        <div class="icon-row">
-          <div class="properties__group">
-            <label>Platform</label>
-            <select v-model="icon.platform" @change="emitUpdate">
-              <option value="facebook">Facebook</option>
-              <option value="twitter">Twitter</option>
-              <option value="instagram">Instagram</option>
-              <option value="linkedin">LinkedIn</option>
-              <option value="youtube">YouTube</option>
-              <option value="pinterest">Pinterest</option>
-              <option value="tiktok">TikTok</option>
-              <option value="github">GitHub</option>
+        <div class="properties__group">
+            <label>Align</label>
+            <select v-model="localProps.align" @change="emitUpdate">
+                <option value="left">Left</option>
+                <option value="center">Center</option>
+                <option value="right">Right</option>
             </select>
-          </div>
-          <div class="properties__group">
-            <label>URL</label>
-            <input v-model="icon.url" @input="emitUpdate" type="url" placeholder="https://..." />
-          </div>
-          <button class="remove-button" @click="removeIcon(index)">Remove</button>
         </div>
-      </div>
-      <button class="add-button" @click="addIcon">Add Icon</button>
-    </div>
 
-    <div class="properties__section">
-      <h4>Margin</h4>
-      <div class="properties__grid">
-        <div class="properties__group">
-          <label>Top</label>
-          <input v-model="localProps.margin.top" @input="emitUpdate" placeholder="0px" />
+        <div class="properties__section">
+            <h4>Social Icons</h4>
+            <div v-for="(icon, index) in localProps.icons" :key="index" class="icon-item">
+                <div class="icon-row">
+                    <div class="properties__group">
+                        <label>Platform</label>
+                        <select v-model="icon.platform" @change="emitUpdate">
+                            <option value="facebook">Facebook</option>
+                            <option value="x">X</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="pinterest">Pinterest</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="github">GitHub</option>
+                        </select>
+                    </div>
+                    <div class="properties__group">
+                        <label>URL</label>
+                        <input v-model="icon.url" @input="emitUpdate" type="url" placeholder="https://..." />
+                    </div>
+                    <button class="remove-button" @click="removeIcon(index)">Remove</button>
+                </div>
+            </div>
+            <button class="add-button" @click="addIcon">Add Icon</button>
         </div>
-        <div class="properties__group">
-          <label>Right</label>
-          <input v-model="localProps.margin.right" @input="emitUpdate" placeholder="0px" />
+
+        <div class="properties__section">
+            <h4>Margin</h4>
+            <div class="properties__grid">
+                <div class="properties__group">
+                    <label>Top</label>
+                    <input v-model="localProps.margin.top" @input="emitUpdate" placeholder="0px" />
+                </div>
+                <div class="properties__group">
+                    <label>Right</label>
+                    <input v-model="localProps.margin.right" @input="emitUpdate" placeholder="0px" />
+                </div>
+                <div class="properties__group">
+                    <label>Bottom</label>
+                    <input v-model="localProps.margin.bottom" @input="emitUpdate" placeholder="16px" />
+                </div>
+                <div class="properties__group">
+                    <label>Left</label>
+                    <input v-model="localProps.margin.left" @input="emitUpdate" placeholder="0px" />
+                </div>
+            </div>
         </div>
-        <div class="properties__group">
-          <label>Bottom</label>
-          <input v-model="localProps.margin.bottom" @input="emitUpdate" placeholder="16px" />
-        </div>
-        <div class="properties__group">
-          <label>Left</label>
-          <input v-model="localProps.margin.left" @input="emitUpdate" placeholder="0px" />
-        </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <script>

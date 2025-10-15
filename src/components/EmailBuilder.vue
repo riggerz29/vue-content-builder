@@ -426,7 +426,7 @@ export default {
           padding: { top: 0, right: 0, bottom: 0, left: 0 }
         },
         image: {
-          url: 'https://via.placeholder.com/600x300',
+          url: 'https://https://dummyimage.com/600x300/cccccc/fff&text=Add+Image/600x300',
           alt: 'Image',
           width: '100%',
           height: 'auto',
@@ -436,7 +436,7 @@ export default {
         },
         video: {
           url: '',
-          thumbnailUrl: 'https://via.placeholder.com/600x300',
+          thumbnailUrl: 'https://https://dummyimage.com/600x300/cccccc/fff&text=Add+Image/600x300',
           width: '100%',
           align: 'center',
           margin: { top: 10, right: 0, bottom: 10, left: 0 }
@@ -444,7 +444,7 @@ export default {
         social: {
           icons: [
             { platform: 'facebook', url: '#' },
-            { platform: 'twitter', url: '#' },
+            { platform: 'x', url: '#' },
             { platform: 'instagram', url: '#' },
             { platform: 'linkedin', url: '#' }
           ],
