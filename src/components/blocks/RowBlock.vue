@@ -1,0 +1,265 @@
+<template>
+  <div
+    class="block-wrapper"
+    :class="{ 'block-wrapper--selected': isSelected }"
+    @click.stop="$emit('select')"
+    @drop.stop="handleDrop"
+    @dragover.prevent
+  >
+    <div class="block-actions" v-if="isSelected">
+      <button @click.stop="$emit('copy', block.id)" title="Copy">📋</button>
+      <button @click.stop="$emit('move-up', block.id)" title="Move Up">↑</button>
+      <button @click.stop="$emit('move-down', block.id)" title="Move Down">↓</button>
+      <button @click.stop="$emit('delete', block.id)" title="Delete">🗑</button>
+    </div>
+
+    <div class="row-block" :style="rowStyle">
+      <div
+        v-for="(column, columnIndex) in block.columns"
+        :key="columnIndex"
+        class="row-block__column"
+        :style="getColumnStyle(column)"
+        @drop.stop="handleColumnDrop($event, columnIndex)"
+        @dragover.prevent
+      >
+        <div v-if="column.blocks.length === 0" class="column__placeholder">
+          Drop content here
+        </div>
+
+        <component
+          v-for="(childBlock, childIndex) in column.blocks"
+          :key="childBlock.id"
+          :is="getBlockComponent(childBlock.type)"
+          :block="childBlock"
+          :index="childIndex"
+          :is-selected="selectedBlockId === childBlock.id"
+          @select="$emit('select', childBlock)"
+          @update="handleChildUpdate"
+          @delete="handleChildDelete"
+          @copy="handleChildCopy"
+          @move-up="handleChildMoveUp"
+          @move-down="handleChildMoveDown"
+          @drop="handleNestedDrop($event, columnIndex, childIndex)"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { computed } from 'vue'
+
+export default {
+  name: 'RowBlock',
+  props: {
+    block: { type: Object, required: true },
+    isSelected: { type: Boolean, default: false },
+    index: { type: Number, required: true },
+    selectedBlockId: { type: [Number, String], default: null }
+  },
+  emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop'],
+  setup(props, { emit }) {
+    const rowStyle = computed(() => ({
+      display: 'flex',
+      backgroundColor: props.block.properties.backgroundColor,
+      padding: `${props.block.properties.padding.top}px ${props.block.properties.padding.right}px ${props.block.properties.padding.bottom}px ${props.block.properties.padding.left}px`
+    }))
+
+    const getColumnStyle = (column) => {
+      return {
+        width: `${column.width}%`,
+        minHeight: '100px',
+        border: '1px dashed #e5e7eb',
+        padding: '8px'
+      }
+    }
+
+    const getBlockComponent = (type) => {
+      const components = {
+        button: 'ButtonBlock',
+        divider: 'DividerBlock',
+        heading: 'HeadingBlock',
+        paragraph: 'ParagraphBlock',
+        image: 'ImageBlock',
+        video: 'VideoBlock',
+        social: 'SocialBlock',
+        table: 'TableBlock'
+      }
+      return components[type] || 'div'
+    }
+
+    const handleDrop = (event) => {
+      emit('drop', event, props.index)
+    }
+
+    const handleColumnDrop = (event, columnIndex) => {
+      event.stopPropagation()
+      const dragData = event.dataTransfer.getData('block-type')
+      if (dragData) {
+        emit('column-drop', {
+          blockId: props.block.id,
+          columnIndex,
+          insertIndex: null
+        })
+      }
+    }
+
+    const handleNestedDrop = (event, columnIndex, insertIndex) => {
+      event.stopPropagation()
+      emit('column-drop', {
+        blockId: props.block.id,
+        columnIndex,
+        insertIndex
+      })
+    }
+
+    const handleChildUpdate = (childId, properties) => {
+      const updatedBlock = { ...props.block }
+      for (const column of updatedBlock.columns) {
+        const childBlock = column.blocks.find(b => b.id === childId)
+        if (childBlock) {
+          childBlock.properties = { ...childBlock.properties, ...properties }
+          emit('update', props.block.id, updatedBlock)
+          break
+        }
+      }
+    }
+
+    const handleChildDelete = (childId) => {
+      const updatedBlock = { ...props.block }
+      for (const column of updatedBlock.columns) {
+        const index = column.blocks.findIndex(b => b.id === childId)
+        if (index !== -1) {
+          column.blocks.splice(index, 1)
+          emit('update', props.block.id, updatedBlock)
+          break
+        }
+      }
+    }
+
+    const handleChildCopy = (childId) => {
+      const updatedBlock = { ...props.block }
+      for (const column of updatedBlock.columns) {
+        const index = column.blocks.findIndex(b => b.id === childId)
+        if (index !== -1) {
+          const copied = JSON.parse(JSON.stringify(column.blocks[index]))
+          copied.id = Date.now() + Math.random()
+          column.blocks.splice(index + 1, 0, copied)
+          emit('update', props.block.id, updatedBlock)
+          break
+        }
+      }
+    }
+
+    const handleChildMoveUp = (childId) => {
+      const updatedBlock = { ...props.block }
+      for (const column of updatedBlock.columns) {
+        const index = column.blocks.findIndex(b => b.id === childId)
+        if (index > 0) {
+          const temp = column.blocks[index]
+          column.blocks[index] = column.blocks[index - 1]
+          column.blocks[index - 1] = temp
+          emit('update', props.block.id, updatedBlock)
+          break
+        }
+      }
+    }
+
+    const handleChildMoveDown = (childId) => {
+      const updatedBlock = { ...props.block }
+      for (const column of updatedBlock.columns) {
+        const index = column.blocks.findIndex(b => b.id === childId)
+        if (index < column.blocks.length - 1) {
+          const temp = column.blocks[index]
+          column.blocks[index] = column.blocks[index + 1]
+          column.blocks[index + 1] = temp
+          emit('update', props.block.id, updatedBlock)
+          break
+        }
+      }
+    }
+
+    return {
+      rowStyle,
+      getColumnStyle,
+      getBlockComponent,
+      handleDrop,
+      handleColumnDrop,
+      handleNestedDrop,
+      handleChildUpdate,
+      handleChildDelete,
+      handleChildCopy,
+      handleChildMoveUp,
+      handleChildMoveDown
+    }
+  }
+}
+</script>
+
+<style scoped>
+.block-wrapper {
+  position: relative;
+  padding: 4px;
+  margin: 2px 0;
+  transition: all 0.2s;
+}
+
+.block-wrapper--selected {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.block-wrapper:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.block-actions {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  display: flex;
+  gap: 4px;
+  background: white;
+  padding: 4px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.block-actions button {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.block-actions button:hover {
+  background: #e5e7eb;
+}
+
+.row-block {
+  min-height: 50px;
+}
+
+.row-block__column {
+  position: relative;
+  box-sizing: border-box;
+}
+
+.row-block__column:hover {
+  border-color: #3b82f6;
+}
+
+.column__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 80px;
+  color: #9ca3af;
+  font-size: 14px;
+  text-align: center;
+}
+</style>

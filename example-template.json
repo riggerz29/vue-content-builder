@@ -1,0 +1,187 @@
+{
+  "blocks": [
+    {
+      "id": 1634567890123,
+      "type": "heading",
+      "properties": {
+        "text": "Welcome to Our Newsletter",
+        "level": "h1",
+        "fontSize": 32,
+        "fontFamily": "Arial, sans-serif",
+        "fontWeight": "bold",
+        "color": "#1f2937",
+        "lineHeight": 1.4,
+        "letterSpacing": 0,
+        "align": "center",
+        "margin": { "top": 30, "right": 20, "bottom": 10, "left": 20 },
+        "padding": { "top": 0, "right": 0, "bottom": 0, "left": 0 }
+      }
+    },
+    {
+      "id": 1634567890124,
+      "type": "paragraph",
+      "properties": {
+        "text": "Thank you for subscribing to our newsletter. We're excited to keep you updated with the latest news and offers.",
+        "fontSize": 16,
+        "fontFamily": "Arial, sans-serif",
+        "fontWeight": "normal",
+        "color": "#6b7280",
+        "lineHeight": 1.6,
+        "letterSpacing": 0,
+        "align": "center",
+        "margin": { "top": 10, "right": 20, "bottom": 20, "left": 20 },
+        "padding": { "top": 0, "right": 0, "bottom": 0, "left": 0 }
+      }
+    },
+    {
+      "id": 1634567890125,
+      "type": "image",
+      "properties": {
+        "url": "https://via.placeholder.com/600x300/3b82f6/ffffff?text=Featured+Image",
+        "alt": "Featured Image",
+        "width": "100%",
+        "height": "auto",
+        "link": "",
+        "align": "center",
+        "margin": { "top": 20, "right": 0, "bottom": 20, "left": 0 }
+      }
+    },
+    {
+      "id": 1634567890126,
+      "type": "row",
+      "columns": [
+        {
+          "width": 50,
+          "blocks": [
+            {
+              "id": 1634567890127,
+              "type": "heading",
+              "properties": {
+                "text": "Feature One",
+                "level": "h3",
+                "fontSize": 20,
+                "fontFamily": "Arial, sans-serif",
+                "fontWeight": "bold",
+                "color": "#1f2937",
+                "lineHeight": 1.4,
+                "letterSpacing": 0,
+                "align": "left",
+                "margin": { "top": 0, "right": 0, "bottom": 10, "left": 0 },
+                "padding": { "top": 0, "right": 0, "bottom": 0, "left": 0 }
+              }
+            },
+            {
+              "id": 1634567890128,
+              "type": "paragraph",
+              "properties": {
+                "text": "This is a great feature that will help you achieve your goals.",
+                "fontSize": 14,
+                "fontFamily": "Arial, sans-serif",
+                "fontWeight": "normal",
+                "color": "#6b7280",
+                "lineHeight": 1.6,
+                "letterSpacing": 0,
+                "align": "left",
+                "margin": { "top": 0, "right": 0, "bottom": 0, "left": 0 },
+                "padding": { "top": 0, "right": 0, "bottom": 0, "left": 0 }
+              }
+            }
+          ]
+        },
+        {
+          "width": 50,
+          "blocks": [
+            {
+              "id": 1634567890129,
+              "type": "heading",
+              "properties": {
+                "text": "Feature Two",
+                "level": "h3",
+                "fontSize": 20,
+                "fontFamily": "Arial, sans-serif",
+                "fontWeight": "bold",
+                "color": "#1f2937",
+                "lineHeight": 1.4,
+                "letterSpacing": 0,
+                "align": "left",
+                "margin": { "top": 0, "right": 0, "bottom": 10, "left": 0 },
+                "padding": { "top": 0, "right": 0, "bottom": 0, "left": 0 }
+              }
+            },
+            {
+              "id": 1634567890130,
+              "type": "paragraph",
+              "properties": {
+                "text": "Another amazing feature designed specifically for you.",
+                "fontSize": 14,
+                "fontFamily": "Arial, sans-serif",
+                "fontWeight": "normal",
+                "color": "#6b7280",
+                "lineHeight": 1.6,
+                "letterSpacing": 0,
+                "align": "left",
+                "margin": { "top": 0, "right": 0, "bottom": 0, "left": 0 },
+                "padding": { "top": 0, "right": 0, "bottom": 0, "left": 0 }
+              }
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "backgroundColor": "transparent",
+        "padding": { "top": 20, "right": 20, "bottom": 20, "left": 20 }
+      }
+    },
+    {
+      "id": 1634567890131,
+      "type": "button",
+      "properties": {
+        "text": "Learn More",
+        "url": "https://example.com",
+        "backgroundColor": "#3b82f6",
+        "textColor": "#ffffff",
+        "fontSize": 16,
+        "fontFamily": "Arial, sans-serif",
+        "fontWeight": "bold",
+        "textDecoration": "none",
+        "borderRadius": 6,
+        "padding": { "top": 14, "right": 32, "bottom": 14, "left": 32 },
+        "margin": { "top": 20, "right": 0, "bottom": 20, "left": 0 },
+        "align": "center",
+        "fullWidth": false
+      }
+    },
+    {
+      "id": 1634567890132,
+      "type": "divider",
+      "properties": {
+        "width": 80,
+        "height": 1,
+        "color": "#e5e7eb",
+        "align": "center",
+        "margin": { "top": 30, "right": 0, "bottom": 30, "left": 0 }
+      }
+    },
+    {
+      "id": 1634567890133,
+      "type": "social",
+      "properties": {
+        "icons": [
+          { "platform": "facebook", "url": "https://facebook.com" },
+          { "platform": "twitter", "url": "https://twitter.com" },
+          { "platform": "instagram", "url": "https://instagram.com" },
+          { "platform": "linkedin", "url": "https://linkedin.com" }
+        ],
+        "iconSize": 32,
+        "iconSpacing": 15,
+        "align": "center",
+        "margin": { "top": 20, "right": 0, "bottom": 30, "left": 0 }
+      }
+    }
+  ],
+  "bodySettings": {
+    "backgroundColor": "#f3f4f6",
+    "contentWidth": 600,
+    "fontFamily": "Arial, sans-serif"
+  }
+}
