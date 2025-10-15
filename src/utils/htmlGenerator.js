@@ -2,17 +2,17 @@
  * Generate production-ready HTML email with inline styles
  */
 export function generateHTML(blocks, bodySettings) {
-  const contentHtml = blocks.map(block => generateBlockHTML(block)).join('\n')
-  const preheaderHtml = bodySettings.preheaderText ? `
+    const contentHtml = blocks.map(block => generateBlockHTML(block)).join('\n')
+    const preheaderHtml = bodySettings.preheaderText ? `
   <!-- Preheader Text -->
   <div style="display: none; max-height: 0px; overflow: hidden;">
     ${escapeHtml(bodySettings.preheaderText)}
   </div>
   <!-- End Preheader -->` : ''
 
-  const contentAlignment = bodySettings.contentAlignment || 'center'
+    const contentAlignment = bodySettings.contentAlignment || 'center'
 
-  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -45,36 +45,36 @@ export function generateHTML(blocks, bodySettings) {
 }
 
 function generateBlockHTML(block) {
-  switch (block.type) {
-    case 'button':
-      return generateButtonHTML(block)
-    case 'divider':
-      return generateDividerHTML(block)
-    case 'heading':
-      return generateHeadingHTML(block)
-    case 'paragraph':
-      return generateParagraphHTML(block)
-    case 'image':
-      return generateImageHTML(block)
-    case 'video':
-      return generateVideoHTML(block)
-    case 'social':
-      return generateSocialHTML(block)
-    case 'table':
-      return generateTableHTML(block)
-    case 'row':
-      return generateRowHTML(block)
-    default:
-      return ''
-  }
+    switch (block.type) {
+        case 'button':
+            return generateButtonHTML(block)
+        case 'divider':
+            return generateDividerHTML(block)
+        case 'heading':
+            return generateHeadingHTML(block)
+        case 'paragraph':
+            return generateParagraphHTML(block)
+        case 'image':
+            return generateImageHTML(block)
+        case 'video':
+            return generateVideoHTML(block)
+        case 'social':
+            return generateSocialHTML(block)
+        case 'table':
+            return generateTableHTML(block)
+        case 'row':
+            return generateRowHTML(block)
+        default:
+            return ''
+    }
 }
 
 function generateButtonHTML(block) {
-  const p = block.properties
-  const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
-  const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
+    const p = block.properties
+    const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
+    const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
 
-  return `
+    return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin};">
       <tr>
         <td align="${p.align}">
@@ -93,10 +93,10 @@ function generateButtonHTML(block) {
 }
 
 function generateDividerHTML(block) {
-  const p = block.properties
-  const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
+    const p = block.properties
+    const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
 
-  return `
+    return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin};">
       <tr>
         <td align="${p.align}">
@@ -111,36 +111,36 @@ function generateDividerHTML(block) {
 }
 
 function generateHeadingHTML(block) {
-  const p = block.properties
-  const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
-  const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
+    const p = block.properties
+    const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
+    const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
 
-  return `
+    return `
     <${p.level} style="margin: ${margin}; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.color}; line-height: ${p.lineHeight}; letter-spacing: ${p.letterSpacing}px; text-align: ${p.align};">
       ${escapeHtml(p.text)}
     </${p.level}>`
 }
 
 function generateParagraphHTML(block) {
-  const p = block.properties
-  const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
-  const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
+    const p = block.properties
+    const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
+    const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
 
-  return `
+    return `
     <p style="margin: ${margin}; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.color}; line-height: ${p.lineHeight}; letter-spacing: ${p.letterSpacing}px; text-align: ${p.align};">
       ${escapeHtml(p.text)}
     </p>`
 }
 
 function generateImageHTML(block) {
-  const p = block.properties
-  const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
+    const p = block.properties
+    const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
 
-  const imgTag = `<img src="${p.url}" alt="${escapeHtml(p.alt)}" width="${p.width}" height="${p.height}" style="display: block; max-width: 100%; height: auto;" />`
+    const imgTag = `<img src="${p.url}" alt="${escapeHtml(p.alt)}" width="${p.width}" height="${p.height}" style="display: block; max-width: 100%; height: auto;" />`
 
-  const content = p.link ? `<a href="${p.link}" target="_blank">${imgTag}</a>` : imgTag
+    const content = p.link ? `<a href="${p.link}" target="_blank">${imgTag}</a>` : imgTag
 
-  return `
+    return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin};">
       <tr>
         <td align="${p.align}">
@@ -151,10 +151,10 @@ function generateImageHTML(block) {
 }
 
 function generateVideoHTML(block) {
-  const p = block.properties
-  const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
+    const p = block.properties
+    const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
 
-  return `
+    return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin};">
       <tr>
         <td align="${p.align}">
@@ -167,25 +167,28 @@ function generateVideoHTML(block) {
 }
 
 function generateSocialHTML(block) {
-  const p = block.properties
-  const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
+    const p = block.properties
+    const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
 
-  const socialIcons = {
-    facebook: 'https://cdn-icons-png.flaticon.com/512/124/124010.png',
-    x: 'https://cdn-icons-png.flaticon.com/512/124/124021.png',
-    instagram: 'https://cdn-icons-png.flaticon.com/512/174/174855.png',
-    linkedin: 'https://cdn-icons-png.flaticon.com/512/174/174857.png',
-    youtube: 'https://cdn-icons-png.flaticon.com/512/174/174883.png',
-    pinterest: 'https://cdn-icons-png.flaticon.com/512/174/174863.png'
-  }
+    const socialIcons = {
+        facebook: 'https://cdn-icons-png.flaticon.com/512/124/124010.png',
+        twitter: 'https://cdn-icons-png.flaticon.com/512/12107/12107611.png',
+        x: 'https://cdn-icons-png.flaticon.com/512/12107/12107611.png',
+        instagram: 'https://cdn-icons-png.flaticon.com/512/174/174855.png',
+        linkedin: 'https://cdn-icons-png.flaticon.com/512/174/174857.png',
+        youtube: 'https://cdn-icons-png.flaticon.com/512/174/174883.png',
+        pinterest: 'https://cdn-icons-png.flaticon.com/512/174/174863.png',
+        tiktok: 'https://cdn-icons-png.flaticon.com/512/3116/3116491.png',
+        github: 'https://cdn-icons-png.flaticon.com/512/733/733553.png'
+    }
 
-  const iconsHtml = p.icons.map(icon => `
+    const iconsHtml = p.icons.map(icon => `
     <a href="${icon.url}" target="_blank" style="display: inline-block; margin: 0 ${p.iconSpacing / 2}px;">
       <img src="${socialIcons[icon.platform] || ''}" alt="${icon.platform}" width="${p.iconSize}" height="${p.iconSize}" style="display: block;" />
     </a>
   `).join('')
 
-  return `
+    return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin};">
       <tr>
         <td align="${p.align}">
@@ -196,10 +199,10 @@ function generateSocialHTML(block) {
 }
 
 function generateTableHTML(block) {
-  const p = block.properties
-  const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
+    const p = block.properties
+    const margin = `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`
 
-  const rowsHtml = p.rows.map(row => `
+    const rowsHtml = p.rows.map(row => `
     <tr>
       ${row.cells.map(cell => `
         <td style="border: ${p.borderWidth}px solid ${p.borderColor}; padding: ${p.cellPadding}px; background-color: ${p.backgroundColor}; color: ${p.textColor}; font-size: ${p.fontSize}px;">
@@ -209,26 +212,26 @@ function generateTableHTML(block) {
     </tr>
   `).join('')
 
-  return `
+    return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin}; border-collapse: collapse;">
       ${rowsHtml}
     </table>`
 }
 
 function generateRowHTML(block) {
-  const p = block.properties
-  const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
+    const p = block.properties
+    const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
 
-  const columnsHtml = block.columns.map(column => {
-    const columnContent = column.blocks.map(b => generateBlockHTML(b)).join('\n')
-    return `
+    const columnsHtml = block.columns.map(column => {
+        const columnContent = column.blocks.map(b => generateBlockHTML(b)).join('\n')
+        return `
       <td width="${column.width}%" valign="top" style="padding: ${padding};">
         ${columnContent}
       </td>
     `
-  }).join('')
+    }).join('')
 
-  return `
+    return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: ${p.backgroundColor};">
       <tr>
         ${columnsHtml}
@@ -237,12 +240,12 @@ function generateRowHTML(block) {
 }
 
 function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  }
-  return String(text).replace(/[&<>"']/g, m => map[m])
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    }
+    return String(text).replace(/[&<>"']/g, m => map[m])
 }

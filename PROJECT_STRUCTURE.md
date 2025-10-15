@@ -46,7 +46,6 @@ content-builder/
 ├── package.json                  # Package configuration
 ├── vite.config.js                # Vite build configuration
 ├── README.md                     # Package documentation
-├── USAGE.md                      # Usage guide
 └── PROJECT_STRUCTURE.md          # This file
 ```
 

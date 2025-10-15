@@ -18,12 +18,15 @@
           :key="index"
           :href="icon.url"
           class="social-block__icon"
-          :style="iconStyle"
+          :style="iconLinkStyle"
           :title="icon.platform"
         >
-          <span class="social-icon" :class="`social-icon--${icon.platform}`">
-            {{ getPlatformIcon(icon.platform) }}
-          </span>
+          <img
+            :src="getIconUrl(icon.platform)"
+            :alt="icon.platform"
+            :style="iconImageStyle"
+            class="social-icon-img"
+          />
         </a>
       </div>
     </div>
@@ -34,58 +37,66 @@
 import { computed } from 'vue'
 
 export default {
-  name: 'SocialBlock',
-  props: {
-    block: { type: Object, required: true },
-    isSelected: { type: Boolean, default: false },
-    index: { type: Number, required: true }
-  },
-  emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop'],
-  setup(props, { emit }) {
-    const containerStyle = computed(() => ({
-      textAlign: props.block.properties.align,
-      margin: `${props.block.properties.margin.top}px ${props.block.properties.margin.right}px ${props.block.properties.margin.bottom}px ${props.block.properties.margin.left}px`
-    }))
+    name: 'SocialBlock',
+    props: {
+        block: { type: Object, required: true },
+        isSelected: { type: Boolean, default: false },
+        index: { type: Number, required: true }
+    },
+    emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop'],
+    setup(props, { emit }) {
+        const containerStyle = computed(() => ({
+            textAlign: props.block.properties.align,
+            margin: `${props.block.properties.margin.top}px ${props.block.properties.margin.right}px ${props.block.properties.margin.bottom}px ${props.block.properties.margin.left}px`
+        }))
 
-    const iconsContainerStyle = computed(() => ({
-      display: 'flex',
-      justifyContent: props.block.properties.align === 'left' ? 'flex-start' : props.block.properties.align === 'right' ? 'flex-end' : 'center',
-      gap: `${props.block.properties.iconSpacing}px`
-    }))
+        const iconsContainerStyle = computed(() => ({
+            display: 'flex',
+            justifyContent: props.block.properties.align === 'left' ? 'flex-start' : props.block.properties.align === 'right' ? 'flex-end' : 'center',
+            gap: `${props.block.properties.iconSpacing}px`
+        }))
 
-    const iconStyle = computed(() => ({
-      width: `${props.block.properties.iconSize}px`,
-      height: `${props.block.properties.iconSize}px`,
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: `${props.block.properties.iconSize * 0.6}px`
-    }))
+        const iconLinkStyle = computed(() => ({
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+        }))
 
-    const getPlatformIcon = (platform) => {
-      const icons = {
-        facebook: 'f',
-        x: 'X',
-        instagram: 'i',
-        linkedin: 'in',
-        youtube: 'yt',
-        pinterest: 'p'
-      }
-      return icons[platform] || '?'
+        const iconImageStyle = computed(() => ({
+            width: `${props.block.properties.iconSize}px`,
+            height: `${props.block.properties.iconSize}px`,
+            display: 'block'
+        }))
+
+        const socialIcons = {
+            facebook: 'https://cdn-icons-png.flaticon.com/512/124/124010.png',
+            twitter: 'https://cdn-icons-png.flaticon.com/512/12107/12107611.png',
+            x: 'https://cdn-icons-png.flaticon.com/512/12107/12107611.png',
+            instagram: 'https://cdn-icons-png.flaticon.com/512/174/174855.png',
+            linkedin: 'https://cdn-icons-png.flaticon.com/512/174/174857.png',
+            youtube: 'https://cdn-icons-png.flaticon.com/512/174/174883.png',
+            pinterest: 'https://cdn-icons-png.flaticon.com/512/174/174863.png',
+            tiktok: 'https://cdn-icons-png.flaticon.com/512/3116/3116491.png',
+            github: 'https://cdn-icons-png.flaticon.com/512/733/733553.png'
+        }
+
+        const getIconUrl = (platform) => {
+            return socialIcons[platform] || socialIcons.facebook
+        }
+
+        const handleDrop = (event) => {
+            emit('drop', event, props.index)
+        }
+
+        return {
+            containerStyle,
+            iconsContainerStyle,
+            iconLinkStyle,
+            iconImageStyle,
+            getIconUrl,
+            handleDrop
+        }
     }
-
-    const handleDrop = (event) => {
-      emit('drop', event, props.index)
-    }
-
-    return {
-      containerStyle,
-      iconsContainerStyle,
-      iconStyle,
-      getPlatformIcon,
-      handleDrop
-    }
-  }
 }
 </script>
 
@@ -142,46 +153,15 @@ export default {
 
 .social-block__icon {
   text-decoration: none;
-  transition: transform 0.2s;
+  transition: transform 0.2s, opacity 0.2s;
 }
 
 .social-block__icon:hover {
   transform: scale(1.1);
+  opacity: 0.8;
 }
 
-.social-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  color: white;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.social-icon--facebook {
-  background: #1877f2;
-}
-
-.social-icon--x {
-  background: #000000;
-}
-
-.social-icon--instagram {
-  background: #e4405f;
-}
-
-.social-icon--linkedin {
-  background: #0077b5;
-}
-
-.social-icon--youtube {
-  background: #ff0000;
-}
-
-.social-icon--pinterest {
-  background: #bd081c;
+.social-icon-img {
+  object-fit: contain;
 }
 </style>

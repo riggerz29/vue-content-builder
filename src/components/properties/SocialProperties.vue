@@ -74,144 +74,144 @@
 import { ref, watch } from 'vue'
 
 export default {
-  name: 'SocialProperties',
-  props: {
-    block: {
-      type: Object,
-      required: true
+    name: 'SocialProperties',
+    props: {
+        block: {
+            type: Object,
+            required: true
+        },
+        onUpload: {
+            type: Function,
+            default: null
+        }
     },
-    onUpload: {
-      type: Function,
-      default: null
+    emits: ['update'],
+    setup(props, { emit }) {
+        const localProps = ref({
+            icons: [],
+            iconSize: '32px',
+            iconSpacing: '12px',
+            align: 'center',
+            margin: { top: '0px', right: '0px', bottom: '16px', left: '0px' },
+            ...props.block.properties
+        })
+
+        const emitUpdate = () => {
+            emit('update', { ...localProps.value })
+        }
+
+        const addIcon = () => {
+            localProps.value.icons.push({ platform: 'facebook', url: '' })
+            emitUpdate()
+        }
+
+        const removeIcon = (index) => {
+            localProps.value.icons.splice(index, 1)
+            emitUpdate()
+        }
+
+        watch(() => props.block.properties, (newProps) => {
+            localProps.value = {
+                icons: [],
+                iconSize: '32px',
+                iconSpacing: '12px',
+                align: 'center',
+                margin: { top: '0px', right: '0px', bottom: '16px', left: '0px' },
+                ...newProps
+            }
+        }, { deep: true })
+
+        return { localProps, emitUpdate, addIcon, removeIcon }
     }
-  },
-  emits: ['update'],
-  setup(props, { emit }) {
-    const localProps = ref({
-      icons: [],
-      iconSize: '32px',
-      iconSpacing: '12px',
-      align: 'center',
-      margin: { top: '0px', right: '0px', bottom: '16px', left: '0px' },
-      ...props.block.properties
-    })
-
-    const emitUpdate = () => {
-      emit('update', { ...localProps.value })
-    }
-
-    const addIcon = () => {
-      localProps.value.icons.push({ platform: 'facebook', url: '' })
-      emitUpdate()
-    }
-
-    const removeIcon = (index) => {
-      localProps.value.icons.splice(index, 1)
-      emitUpdate()
-    }
-
-    watch(() => props.block.properties, (newProps) => {
-      localProps.value = {
-        icons: [],
-        iconSize: '32px',
-        iconSpacing: '12px',
-        align: 'center',
-        margin: { top: '0px', right: '0px', bottom: '16px', left: '0px' },
-        ...newProps
-      }
-    }, { deep: true })
-
-    return { localProps, emitUpdate, addIcon, removeIcon }
-  }
 }
 </script>
 
 <style scoped>
 .properties-panel {
-  padding: 16px;
+    padding: 16px;
 }
 
 .properties__group {
-  margin-bottom: 16px;
+    margin-bottom: 16px;
 }
 
 .properties__group label {
-  display: block;
-  font-size: 13px;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 6px;
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
 }
 
 .properties__group input,
 .properties__group select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  font-size: 13px;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 13px;
 }
 
 .properties__section {
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
 }
 
 .properties__section h4 {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 12px;
 }
 
 .icon-item {
-  margin-bottom: 16px;
-  padding: 12px;
-  background-color: #f9fafb;
-  border-radius: 4px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background-color: #f9fafb;
+    border-radius: 4px;
 }
 
 .icon-row {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .add-button,
 .remove-button {
-  width: 100%;
-  padding: 8px;
-  border: none;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .add-button {
-  background-color: #10b981;
-  color: white;
+    background-color: #10b981;
+    color: white;
 }
 
 .add-button:hover {
-  background-color: #059669;
+    background-color: #059669;
 }
 
 .remove-button {
-  background-color: #ef4444;
-  color: white;
-  margin-top: 8px;
+    background-color: #ef4444;
+    color: white;
+    margin-top: 8px;
 }
 
 .remove-button:hover {
-  background-color: #dc2626;
+    background-color: #dc2626;
 }
 
 .properties__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
 }
 </style>
