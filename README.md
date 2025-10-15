@@ -1,6 +1,8 @@
 # Email Builder
 
-A Vue 3 drag-and-drop email builder component for crafting production-ready HTML emails with inline styles.
+A simplistic Vue 3 drag-and-drop email builder component for crafting production-ready HTML emails with inline styles. 
+The name suggests that it's more than just a drag-and-drop email builder, this is intended as I plan to add more content 
+types and features in the future.
 
 ## Features
 
@@ -18,7 +20,7 @@ A Vue 3 drag-and-drop email builder component for crafting production-ready HTML
 ## Installation
 
 ```bash
-npm install @riggerz29/email-builder
+npm install @riggerz29/content-builder
 ```
 
 ## Usage
@@ -39,7 +41,7 @@ npm install @riggerz29/email-builder
 
 <script>
 import { ref } from 'vue'
-import EmailBuilder from '@riggerz29/email-builder'
+import EmailBuilder from '@riggerz29/content-builder'
 
 export default {
   components: {

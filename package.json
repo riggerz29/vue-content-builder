@@ -1,5 +1,5 @@
 {
-  "name": "@riggerz29/email-builder",
+  "name": "@riggerz29/content-builder",
   "version": "1.0.0",
   "description": "A Vue 3 drag-and-drop email builder component",
   "main": "dist/email-builder.umd.js",
@@ -20,8 +20,12 @@
     "preview": "vite preview"
   },
   "keywords": ["vue", "email", "builder", "drag-drop", "email-template"],
-  "author": "",
+  "author": "Richard Holmes riggerz29@hotmail.com",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/riggerz29/vue-content-builder"
+  },
   "peerDependencies": {
     "vue": "^3.0.0"
   },
