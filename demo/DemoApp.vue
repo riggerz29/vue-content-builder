@@ -47,8 +47,13 @@ export default {
       blocks: [],
       bodySettings: {
         backgroundColor: '#f3f4f6',
+        textColor: '#000000',
+        linkColor: '#3b82f6',
         contentWidth: 600,
-        fontFamily: 'Arial, sans-serif'
+        contentAlignment: 'center',
+        fontFamily: 'Arial, sans-serif',
+        fontWeight: 'normal',
+        preheaderText: ''
       }
     })
 
