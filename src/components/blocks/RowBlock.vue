@@ -48,16 +48,34 @@
 
 <script>
 import { computed } from 'vue'
+import ButtonBlock from './ButtonBlock.vue'
+import DividerBlock from './DividerBlock.vue'
+import HeadingBlock from './HeadingBlock.vue'
+import ParagraphBlock from './ParagraphBlock.vue'
+import ImageBlock from './ImageBlock.vue'
+import VideoBlock from './VideoBlock.vue'
+import SocialBlock from './SocialBlock.vue'
+import TableBlock from './TableBlock.vue'
 
 export default {
   name: 'RowBlock',
+  components: {
+    ButtonBlock,
+    DividerBlock,
+    HeadingBlock,
+    ParagraphBlock,
+    ImageBlock,
+    VideoBlock,
+    SocialBlock,
+    TableBlock
+  },
   props: {
     block: { type: Object, required: true },
     isSelected: { type: Boolean, default: false },
     index: { type: Number, required: true },
     selectedBlockId: { type: [Number, String], default: null }
   },
-  emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop'],
+  emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop', 'column-drop'],
   setup(props, { emit }) {
     const rowStyle = computed(() => ({
       display: 'flex',
@@ -69,8 +87,10 @@ export default {
       return {
         width: `${column.width}%`,
         minHeight: '100px',
-        border: '1px dashed #e5e7eb',
-        padding: '8px'
+        border: '2px dashed #d1d5db',
+        padding: '10px',
+        backgroundColor: 'rgba(249, 250, 251, 0.5)',
+        transition: 'all 0.2s'
       }
     }
 

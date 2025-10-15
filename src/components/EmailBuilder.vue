@@ -175,6 +175,7 @@
             :block="block"
             :index="index"
             :is-selected="selectedBlock && selectedBlock.id === block.id"
+            :selected-block-id="selectedBlock ? selectedBlock.id : null"
             @select="selectBlock(block)"
             @update="updateBlock"
             @delete="deleteBlock"
@@ -182,6 +183,7 @@
             @move-up="moveBlockUp"
             @move-down="moveBlockDown"
             @drop="onDrop($event, index)"
+            @column-drop="handleColumnDrop"
           />
         </div>
       </div>
@@ -327,6 +329,30 @@ export default {
         blocks.value.splice(insertIndex + 1, 0, newBlock)
       } else {
         blocks.value.push(newBlock)
+      }
+
+      draggedBlock = null
+      emitChange()
+    }
+
+    const handleColumnDrop = (dropInfo) => {
+      if (!draggedBlock) return
+
+      // Find the row block
+      const rowBlock = findBlockById(blocks.value, dropInfo.blockId)
+      if (!rowBlock || rowBlock.type !== 'row') return
+
+      // Create the new block
+      const newBlock = createBlock(draggedBlock)
+
+      // Add to the specified column
+      const column = rowBlock.columns[dropInfo.columnIndex]
+      if (column) {
+        if (dropInfo.insertIndex !== null && dropInfo.insertIndex !== undefined) {
+          column.blocks.splice(dropInfo.insertIndex + 1, 0, newBlock)
+        } else {
+          column.blocks.push(newBlock)
+        }
       }
 
       draggedBlock = null
@@ -606,6 +632,7 @@ export default {
       canvasContainerStyle,
       onDragStart,
       onDrop,
+      handleColumnDrop,
       getBlockComponent,
       getPropertiesComponent,
       selectBlock,
