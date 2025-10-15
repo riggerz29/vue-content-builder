@@ -426,7 +426,7 @@ export default {
                     padding: { top: 0, right: 0, bottom: 0, left: 0 }
                 },
                 image: {
-                    url: 'https://https://dummyimage.com/600x300/cccccc/fff&text=Add+Image/600x300',
+                    url: 'https://dummyimage.com/600x300/cccccc/fff&text=Add+Image/600x300',
                     alt: 'Image',
                     width: '100%',
                     height: 'auto',
@@ -436,7 +436,7 @@ export default {
                 },
                 video: {
                     url: '',
-                    thumbnailUrl: 'https://https://dummyimage.com/600x300/cccccc/fff&text=Add+Image/600x300',
+                    thumbnailUrl: 'https://dummyimage.com/600x300/cccccc/fff&text=Add+Image/600x300',
                     width: '100%',
                     align: 'center',
                     margin: { top: 10, right: 0, bottom: 10, left: 0 }
