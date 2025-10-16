@@ -42,7 +42,7 @@ export default {
         EmailBuilder
     },
     setup() {
-        const primaryColor = ref('#6b7280')
+        const primaryColor = ref('#334570')
         const initialData = ref({
                 "blocks": [
                     {
@@ -183,7 +183,7 @@ export default {
                         "properties": {
                             "text": "Learn More",
                             "url": "https://example.com",
-                            "backgroundColor": "#3b82f6",
+                            "backgroundColor": "#2f4574",
                             "textColor": "#ffffff",
                             "fontSize": 16,
                             "fontFamily": "Arial, sans-serif",
@@ -227,7 +227,7 @@ export default {
                 "bodySettings": {
                     "backgroundColor": "#f3f4f6",
                     "textColor": "#1f2937",
-                    "linkColor": "#3b82f6",
+                    "linkColor": "#2f4574",
                     "contentWidth": 600,
                     "contentAlignment": "center",
                     "fontFamily": "Arial, sans-serif",
@@ -419,7 +419,7 @@ export default {
 }
 
 .btn-download {
-    background: #3b82f6;
+    background: #2f4574;
     color: white;
 }
 

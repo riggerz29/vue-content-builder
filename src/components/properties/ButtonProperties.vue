@@ -144,7 +144,7 @@ export default {
         const localProps = ref({
             text: '',
             url: '',
-            backgroundColor: '#3b82f6',
+            backgroundColor: '#2f4574',
             textColor: '#ffffff',
             fontSize: '16px',
             fontFamily: 'Arial, sans-serif',
@@ -166,7 +166,7 @@ export default {
             localProps.value = {
                 text: '',
                 url: '',
-                backgroundColor: '#3b82f6',
+                backgroundColor: '#2f4574',
                 textColor: '#ffffff',
                 fontSize: '16px',
                 fontFamily: 'Arial, sans-serif',

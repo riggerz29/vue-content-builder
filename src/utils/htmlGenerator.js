@@ -22,7 +22,7 @@ export function generateHTML(blocks, bodySettings) {
     body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
     table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
     img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
-    a { color: ${bodySettings.linkColor || '#3b82f6'}; text-decoration: underline; }
+    a { color: ${bodySettings.linkColor || '#2f4574'}; text-decoration: underline; }
   </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: ${bodySettings.backgroundColor}; font-family: ${bodySettings.fontFamily}; font-weight: ${bodySettings.fontWeight || 'normal'}; color: ${bodySettings.textColor || '#000000'};">

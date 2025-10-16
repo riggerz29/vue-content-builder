@@ -172,7 +172,7 @@ export default {
 }
 
 .block-wrapper--selected {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid #2f4574;
     outline-offset: 2px;
 }
 
@@ -192,7 +192,7 @@ export default {
 
 .heading-block__textarea {
     width: 100%;
-    border: 2px dashed #3b82f6;
+    border: 2px dashed #2f4574;
     padding: 8px;
     resize: vertical;
     font-family: inherit;
@@ -238,9 +238,9 @@ export default {
 }
 
 .inline-toolbar button.active {
-    background: #3b82f6;
+    background: #2f4574;
     color: white;
-    border-color: #3b82f6;
+    border-color: #2f4574;
 }
 
 .inline-toolbar button.btn-check {

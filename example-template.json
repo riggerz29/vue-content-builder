@@ -138,7 +138,7 @@
       "properties": {
         "text": "Learn More",
         "url": "https://example.com",
-        "backgroundColor": "#3b82f6",
+        "backgroundColor": "#2f4574",
         "textColor": "#ffffff",
         "fontSize": 16,
         "fontFamily": "Arial, sans-serif",
@@ -182,7 +182,7 @@
   "bodySettings": {
     "backgroundColor": "#f3f4f6",
     "textColor": "#1f2937",
-    "linkColor": "#3b82f6",
+    "linkColor": "#2f4574",
     "contentWidth": 600,
     "contentAlignment": "center",
     "fontFamily": "Arial, sans-serif",

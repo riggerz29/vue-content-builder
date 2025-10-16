@@ -137,7 +137,7 @@ export default {
 .upload-button {
     width: 100%;
     padding: 10px;
-    background-color: #3b82f6;
+    background-color: #2f4574;
     color: white;
     border: none;
     border-radius: 4px;

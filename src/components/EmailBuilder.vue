@@ -252,7 +252,7 @@ export default {
         },
         primaryColor: {
             type: String,
-            default: '#6b7280'
+            default: '#2f4574'
         },
         onUpload: {
             type: Function,
@@ -267,7 +267,7 @@ export default {
         const bodySettings = ref({
             backgroundColor: '#f3f4f6',
             textColor: '#000000',
-            linkColor: '#3b82f6',
+            linkColor: props.primaryColor || '#2f4574',
             contentWidth: 600,
             contentAlignment: 'center',
             fontFamily: 'Arial, sans-serif',
@@ -391,7 +391,7 @@ export default {
                 button: {
                     text: 'Click Here',
                     url: '#',
-                    backgroundColor: '#3b82f6',
+                    backgroundColor: '#2f4574',
                     textColor: '#ffffff',
                     fontSize: 16,
                     fontFamily: 'Arial, sans-serif',

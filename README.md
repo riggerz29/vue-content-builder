@@ -31,7 +31,7 @@ npm install @riggerz29/content-builder
 <template>
   <EmailBuilder
     :initial-data="emailData"
-    :primary-color="#3b82f6"
+    :primary-color="#2f4574"
     :on-upload="handleImageUpload"
     @export-json="handleExportJSON"
     @export-html="handleExportHTML"
@@ -53,7 +53,7 @@ export default {
       bodySettings: {
         backgroundColor: '#f3f4f6',
         textColor: '#000000',
-        linkColor: '#3b82f6',
+        linkColor: '#2f4574',
         contentWidth: 600,
         contentAlignment: 'center',
         fontFamily: 'Arial, sans-serif',
@@ -185,7 +185,7 @@ Columns can contain any content blocks and support nested layouts.
   "bodySettings": {
     "backgroundColor": "#f3f4f6",
     "textColor": "#000000",
-    "linkColor": "#3b82f6",
+    "linkColor": "#2f4574",
     "contentWidth": 600,
     "contentAlignment": "center",
     "fontFamily": "Arial, sans-serif",

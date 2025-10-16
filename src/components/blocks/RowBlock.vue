@@ -230,7 +230,7 @@ export default {
 }
 
 .block-wrapper--selected {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid #2f4574;
     outline-offset: 2px;
 }
 
@@ -248,7 +248,7 @@ export default {
 }
 
 .row-block__column:hover {
-    border-color: #3b82f6;
+    border-color: #2f4574;
 }
 
 .column__placeholder {
