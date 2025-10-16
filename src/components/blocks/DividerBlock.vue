@@ -6,10 +6,15 @@
         @drop.stop="handleDrop"
         @dragover.prevent
     >
-        <div class="block-actions" v-if="isSelected">
-            <button @click.stop="$emit('copy', block.id)" title="Copy">📋</button>
-            <button @click.stop="$emit('delete', block.id)" title="Delete">🗑</button>
-        </div>
+        <BlockActions
+            :is-selected="isSelected"
+            @select="$emit('select', block.id)"
+            @update="$emit('update', block.id)"
+            @delete="$emit('delete', block.id)"
+            @copy="$emit('copy', block.id)"
+            @move-up="$emit('move-up', block.id)"
+            @move-down="$emit('move-down', block.id)"
+        />
 
         <div class="divider-block" :style="containerStyle">
             <hr :style="dividerStyle" />
@@ -19,9 +24,11 @@
 
 <script>
 import { computed } from 'vue'
+import BlockActions from "../common/BlockActions.vue";
 
 export default {
     name: 'DividerBlock',
+    components: {BlockActions},
     props: {
         block: { type: Object, required: true },
         isSelected: { type: Boolean, default: false },
@@ -71,32 +78,6 @@ export default {
 
 .block-wrapper:hover {
     background: rgba(59, 130, 246, 0.05);
-}
-
-.block-actions {
-    position: absolute;
-    top: -30px;
-    right: 0;
-    display: flex;
-    gap: 4px;
-    background: white;
-    padding: 4px;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    z-index: 10;
-}
-
-.block-actions button {
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    padding: 4px 8px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.block-actions button:hover {
-    background: #e5e7eb;
 }
 
 .divider-block {

@@ -19,7 +19,13 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "keywords": ["vue", "email", "builder", "drag-drop", "email-template"],
+  "keywords": [
+    "vue",
+    "email",
+    "builder",
+    "drag-drop",
+    "email-template"
+  ],
   "author": "Richard Holmes riggerz29@hotmail.com",
   "license": "MIT",
   "repository": {
@@ -35,5 +41,8 @@
     "typescript": "^5.9.3",
     "vite": "^7.1.10",
     "vue": "^3.5.22"
+  },
+  "dependencies": {
+    "lucide-vue-next": "^0.545.0"
   }
 }

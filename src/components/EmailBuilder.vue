@@ -3,8 +3,14 @@
         <!-- Top Toolbar -->
         <div class="email-builder__toolbar">
             <div class="toolbar__actions">
-                <button @click="exportJSON" class="toolbar__btn">Export JSON</button>
-                <button @click="exportHTML" class="toolbar__btn">Export HTML</button>
+                <button @click="exportJSON" class="toolbar__btn">
+                    <Icon name="download" :size="16" />
+                    <span>Export JSON</span>
+                </button>
+                <button @click="exportHTML" class="toolbar__btn">
+                    <Icon name="code" :size="16" />
+                    <span>Export HTML</span>
+                </button>
             </div>
         </div>
 
@@ -35,7 +41,9 @@
                                 draggable="true"
                                 @dragstart="onDragStart($event, block)"
                             >
-                                <div class="item__icon">{{ block.icon }}</div>
+                                <div class="item__icon">
+                                    <Icon :name="block.icon" :size="24" :stroke-width="2" />
+                                </div>
                                 <div class="item__label">{{ block.label }}</div>
                             </div>
                         </div>
@@ -193,6 +201,7 @@
 
 <script>
 import { ref, computed, watch } from 'vue'
+import Icon from './common/Icon.vue'
 import ButtonBlock from './blocks/ButtonBlock.vue'
 import DividerBlock from './blocks/DividerBlock.vue'
 import HeadingBlock from './blocks/HeadingBlock.vue'
@@ -216,6 +225,7 @@ import { generateHTML } from '../utils/htmlGenerator'
 export default {
     name: 'EmailBuilder',
     components: {
+        Icon,
         ButtonBlock,
         DividerBlock,
         HeadingBlock,
@@ -273,14 +283,14 @@ export default {
         ]
 
         const contentBlocks = [
-            { type: 'button', label: 'Button', icon: '🔘' },
-            { type: 'divider', label: 'Divider', icon: '➖' },
-            { type: 'heading', label: 'Heading', icon: 'H' },
-            { type: 'paragraph', label: 'Paragraph', icon: '¶' },
-            { type: 'image', label: 'Image', icon: '🖼' },
-            { type: 'video', label: 'Video', icon: '🎬' },
-            { type: 'social', label: 'Social', icon: '👥' },
-            { type: 'table', label: 'Table', icon: '⊞' }
+            { type: 'button', label: 'Button', icon: 'square' },
+            { type: 'divider', label: 'Divider', icon: 'minus' },
+            { type: 'heading', label: 'Heading', icon: 'type' },
+            { type: 'paragraph', label: 'Paragraph', icon: 'alignLeft' },
+            { type: 'image', label: 'Image', icon: 'image' },
+            { type: 'video', label: 'Video', icon: 'video' },
+            { type: 'social', label: 'Social', icon: 'users' },
+            { type: 'table', label: 'Table', icon: 'table' }
         ]
 
         const layoutBlocks = [
@@ -673,6 +683,9 @@ export default {
 }
 
 .toolbar__btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     background: rgba(255, 255, 255, 0.2);
     color: white;
     border: none;
@@ -680,6 +693,7 @@ export default {
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
+    transition: background 0.2s;
 }
 
 .toolbar__btn:hover {
