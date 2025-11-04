@@ -34,7 +34,7 @@
                     :block="childBlock"
                     :index="childIndex"
                     :is-selected="selectedBlockId === childBlock.id"
-                    @select="handleChildSelect(childBlock)"
+                    @select="$emit('child-select', childBlock)"
                     @update="handleChildUpdate"
                     @delete="handleChildDelete"
                     @copy="handleChildCopy"
@@ -202,10 +202,6 @@ export default {
             }
         }
 
-        const handleChildSelect = (block) => {
-            emit('child-select', block)
-        }
-
         return {
             rowStyle,
             getColumnStyle,
@@ -218,7 +214,6 @@ export default {
             handleChildCopy,
             handleChildMoveUp,
             handleChildMoveDown,
-            handleChildSelect,
         }
     }
 }
