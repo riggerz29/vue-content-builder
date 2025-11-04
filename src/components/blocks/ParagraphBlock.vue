@@ -40,8 +40,9 @@
                 <button @click="setAlign('left')" :class="{ active: localProps.align === 'left' }" title="Align Left">⬅</button>
                 <button @click="setAlign('center')" :class="{ active: localProps.align === 'center' }" title="Align Center">↔</button>
                 <button @click="setAlign('right')" :class="{ active: localProps.align === 'right' }" title="Align Right">➡</button>
-                <button @click="finishEditing" class="btn-check">✓</button>
-                <button @click.stop="$emit('delete', block.id)" class="btn-delete">🗑</button>
+                <button @click.stop="$emit('delete', block.id)" class="btn-delete">
+                    <Trash2 size="16" />
+                </button>
             </div>
             <textarea
                 ref="editInput"
@@ -56,11 +57,12 @@
 
 <script>
 import { ref, computed } from 'vue'
+import { Trash2 } from 'lucide-vue-next'
 import BlockActions from "../common/BlockActions.vue";
 
 export default {
     name: 'ParagraphBlock',
-    components: {BlockActions},
+    components: {BlockActions, Trash2},
     props: {
         block: { type: Object, required: true },
         isSelected: { type: Boolean, default: false },
