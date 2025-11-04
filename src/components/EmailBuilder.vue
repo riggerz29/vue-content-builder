@@ -22,7 +22,7 @@
                     <button
                         v-for="tab in tabs"
                         :key="tab.id"
-                        @click="activeTab = tab.id"
+                        @click="activeTab = tab.id, selectedBlock = null"
                         :class="['tab__btn', { 'tab__btn--active': activeTab === tab.id }]"
                     >
                         {{ tab.label }}
