@@ -185,6 +185,7 @@
                         :is-selected="selectedBlock && selectedBlock.id === block.id"
                         :selected-block-id="selectedBlock ? selectedBlock.id : null"
                         @select="selectBlock(block)"
+                        @child-select="selectBlock($event)"
                         @update="updateBlock($event)"
                         @delete="deleteBlock($event)"
                         @copy="copyBlock($event)"
@@ -518,6 +519,7 @@ export default {
         }
 
         const selectBlock = (block) => {
+            console.log('selectBlock', block)
             selectedBlock.value = block
         }
 

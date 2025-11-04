@@ -34,7 +34,7 @@
                     :block="childBlock"
                     :index="childIndex"
                     :is-selected="selectedBlockId === childBlock.id"
-                    @select="$emit('select', childBlock)"
+                    @select="handleChildSelect(childBlock)"
                     @update="handleChildUpdate"
                     @delete="handleChildDelete"
                     @copy="handleChildCopy"
@@ -78,7 +78,7 @@ export default {
         index: { type: Number, required: true },
         selectedBlockId: { type: [Number, String], default: null }
     },
-    emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop', 'column-drop'],
+    emits: ['select', 'child-select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop', 'column-drop'],
     setup(props, { emit }) {
         const rowStyle = computed(() => ({
             display: 'flex',
@@ -202,6 +202,10 @@ export default {
             }
         }
 
+        const handleChildSelect = (block) => {
+            emit('child-select', block)
+        }
+
         return {
             rowStyle,
             getColumnStyle,
@@ -213,7 +217,8 @@ export default {
             handleChildDelete,
             handleChildCopy,
             handleChildMoveUp,
-            handleChildMoveDown
+            handleChildMoveDown,
+            handleChildSelect,
         }
     }
 }
