@@ -8,12 +8,10 @@
     >
         <BlockActions
             :is-selected="isSelected"
-            @select="$emit('select', block)"
-            @update="$emit('update', block.id)"
-            @delete="$emit('delete', block.id)"
             @copy="$emit('copy', block.id)"
-            @move-up="$emit('move-up', index)"
-            @move-down="$emit('move-down', index)"
+            @move-up="$emit('move-up', block.id)"
+            @move-down="$emit('move-down', block.id)"
+            @delete="$emit('delete', block.id)"
         />
 
         <component

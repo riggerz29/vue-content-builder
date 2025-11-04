@@ -179,17 +179,17 @@
                     <component
                         v-for="(block, index) in blocks"
                         :key="block.id"
-                        :is="getBlockComponent(block.type)"
+                        :is="getBlockComponent(block?.type)"
                         :block="block"
                         :index="index"
                         :is-selected="selectedBlock && selectedBlock.id === block.id"
                         :selected-block-id="selectedBlock ? selectedBlock.id : null"
                         @select="selectBlock(block)"
-                        @update="updateBlock(id)"
-                        @delete="deleteBlock(id)"
-                        @copy="copyBlock(id)"
-                        @move-up="moveBlockUp(index)"
-                        @move-down="moveBlockDown(index)"
+                        @update="updateBlock($event)"
+                        @delete="deleteBlock($event)"
+                        @copy="copyBlock($event)"
+                        @move-up="moveBlockUp($event)"
+                        @move-down="moveBlockDown($event)"
                         @drop="onDrop($event, index)"
                         @column-drop="handleColumnDrop"
                     />
@@ -263,7 +263,7 @@ export default {
     setup(props, { emit }) {
         const activeTab = ref('content')
         const selectedBlock = ref(null)
-        const blocks = ref(props.initialData.blocks || [])
+        const blocks = ref(props.initialData?.blocks || [])
         const bodySettings = ref({
             backgroundColor: '#f3f4f6',
             textColor: '#000000',
@@ -273,7 +273,7 @@ export default {
             fontFamily: 'Arial, sans-serif',
             fontWeight: 'normal',
             preheaderText: '',
-            ...props.initialData.bodySettings
+            ...props.initialData?.bodySettings
         })
 
         const tabs = [
@@ -349,7 +349,7 @@ export default {
             if (!draggedBlock) return
 
             // Find the row block
-            const rowBlock = findBlockById(blocks.value, dropInfo.blockId)
+            const rowBlock = _findBlockById(blocks.value, dropInfo.blockId)
             if (!rowBlock || rowBlock.type !== 'row') return
 
             // Create the new block
@@ -520,7 +520,7 @@ export default {
         }
 
         const updateBlock = (id, properties) => {
-            const block = findBlockById(blocks.value, id)
+            const block = _findBlockById(blocks.value, id)
             if (block) {
                 block.properties = { ...block.properties, ...properties }
                 emitChange()
@@ -535,7 +535,14 @@ export default {
         }
 
         const deleteBlock = (id) => {
-            blocks.value = removeBlockById(blocks.value, id)
+            // try top-level first (in-place)
+            const topIndex = _findBlockIndex(blocks.value, id)
+            if (topIndex !== -1) {
+                blocks.value.splice(topIndex, 1)
+            } else {
+                // remove from nested rows in-place
+                _removeFromRowsInPlace(blocks.value, id)
+            }
             if (selectedBlock.value && selectedBlock.value.id === id) {
                 selectedBlock.value = null
             }
@@ -543,18 +550,18 @@ export default {
         }
 
         const copyBlock = (id) => {
-            const block = findBlockById(blocks.value, id)
+            const block = _findBlockById(blocks.value, id)
             if (block) {
                 const copied = JSON.parse(JSON.stringify(block))
                 copied.id = Date.now() + Math.random()
-                const index = findBlockIndex(blocks.value, id)
+                const index = _findBlockIndex(blocks.value, id)
                 blocks.value.splice(index + 1, 0, copied)
                 emitChange()
             }
         }
 
         const moveBlockUp = (id) => {
-            const index = findBlockIndex(blocks.value, id)
+            const index = _findBlockIndex(blocks.value, id)
             if (index > 0) {
                 const temp = blocks.value[index]
                 blocks.value[index] = blocks.value[index - 1]
@@ -564,7 +571,7 @@ export default {
         }
 
         const moveBlockDown = (id) => {
-            const index = findBlockIndex(blocks.value, id)
+            const index = _findBlockIndex(blocks.value, id)
             if (index < blocks.value.length - 1) {
                 const temp = blocks.value[index]
                 blocks.value[index] = blocks.value[index + 1]
@@ -573,12 +580,28 @@ export default {
             }
         }
 
-        const findBlockById = (blockList, id) => {
+        const _removeFromRowsInPlace = (list, id) => {
+            for (const block of list) {
+                if (block.type === 'row' && block.columns) {
+                    for (const column of block.columns) {
+                        const idx = column.blocks.findIndex(b => b.id === id)
+                        if (idx !== -1) {
+                            column.blocks.splice(idx, 1)
+                            return true
+                        }
+                        if (_removeFromRowsInPlace(column.blocks, id)) return true
+                    }
+                }
+            }
+            return false
+        }
+
+        const _findBlockById = (blockList, id) => {
             for (const block of blockList) {
                 if (block.id === id) return block
                 if (block.type === 'row' && block.columns) {
                     for (const column of block.columns) {
-                        const found = findBlockById(column.blocks, id)
+                        const found = _findBlockById(column.blocks, id)
                         if (found) return found
                     }
                 }
@@ -586,19 +609,7 @@ export default {
             return null
         }
 
-        const removeBlockById = (blockList, id) => {
-            return blockList.filter(block => {
-                if (block.id === id) return false
-                if (block.type === 'row' && block.columns) {
-                    block.columns.forEach(column => {
-                        column.blocks = removeBlockById(column.blocks, id)
-                    })
-                }
-                return true
-            })
-        }
-
-        const findBlockIndex = (blockList, id) => {
+        const _findBlockIndex = (blockList, id) => {
             return blockList.findIndex(block => block.id === id)
         }
 

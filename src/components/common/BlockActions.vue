@@ -27,9 +27,8 @@ export default {
     props: {
         isSelected: { type: Boolean, default: false },
     },
-    emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', ],
-    setup(props, { emit }) {
-    }
+    emits: ['delete', 'copy', 'move-up', 'move-down'],
+    setup(props, { emit }) {}
 }
 
 </script>
