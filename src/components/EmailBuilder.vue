@@ -519,7 +519,6 @@ export default {
         }
 
         const selectBlock = (block) => {
-            console.log('selectBlock', block)
             selectedBlock.value = block
         }
 
