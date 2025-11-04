@@ -24,7 +24,7 @@
             {{ block.properties.text }}
         </component>
 
-        <div v-else class="heading-block-editing">
+        <div v-else class="heading-block-editing" ref="editingContainer" @focusout="onFocusOut">
             <div class="inline-toolbar">
                 <select v-model="localProps.level" class="toolbar-select">
                     <option value="h1">H1</option>
@@ -57,7 +57,6 @@
                 v-model="localProps.text"
                 :style="headingEditStyle"
                 class="heading-block__textarea"
-                @blur="finishEditing"
                 rows="2"
             />
         </div>
@@ -80,6 +79,7 @@ export default {
     setup(props, { emit }) {
         const isEditing = ref(false)
         const editInput = ref(null)
+        const editingContainer = ref(null)
         const localProps = ref({ ...props.block.properties })
 
         const headingStyle = computed(() => ({
@@ -143,9 +143,18 @@ export default {
             emit('drop', event, props.index)
         }
 
+        const onFocusOut = (e) => {
+            const next = e.relatedTarget
+            if (editingContainer.value && next && editingContainer.value.contains(next)) {
+                return
+            }
+            finishEditing()
+        }
+
         return {
             isEditing,
             editInput,
+            editingContainer,
             localProps,
             headingStyle,
             headingEditStyle,
@@ -155,7 +164,8 @@ export default {
             toggleItalic,
             toggleUnderline,
             setAlign,
-            handleDrop
+            handleDrop,
+            onFocusOut
         }
     }
 }

@@ -23,7 +23,7 @@
             {{ block.properties.text }}
         </p>
 
-        <div v-else class="paragraph-block-editing">
+        <div v-else class="paragraph-block-editing" ref="editingContainer" @focusout="onFocusOut">
             <div class="inline-toolbar">
                 <select v-model="localProps.fontFamily" class="toolbar-select">
                     <option value="Arial, sans-serif">Arial</option>
@@ -48,7 +48,6 @@
                 v-model="localProps.text"
                 :style="paragraphEditStyle"
                 class="paragraph-block__textarea"
-                @blur="finishEditing"
                 rows="4"
             />
         </div>
@@ -71,6 +70,7 @@ export default {
     setup(props, { emit }) {
         const isEditing = ref(false)
         const editInput = ref(null)
+        const editingContainer = ref(null)
         const localProps = ref({ ...props.block.properties })
 
         const paragraphStyle = computed(() => ({
@@ -134,9 +134,19 @@ export default {
             emit('drop', event, props.index)
         }
 
+        const onFocusOut = (e) => {
+            const next = e.relatedTarget
+            // If focus is moving within the editing container, do not finish editing
+            if (editingContainer.value && next && editingContainer.value.contains(next)) {
+                return
+            }
+            finishEditing()
+        }
+
         return {
             isEditing,
             editInput,
+            editingContainer,
             localProps,
             paragraphStyle,
             paragraphEditStyle,
@@ -146,7 +156,8 @@ export default {
             toggleItalic,
             toggleUnderline,
             setAlign,
-            handleDrop
+            handleDrop,
+            onFocusOut
         }
     }
 }
