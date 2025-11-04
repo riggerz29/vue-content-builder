@@ -325,6 +325,7 @@ export default {
         const onDragStart = (event, block) => {
             draggedBlock = block
             event.dataTransfer.effectAllowed = 'copy'
+            event.dataTransfer.setData('block-dropped', block);
         }
 
         const onDrop = (event, insertIndex) => {
@@ -346,6 +347,7 @@ export default {
         }
 
         const handleColumnDrop = (dropInfo) => {
+            console.log('handleColumnDrop', dropInfo)
             if (!draggedBlock) return
 
             // Find the row block

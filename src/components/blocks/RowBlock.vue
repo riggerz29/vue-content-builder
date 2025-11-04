@@ -117,7 +117,7 @@ export default {
 
         const handleColumnDrop = (event, columnIndex) => {
             event.stopPropagation()
-            const dragData = event.dataTransfer.getData('block-type')
+            const dragData = event.dataTransfer.getData('block-dropped')
             if (dragData) {
                 emit('column-drop', {
                     blockId: props.block.id,
