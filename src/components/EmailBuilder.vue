@@ -318,7 +318,8 @@ export default {
             maxWidth: `${bodySettings.value.contentWidth}px`,
             color: bodySettings.value.textColor,
             fontFamily: bodySettings.value.fontFamily,
-            fontWeight: bodySettings.value.fontWeight
+            fontWeight: bodySettings.value.fontWeight,
+            height: 'fit-content'
         }))
 
         let draggedBlock = null
