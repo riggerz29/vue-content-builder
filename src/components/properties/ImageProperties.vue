@@ -16,7 +16,7 @@
 
         <div class="properties__group">
             <label>Width</label>
-            <div class="size-row">
+            <div class="size-row" :class="{ stacked: widthUnit === '%' }">
                 <select v-model="widthUnit" @change="emitUpdate" class="unit-select">
                     <option value="px">Pixels</option>
                     <option value="%">Percent</option>
@@ -35,7 +35,7 @@
 
         <div class="properties__group">
             <label>Height</label>
-            <div class="size-row">
+            <div class="size-row" :class="{ stacked: heightUnit === '%' }">
                 <select v-model="heightUnit" @change="emitUpdate" class="unit-select">
                     <option value="px">Pixels</option>
                     <option value="%">Percent</option>
@@ -302,6 +302,15 @@ export default {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+/* When percent is selected, stack the unit dropdown on top and show slider + value on the next row */
+.size-row.stacked {
+    flex-direction: column;
+    align-items: stretch;
+}
+.size-row.stacked .unit-select {
+    flex: 0 0 auto;
+    width: 100%;
 }
 .unit-select {
     flex: 0 0 110px;
