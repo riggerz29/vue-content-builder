@@ -1,5 +1,8 @@
 <template>
-    <div class="email-builder" :style="cssVars">
+    <div class="email-builder" :class="{ 'email-builder--modal': displayAsModal && isOpen }" :style="cssVars" v-show="!displayAsModal || isOpen">
+        <button v-if="displayAsModal" class="modal__close-btn" @click="close" aria-label="Close editor">
+            <Icon name="x" :size="20" />
+        </button>
         <!-- Top Toolbar -->
         <div class="email-builder__toolbar">
             <div class="toolbar__actions">
@@ -269,13 +272,27 @@ export default {
         variables: {
             type: [Array, Object],
             default: () => ([]) // preferably {label, format}
+        },
+        // When true, the builder renders as a fullscreen modal overlay that can be controlled with exposed methods
+        displayAsModal: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['export-json', 'export-html', 'change', 'update:modelValue'],
-    setup(props, { emit }) {
+    setup(props, { emit, expose }) {
         const activeTab = ref('content')
         const selectedBlock = ref(null)
         const isSyncingFromParent = ref(false)
+        // Modal state (only relevant when displayAsModal is true)
+        const isOpen = ref(false)
+
+        const open = () => { if (props.displayAsModal) isOpen.value = true }
+        const close = () => { if (props.displayAsModal) isOpen.value = false }
+        const toggle = () => { if (props.displayAsModal) isOpen.value = !isOpen.value }
+
+        // Expose public methods for parent components using template refs
+        expose({ open, close, toggle })
 
         // Defaults used when no JSON is provided via v-model
         const defaultBodySettings = {
@@ -714,7 +731,12 @@ export default {
             moveBlockUp,
             moveBlockDown,
             exportJSON,
-            exportHTML
+            exportHTML,
+            // modal
+            isOpen,
+            open,
+            close,
+            toggle
         }
     }
 }
@@ -977,5 +999,37 @@ export default {
 
 .canvas__placeholder p {
     font-size: 16px;
+}
+
+/* Modal variant */
+.email-builder--modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.modal__close-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 10000;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    border-radius: 9999px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.modal__close-btn:hover {
+    background: #f9fafb;
 }
 </style>
