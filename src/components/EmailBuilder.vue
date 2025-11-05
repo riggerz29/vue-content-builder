@@ -201,7 +201,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import Icon from './common/Icon.vue'
 import ButtonBlock from './blocks/ButtonBlock.vue'
 import DividerBlock from './blocks/DividerBlock.vue'
@@ -247,10 +247,6 @@ export default {
         RowProperties
     },
     props: {
-        initialData: {
-            type: Object,
-            default: () => ({ blocks: [], bodySettings: {} })
-        },
         primaryColor: {
             type: String,
             default: '#2f4574'
@@ -258,14 +254,19 @@ export default {
         onUpload: {
             type: Function,
             default: null
+        },
+        modelValue: {
+            type: Object,
+            default: () => ({ json: {}, html: '' })
         }
     },
-    emits: ['export-json', 'export-html', 'change'],
+    emits: ['export-json', 'export-html', 'change', 'update:modelValue'],
     setup(props, { emit }) {
         const activeTab = ref('content')
         const selectedBlock = ref(null)
-        const blocks = ref(props.initialData?.blocks || [])
-        const bodySettings = ref({
+
+        // Defaults used when no JSON is provided via v-model
+        const defaultBodySettings = {
             backgroundColor: '#f3f4f6',
             textColor: '#000000',
             linkColor: props.primaryColor || '#2f4574',
@@ -273,8 +274,16 @@ export default {
             contentAlignment: 'center',
             fontFamily: 'Arial, sans-serif',
             fontWeight: 'normal',
-            preheaderText: '',
-            ...props.initialData?.bodySettings
+            preheaderText: ''
+        }
+
+        const incomingJson = props.modelValue?.json || {}
+        const isEmptyJson = !incomingJson || Object.keys(incomingJson).length === 0
+
+        const blocks = ref(isEmptyJson ? [] : (incomingJson.blocks || []))
+        const bodySettings = ref({
+            ...defaultBodySettings,
+            ...(isEmptyJson ? {} : (incomingJson.bodySettings || {}))
         })
 
         const tabs = [
@@ -631,18 +640,39 @@ export default {
         }
 
         const emitChange = () => {
-            emit('change', {
+            const json = {
                 blocks: blocks.value,
                 bodySettings: bodySettings.value
-            })
+            }
+            const html = generateHTML(blocks.value, bodySettings.value)
+
+            // Legacy event with JSON only
+            emit('change', json)
+
+            // v-model event returns both JSON and HTML
+            emit('update:modelValue', { json, html })
         }
 
-        watch(() => props.initialData, (newData) => {
-            if (newData) {
-                blocks.value = newData.blocks || []
-                bodySettings.value = { ...bodySettings.value, ...newData.bodySettings }
+        // When parent updates v-model, sync internal state. If json is empty, use defaults.
+        watch(() => props.modelValue, (newVal) => {
+            const incoming = newVal?.json || {}
+            const isEmpty = !incoming || Object.keys(incoming).length === 0
+            blocks.value = isEmpty ? [] : (incoming.blocks || [])
+            bodySettings.value = {
+                ...defaultBodySettings,
+                ...(isEmpty ? {} : (incoming.bodySettings || {}))
             }
         }, { deep: true })
+
+        // Always keep v-model in sync when user edits blocks or body settings
+        watch([blocks, bodySettings], () => {
+            emitChange()
+        }, { deep: true })
+
+        // Emit initial value so v-model receives defaults-derived JSON+HTML
+        onMounted(() => {
+            emitChange()
+        })
 
         return {
             activeTab,

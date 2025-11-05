@@ -1,7 +1,7 @@
 <template>
     <div class="demo-wrapper">
         <EmailBuilder
-            :initial-data="initialData"
+            v-model="data"
             :primary-color="primaryColor"
             :on-upload="handleUpload"
             @export-json="handleExportJSON"
@@ -43,7 +43,7 @@ export default {
     },
     setup() {
         const primaryColor = ref('#334570')
-        const initialData = ref({
+        const data = ref({ json: {
                 "blocks": [
                     {
                         "id": 1634567890123,
@@ -234,7 +234,7 @@ export default {
                     "fontWeight": "normal",
                     "preheaderText": "Thank you for subscribing! Check out our latest updates and exclusive offers."
                 }
-            }
+            }, html: ''}
         )
 
         const exportModal = ref({
@@ -302,7 +302,7 @@ export default {
 
         return {
             primaryColor,
-            initialData,
+            data,
             exportModal,
             handleUpload,
             handleExportJSON,
