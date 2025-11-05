@@ -243,16 +243,26 @@ export default {
             content: ''
         })
 
-        const handleUpload = async (file) => {
+        const handleUpload = async (file, blockData) => {
+            // You will receive the block id and type here in-case you need to do some manipulation in your backend
+            const blockId = blockData.id
+            const blockType = blockData?.type || null
+
             // This is where you would implement your upload logic
             // For demo purposes, we'll just return a data URL
-            return new Promise((resolve) => {
+            const result = new Promise((resolve) => {
                 const reader = new FileReader()
                 reader.onload = (e) => {
                     resolve(e.target.result)
                 }
                 reader.readAsDataURL(file)
             })
+
+            // return url and meta
+            return {
+                url: await result,
+                meta: {} // maybe the result of streamed S3 upload
+            }
         }
 
         const handleExportJSON = (data) => {

@@ -87,7 +87,7 @@ export default {
             link: '',
             align: 'center',
             margin: { top: '0px', right: '0px', bottom: '16px', left: '0px' },
-            meta: {}, // maybe store raw upload metadata here etc
+            meta: {}, // optional metadata i.e the returned data from a streamed s3 upload
             ...props.block.properties
         })
 
@@ -96,21 +96,30 @@ export default {
         }
 
         const handleUpload = async () => {
-            if (props.onUpload) {
-                const result = await props.onUpload({
-                    blockId: props.block.id,
-                    blockType: props.block.type,
-                })
-                if (result) {
-                    if (result?.url) {
-                        localProps.value.url = result.url
-                    }
-                    if (result?.meta) {
-                        localProps.value.meta = result.meta
-                    }
-                    emitUpdate()
-                }
-            }
+            if (!props.onUpload) return
+
+            // optionally open a file dialog
+            const file = await pickFileOptional() // returns File or null
+
+            const result = await props.onUpload(file, {
+                blockId: props.block.id,
+                blockType: props.block.type,
+            })
+
+            if (result?.url) localProps.value.url = result.url
+            if (result?.meta) localProps.value.meta = result.meta
+            emitUpdate()
+        }
+
+        // helper: optional picker
+        function pickFileOptional() {
+            return new Promise(resolve => {
+                const input = document.createElement('input')
+                input.type = 'file'
+                input.accept = 'image/*' // adjust per use-case
+                input.onchange = () => resolve(input.files?.[0] || null)
+                input.click()
+            })
         }
 
         watch(() => props.block.properties, (newProps) => {
