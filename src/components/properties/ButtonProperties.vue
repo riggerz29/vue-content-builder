@@ -11,12 +11,12 @@
         </div>
 
         <div class="properties__group">
-            <label>Background Color</label>
+            <label>Background Colour</label>
             <input v-model="localProps.backgroundColor" @input="emitUpdate" type="color" />
         </div>
 
         <div class="properties__group">
-            <label>Text Color</label>
+            <label>Text Colour</label>
             <input v-model="localProps.textColor" @input="emitUpdate" type="color" />
         </div>
 

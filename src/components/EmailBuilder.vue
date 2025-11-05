@@ -77,7 +77,7 @@
                         <h3 class="section__title">Body Settings</h3>
 
                         <div class="properties__group">
-                            <label>Background Color</label>
+                            <label>Background Colour</label>
                             <div class="input-with-color">
                                 <input v-model="bodySettings.backgroundColor" type="color" class="color-input" />
                                 <input v-model="bodySettings.backgroundColor" type="text" class="color-text" />
@@ -85,7 +85,7 @@
                         </div>
 
                         <div class="properties__group">
-                            <label>Text Color</label>
+                            <label>Text Colour</label>
                             <div class="input-with-color">
                                 <input v-model="bodySettings.textColor" type="color" class="color-input" />
                                 <input v-model="bodySettings.textColor" type="text" class="color-text" />

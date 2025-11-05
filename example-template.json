@@ -1,6 +1,19 @@
 {
   "blocks": [
     {
+      "id": 1634567890122,
+      "type": "image",
+      "properties": {
+        "url": "https://dummyimage.com/100x60/cccccc/fff&text=Logo+Here",
+        "alt": "Featured Image",
+        "width": "100px",
+        "height": "60px",
+        "link": "",
+        "align": "center",
+        "margin": { "top": 20, "right": 0, "bottom": 20, "left": 0 }
+      }
+    },
+    {
       "id": 1634567890123,
       "type": "heading",
       "properties": {

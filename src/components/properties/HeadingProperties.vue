@@ -58,7 +58,7 @@
         </div>
 
         <div class="properties__group">
-            <label>Color</label>
+            <label>Colour</label>
             <input v-model="localProps.color" @input="emitUpdate" type="color" />
         </div>
 

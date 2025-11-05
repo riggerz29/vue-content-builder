@@ -60,12 +60,15 @@ The root component that orchestrates the entire email builder.
 - Handles drag-and-drop events
 - Renders sidebar with content/blocks/body tabs
 - Renders canvas with blocks
+- Allow user to pass variables to text blocks
 - Provides export functionality (JSON and HTML)
 
 **Props:**
-- `initialData` - Initial email template data
-- `primaryColor` - Theme color for UI
+- `primaryColor` - Theme colour for UI
 - `onUpload` - Callback for handling file uploads
+- `modelValue` - Email data to initialise and utilise
+- `variables` - Variables to pass to text blocks
+- `displayAsModal` - Display as modal dialog
 
 **Emits:**
 - `export-json` - When user exports to JSON
@@ -86,6 +89,7 @@ Each block type has its own component in `src/components/blocks/`:
 - Support double-click inline editing
 - Show formatting toolbar in edit mode
 - Direct text editing on canvas
+- Support for inserting variables
 
 **Media Blocks** (Image, Video, Social):
 - Display media with configured properties
@@ -109,7 +113,7 @@ Each block type has a corresponding properties component in `src/components/prop
 **Property Types:**
 - Text inputs (text, URLs, alt text)
 - Number inputs (sizes, spacing)
-- Color pickers (colors)
+- Colour pickers (colours)
 - Dropdowns (font family, heading level, alignment)
 - Checkboxes (fullWidth)
 - Object inputs (padding, margin with top/right/bottom/left)
@@ -173,7 +177,7 @@ Each block type has a corresponding properties component in `src/components/prop
 **image:**
 ```javascript
 {
-  url, alt, width, height, link, align,
+  url, alt, width, height, link, align, meta,
   margin: {top, right, bottom, left}
 }
 ```
@@ -331,26 +335,17 @@ The HTML export uses only email-safe inline styles:
 5. Register components in `EmailBuilder.vue`
 6. Add HTML generation in `htmlGenerator.js`
 
-### Customizing Appearance
+### Customising Appearance
 
 - Modify CSS in component `<style>` sections
-- Change default colors/spacing
-- Update `primaryColor` prop for theme color
-
-### Adding Features
-
-- **Undo/Redo**: Add history tracking in EmailBuilder
-- **Templates**: Add template picker in sidebar
-- **Preview Mode**: Add preview toggle
-- **Mobile Preview**: Add responsive preview
-- **A/B Testing**: Add variant support
+- Change default colours/spacing
+- Update `primaryColor` prop for theme colour
 
 ## Performance Considerations
 
 - **Reactive Updates**: Uses Vue's reactivity for efficient updates
 - **Component Reuse**: Block components are reused via `v-for`
 - **Lazy Loading**: Could add dynamic imports for property panels
-- **Bundle Size**: ~125KB ES build, ~106KB UMD build (uncompressed)
 
 ## Browser Compatibility
 
@@ -379,13 +374,6 @@ Requires modern browsers with ES6+ support:
 - Test upload functionality
 
 ## Future Enhancements
-
-- **Conditional Content**: Show/hide based on conditions
-- **Dynamic Content**: Merge tags and personalization
-- **Advanced Layouts**: Custom column widths
 - **More Blocks**: Countdown timer, menu, spacer
 - **Templates**: Pre-built template library
-- **Collaboration**: Real-time multi-user editing
-- **Version History**: Save and restore versions
-- **Preview**: Email client preview modes
-- **Export**: PDF export, Markdown export
+- **Version History**: Save and restore versions 

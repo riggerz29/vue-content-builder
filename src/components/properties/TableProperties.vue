@@ -1,7 +1,7 @@
 <template>
     <div class="properties-panel">
         <div class="properties__group">
-            <label>Border Color</label>
+            <label>Border Colour</label>
             <input v-model="localProps.borderColor" @input="emitUpdate" type="color" />
         </div>
 
@@ -16,7 +16,7 @@
         </div>
 
         <div class="properties__group">
-            <label>Background Color</label>
+            <label>Background Colour</label>
             <input v-model="localProps.backgroundColor" @input="emitUpdate" type="color" />
         </div>
 

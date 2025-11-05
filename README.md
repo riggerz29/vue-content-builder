@@ -2,7 +2,7 @@
 
 A simplistic Vue 3 drag-and-drop email builder component for crafting production-ready HTML emails with inline styles. 
 The name suggests that it's more than just a drag-and-drop email builder, this is intended as I plan to add more content 
-types and features in the future.
+builders and features in the future.
 
 ## Features
 
@@ -14,8 +14,9 @@ types and features in the future.
 - **Responsive Design** - Email-optimized with inline styles
 - **JSON Import/Export** - Save and load email templates
 - **HTML Export** - Production-ready HTML with email client compatibility
-- **Theming** - Customizable primary color for the interface
+- **Basic Theming** - Customizable primary color for the interface
 - **Upload Callback** - Integrate your own image upload handler
+- **Variables** - Add dynamic variables to your email templates
 
 ## Installation
 
@@ -30,9 +31,10 @@ npm install @riggerz29/content-builder
 ```vue
 <template>
   <EmailBuilder
-    :initial-data="emailData"
+    :v-model="data"
     :primary-color="#2f4574"
-    :on-upload="handleImageUpload"
+    :on-upload="handleUpload"
+    :variables="variables"
     @export-json="handleExportJSON"
     @export-html="handleExportHTML"
     @change="handleChange"
@@ -48,7 +50,7 @@ export default {
     EmailBuilder
   },
   setup() {
-    const emailData = ref({
+    const data = ref({ json: {
       blocks: [],
       bodySettings: {
         backgroundColor: '#f3f4f6',
@@ -60,18 +62,22 @@ export default {
         fontWeight: 'normal',
         preheaderText: ''
       }
-    })
+    }, html: '' })
 
-    const handleImageUpload = async (file) => {
+    const handleUpload = async (file, blockData) => {
+      const blockId = blockData.id
+      const blockType = blockData?.type || null
       // Upload to your server and return the URL
       const formData = new FormData()
       formData.append('image', file)
+      formData.append('blockId', blockId)
+      formData.append('blockType', blockType)
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData
       })
       const data = await response.json()
-      return data.url
+      return { url: data.url, meta: data?.meta || {} }
     }
 
     const handleExportJSON = (data) => {
@@ -85,16 +91,22 @@ export default {
     }
 
     const handleChange = (data) => {
-      // Auto-save functionality
-      emailData.value = data
+      // Auto-save functionality or other logic
     }
 
+    const variables = ref([
+      {name: 'First name', format: '$$first_name$$'},
+      {name: 'Last name', format: '$$last_name$$'},
+      {name: 'Title', format: '$$title$$'},
+    ])
+
     return {
-      emailData,
-      handleImageUpload,
+      data, 
+      handleUpload,
       handleExportJSON,
       handleExportHTML,
-      handleChange
+      handleChange, 
+      variables
     }
   }
 }
@@ -103,19 +115,22 @@ export default {
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `initialData` | Object | `{ blocks: [], bodySettings: {} }` | Initial email template data |
-| `primaryColor` | String | `'#6b7280'` | Primary color for the UI (panels, buttons, etc.) |
-| `onUpload` | Function | `null` | Callback function for handling image/video uploads |
+| Prop           | Type            | Default                                              | Description                                                 |
+|----------------|-----------------|------------------------------------------------------|-------------------------------------------------------------|
+| `modelValue`   | Object          | `{ json: { blocks: [], bodySettings: {} }, html: ''}` | v-model data                                                |
+| `primaryColor` | String          | `'#6b7280'`                                          | Primary colour for the UI (panels, buttons, etc.)           |
+| `onUpload`     | Function        | `null`                                               | Callback function for handling image/video uploads          |
+| `variables`     | [Object, Array] | []                                                   | A list of variables to use in text blocks [{label, format}] | 
+ | `displayAsModal` | Boolean | `false` | Display the builder as a modal |
 
 ## Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `export-json` | `{ blocks: Array, bodySettings: Object }` | Emitted when Export JSON is clicked |
-| `export-html` | `String` | Emitted when Export HTML is clicked |
-| `change` | `{ blocks: Array, bodySettings: Object }` | Emitted whenever the email content changes |
+| Event | Payload                                                          | Description |
+|-------|------------------------------------------------------------------|-------------|
+| `export-json` | `{ blocks: Array, bodySettings: Object }`                        | Emitted when Export JSON is clicked |
+| `export-html` | `String`                                                         | Emitted when Export HTML is clicked |
+| `change` | `{ blocks: Array, bodySettings: Object }`                        | Emitted whenever the email content changes |
+ | `update:modelValue` | `{ json: { blocks: Array, bodySettings: Object }, html: String}` | Emitted whenever the email content changes |
 
 ## Content Blocks
 
