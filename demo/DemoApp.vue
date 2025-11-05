@@ -4,6 +4,7 @@
             v-model="data"
             :primary-color="primaryColor"
             :on-upload="handleUpload"
+            :variables="variables"
             @export-json="handleExportJSON"
             @export-html="handleExportHTML"
             @change="handleChange"
@@ -326,6 +327,12 @@ export default {
             URL.revokeObjectURL(url)
         }
 
+        const variables = ref([
+            {name: 'First name', format: '$$first_name$$'},
+            {name: 'Last name', format: '$$last_name$$'},
+            {name: 'Title', format: '$$title$$'},
+        ])
+
         return {
             primaryColor,
             data,
@@ -336,7 +343,8 @@ export default {
             handleChange,
             closeModal,
             copyToClipboard,
-            downloadFile
+            downloadFile,
+            variables,
         }
     }
 }

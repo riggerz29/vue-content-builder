@@ -40,6 +40,12 @@
                 <button @click="setAlign('left')" :class="{ active: localProps.align === 'left' }" title="Align Left">⬅</button>
                 <button @click="setAlign('center')" :class="{ active: localProps.align === 'center' }" title="Align Center">↔</button>
                 <button @click="setAlign('right')" :class="{ active: localProps.align === 'right' }" title="Align Right">➡</button>
+                <div class="toolbar__vars" v-if="variablesList.length">
+                    <select v-model="selectedVarIdx" class="toolbar-select small">
+                        <option v-for="(v, i) in variablesList" :key="i" :value="i">{{ v.name }}</option>
+                    </select>
+                    <button @click="insertSelectedVariable" title="Insert variable">+</button>
+                </div>
                 <button @click.stop="$emit('delete', block.id)" class="btn-delete">
                     <Trash2 size="16" />
                 </button>
@@ -50,13 +56,14 @@
                 :style="paragraphEditStyle"
                 class="paragraph-block__textarea"
                 rows="4"
+                @keydown="onKeydown"
             />
         </div>
     </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { Trash2 } from 'lucide-vue-next'
 import BlockActions from "../common/BlockActions.vue";
 
@@ -67,7 +74,7 @@ export default {
         block: { type: Object, required: true },
         isSelected: { type: Boolean, default: false },
         index: { type: Number, required: true },
-        variables: {type: Object, default: () => ({})}
+        variables: {type: [Array, Object], default: () => ([])}
     },
     emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop'],
     setup(props, { emit }) {
@@ -75,6 +82,46 @@ export default {
         const editInput = ref(null)
         const editingContainer = ref(null)
         const localProps = ref({ ...props.block.properties })
+
+        // normalize variables to an array of { name, format }
+        const variablesList = computed(() => {
+            const vars = props.variables || []
+            if (Array.isArray(vars)) return vars.filter(v => v && (v.name || v.label) && v.format).map(v => ({ name: v.name || v.label, format: v.format }))
+            // object/dictionary case
+            return Object.values(vars).filter(v => v && (v.name || v.label) && v.format).map(v => ({ name: v.name || v.label, format: v.format }))
+        })
+        const selectedVarIdx = ref(0)
+
+        function insertAtCursor(textarea, text) {
+            if (!textarea) return
+            const start = textarea.selectionStart ?? textarea.value.length
+            const end = textarea.selectionEnd ?? textarea.value.length
+            const before = textarea.value.slice(0, start)
+            const after = textarea.value.slice(end)
+            const newVal = before + text + after
+            const newPos = start + text.length
+            textarea.value = newVal
+            // also update v-model
+            localProps.value.text = newVal
+            nextTick(() => {
+                textarea.focus()
+                textarea.setSelectionRange(newPos, newPos)
+            })
+        }
+
+        const insertSelectedVariable = () => {
+            const v = variablesList.value[selectedVarIdx.value]
+            if (!v) return
+            insertAtCursor(editInput.value, v.format)
+        }
+
+        const onKeydown = (e) => {
+            if (e.key === '@' && variablesList.value.length) {
+                // simple UX: prevent default to avoid inserting '@' and instead insert the first var format after popup in future
+                // For now, just allow typing '@' and do nothing, or we could show picker in future
+                // no-op placeholder for future popup
+            }
+        }
 
         const paragraphStyle = computed(() => ({
             fontSize: `${props.block.properties.fontSize}px`,
@@ -151,6 +198,10 @@ export default {
             editInput,
             editingContainer,
             localProps,
+            variablesList,
+            selectedVarIdx,
+            insertSelectedVariable,
+            onKeydown,
             paragraphStyle,
             paragraphEditStyle,
             startEditing,

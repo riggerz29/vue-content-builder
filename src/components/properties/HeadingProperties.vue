@@ -5,6 +5,17 @@
             <input v-model="localProps.text" @input="emitUpdate" />
         </div>
 
+        <div class="properties__group" v-if="variablesList.length">
+            <label>Insert Variable</label>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <select v-model="selectedVarIdx" class="toolbar-select" style="flex:1;">
+                    <option v-for="(v, i) in variablesList" :key="i" :value="i">{{ v.name }}</option>
+                </select>
+                <button type="button" class="btn-insert" @click="insertSelectedVariable">Insert</button>
+            </div>
+            <small class="input-hint">Inserts the variable's format into the text (e.g. {{ variablesList[selectedVarIdx]?.format || '' }})</small>
+        </div>
+
         <div class="properties__group">
             <label>Level</label>
             <select v-model="localProps.level" @change="emitUpdate">
@@ -118,7 +129,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 export default {
     name: 'HeadingProperties',
@@ -132,8 +143,8 @@ export default {
             default: null
         },
         variables: {
-            type: Object,
-            default: () => ({})
+            type: [Array, Object],
+            default: () => ([])
         }
     },
     emits: ['update'],
@@ -152,6 +163,20 @@ export default {
             margin: { top: '0px', right: '0px', bottom: '16px', left: '0px' },
             ...props.block.properties
         })
+
+        // normalize variables to array
+        const variablesList = computed(() => {
+            const vars = props.variables || []
+            if (Array.isArray(vars)) return vars.filter(v => v && (v.name || v.label) && v.format).map(v => ({ name: v.name || v.label, format: v.format }))
+            return Object.values(vars).filter(v => v && (v.name || v.label) && v.format).map(v => ({ name: v.name || v.label, format: v.format }))
+        })
+        const selectedVarIdx = ref(0)
+        const insertSelectedVariable = () => {
+            const v = variablesList.value[selectedVarIdx.value]
+            if (!v) return
+            localProps.value.text = (localProps.value.text || '') + v.format
+            emitUpdate()
+        }
 
         const emitUpdate = () => {
             emit('update', { ...localProps.value })
@@ -174,7 +199,7 @@ export default {
             }
         }, { deep: true })
 
-        return { localProps, emitUpdate }
+        return { localProps, emitUpdate, variablesList, selectedVarIdx, insertSelectedVariable }
     }
 }
 </script>
@@ -227,5 +252,20 @@ export default {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+}
+
+.btn-insert {
+    padding: 8px 12px;
+    background-color: #f1f1f1;
+    color: #374151;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+
+    &:hover {
+        background-color: #e5e7eb;
+    }
 }
 </style>

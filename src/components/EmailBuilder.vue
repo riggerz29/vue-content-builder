@@ -267,8 +267,8 @@ export default {
         // you do not need to add $$ before and after the variable name this is just an
         // example, use something you can use to easily find and replace
         variables: {
-            type: Object,
-            default: () => ({})
+            type: [Array, Object],
+            default: () => ([]) // preferably {label, format}
         }
     },
     emits: ['export-json', 'export-html', 'change', 'update:modelValue'],
