@@ -259,6 +259,10 @@ export default {
         modelValue: {
             type: Object,
             default: () => ({ json: {}, html: '' })
+        },
+        variables: {
+            type: Object,
+            default: () => ({}) //
         }
     },
     emits: ['export-json', 'export-html', 'change', 'update:modelValue'],

@@ -16,12 +16,40 @@
 
         <div class="properties__group">
             <label>Width</label>
-            <input v-model="localProps.width" @input="emitUpdate" placeholder="600px or 100%" />
+            <div class="size-row">
+                <select v-model="widthUnit" @change="emitUpdate" class="unit-select">
+                    <option value="px">Pixels</option>
+                    <option value="%">Percent</option>
+                    <option value="auto">Auto</option>
+                </select>
+                <template v-if="widthUnit !== 'auto'">
+                    <input v-if="widthUnit === 'px'" type="number" min="0" v-model.number="widthValue" @input="emitUpdate" placeholder="600" class="size-input" />
+                    <div v-else class="percent-wrap">
+                        <input type="range" min="0" max="100" v-model.number="widthValue" @input="emitUpdate" />
+                        <input type="number" min="0" max="100" v-model.number="widthValue" @input="emitUpdate" placeholder="100" class="size-input" />
+                        <span class="unit-label">%</span>
+                    </div>
+                </template>
+            </div>
         </div>
 
         <div class="properties__group">
             <label>Height</label>
-            <input v-model="localProps.height" @input="emitUpdate" placeholder="auto or 400px" />
+            <div class="size-row">
+                <select v-model="heightUnit" @change="emitUpdate" class="unit-select">
+                    <option value="px">Pixels</option>
+                    <option value="%">Percent</option>
+                    <option value="auto">Auto</option>
+                </select>
+                <template v-if="heightUnit !== 'auto'">
+                    <input v-if="heightUnit === 'px'" type="number" min="0" v-model.number="heightValue" @input="emitUpdate" placeholder="400" class="size-input" />
+                    <div v-else class="percent-wrap">
+                        <input type="range" min="0" max="100" v-model.number="heightValue" @input="emitUpdate" />
+                        <input type="number" min="0" max="100" v-model.number="heightValue" @input="emitUpdate" placeholder="100" class="size-input" />
+                        <span class="unit-label">%</span>
+                    </div>
+                </template>
+            </div>
         </div>
 
         <div class="properties__group">
@@ -83,7 +111,7 @@ export default {
             url: '',
             alt: '',
             width: '600px',
-            height: 'auto',
+            height: '400px',
             link: '',
             align: 'center',
             margin: { top: '0px', right: '0px', bottom: '16px', left: '0px' },
@@ -91,7 +119,73 @@ export default {
             ...props.block.properties
         })
 
+        // Size controls state
+        const widthUnit = ref('px') // 'px' | '%'
+        const widthValue = ref(600)
+        const heightUnit = ref('auto') // 'px' | '%' | 'auto'
+        const heightValue = ref(400)
+
+        const clamp = (n, min, max) => Math.min(max, Math.max(min, Number.isFinite(n) ? n : 0))
+
+        function parseSize(input, { defaultUnit = 'px', defaultValue = 0 } = {}) {
+            if (input == null) return { unit: defaultUnit, value: defaultValue }
+            if (typeof input === 'number') return { unit: 'px', value: input }
+            const str = String(input).trim().toLowerCase()
+            if (str === 'auto') return { unit: 'auto', value: NaN }
+            if (str.endsWith('%')) {
+                const num = parseFloat(str.slice(0, -1))
+                return { unit: '%', value: isNaN(num) ? defaultValue : num }
+            }
+            if (str.endsWith('px')) {
+                const num = parseFloat(str.slice(0, -2))
+                return { unit: 'px', value: isNaN(num) ? defaultValue : num }
+            }
+            // If plain number (user may omit unit), treat as px by default
+            const num = parseFloat(str)
+            if (!isNaN(num)) return { unit: defaultUnit, value: num }
+            return { unit: defaultUnit, value: defaultValue }
+        }
+
+        function initFromProps() {
+            const wParsed = parseSize(localProps.value.width ?? '600px', { defaultUnit: 'px', defaultValue: 600 })
+            if (wParsed.unit === 'auto') {
+                widthUnit.value = 'auto'
+                widthValue.value = 600
+            } else {
+                widthUnit.value = wParsed.unit === '%' ? '%' : 'px'
+                widthValue.value = clamp(wParsed.value || 0, 0, widthUnit.value === '%' ? 100 : Number.POSITIVE_INFINITY)
+            }
+
+            const hParsed = parseSize(localProps.value.height ?? '400px', { defaultUnit: 'px', defaultValue: 400 })
+            if (hParsed.unit === 'auto') {
+                heightUnit.value = 'auto'
+                heightValue.value = 400
+            } else {
+                heightUnit.value = hParsed.unit === '%' ? '%' : 'px'
+                heightValue.value = clamp(hParsed.value || 0, 0, heightUnit.value === '%' ? 100 : Number.POSITIVE_INFINITY)
+            }
+        }
+
+        // init
+        initFromProps()
+
         const emitUpdate = () => {
+            // compose width string
+            if (widthUnit.value === 'auto') {
+                localProps.value.width = 'auto'
+            } else {
+                const wVal = widthUnit.value === '%' ? clamp(widthValue.value, 0, 100) : Math.max(0, Number(widthValue.value) || 0)
+                localProps.value.width = widthUnit.value === '%' ? `${wVal}%` : `${wVal}px`
+            }
+
+            // compose height string
+            if (heightUnit.value === 'auto') {
+                localProps.value.height = 'auto'
+            } else {
+                const hVal = heightUnit.value === '%' ? clamp(heightValue.value, 0, 100) : Math.max(0, Number(heightValue.value) || 0)
+                localProps.value.height = heightUnit.value === '%' ? `${hVal}%` : `${hVal}px`
+            }
+
             emit('update', { ...localProps.value })
         }
 
@@ -127,15 +221,16 @@ export default {
                 url: '',
                 alt: '',
                 width: '600px',
-                height: 'auto',
+                height: '400px',
                 link: '',
                 align: 'center',
                 margin: { top: '0px', right: '0px', bottom: '16px', left: '0px' },
                 ...newProps
             }
+            initFromProps()
         }, { deep: true })
 
-        return { localProps, emitUpdate, handleUpload }
+        return { localProps, emitUpdate, handleUpload, widthUnit, widthValue, heightUnit, heightValue }
     }
 }
 </script>
@@ -200,5 +295,36 @@ export default {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+}
+
+/* New size controls */
+.size-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.unit-select {
+    flex: 0 0 110px;
+    padding: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 13px;
+    background: #fff;
+}
+.size-input {
+    flex: 1 1 auto;
+}
+.percent-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+.percent-wrap input[type="range"] {
+    flex: 1 1 auto;
+}
+.unit-label {
+    color: #6b7280;
+    font-size: 12px;
 }
 </style>

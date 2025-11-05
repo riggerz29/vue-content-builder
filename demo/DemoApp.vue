@@ -51,8 +51,8 @@ export default {
                         "properties": {
                             "url": "https://dummyimage.com/100x60/cccccc/fff&text=Logo+Here",
                             "alt": "Featured Image",
-                            "width": "auto",
-                            "height": "auto",
+                            "width": "100px",
+                            "height": "60px",
                             "link": "",
                             "align": "center",
                             "margin": { "top": 20, "right": 0, "bottom": 20, "left": 0 }
