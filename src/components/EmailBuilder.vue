@@ -157,6 +157,7 @@
                         :is="getPropertiesComponent(selectedBlock.type)"
                         :block="selectedBlock"
                         :on-upload="onUpload"
+                        :variables="variables"
                         @update="updateBlockProperties"
                     />
                 </div>
@@ -185,6 +186,7 @@
                         :index="index"
                         :is-selected="selectedBlock && selectedBlock.id === block.id"
                         :selected-block-id="selectedBlock ? selectedBlock.id : null"
+                        :variables="variables"
                         @select="selectBlock(block)"
                         @child-select="selectBlock($event)"
                         @update="updateBlock($event)"
@@ -260,9 +262,13 @@ export default {
             type: Object,
             default: () => ({ json: {}, html: '' })
         },
+        // a dictionary of variables {name, format} i.e { label: First Name, format: $$first_name$$ }
+        // in back end you can replace $$first_name$$ in HTML with the real first name value
+        // you do not need to add $$ before and after the variable name this is just an
+        // example, use something you can use to easily find and replace
         variables: {
             type: Object,
-            default: () => ({}) //
+            default: () => ({})
         }
     },
     emits: ['export-json', 'export-html', 'change', 'update:modelValue'],

@@ -66,7 +66,8 @@ export default {
     props: {
         block: { type: Object, required: true },
         isSelected: { type: Boolean, default: false },
-        index: { type: Number, required: true }
+        index: { type: Number, required: true },
+        variables: {type: Object, default: () => ({})}
     },
     emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop'],
     setup(props, { emit }) {

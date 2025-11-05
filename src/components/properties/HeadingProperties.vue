@@ -130,6 +130,10 @@ export default {
         onUpload: {
             type: Function,
             default: null
+        },
+        variables: {
+            type: Object,
+            default: () => ({})
         }
     },
     emits: ['update'],
