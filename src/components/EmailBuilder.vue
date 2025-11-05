@@ -156,6 +156,7 @@
                     <component
                         :is="getPropertiesComponent(selectedBlock.type)"
                         :block="selectedBlock"
+                        :on-upload="onUpload"
                         @update="updateBlockProperties"
                     />
                 </div>
