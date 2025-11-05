@@ -358,7 +358,6 @@ export default {
         }
 
         const handleColumnDrop = (dropInfo) => {
-            console.log('handleColumnDrop', dropInfo)
             if (!draggedBlock) return
 
             // Find the row block
@@ -455,7 +454,8 @@ export default {
                     height: 'auto',
                     link: '',
                     align: 'center',
-                    margin: { top: 10, right: 0, bottom: 10, left: 0 }
+                    margin: { top: 10, right: 0, bottom: 10, left: 0 },
+                    meta: {}
                 },
                 video: {
                     url: '',

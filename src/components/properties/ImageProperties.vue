@@ -87,6 +87,7 @@ export default {
             link: '',
             align: 'center',
             margin: { top: '0px', right: '0px', bottom: '16px', left: '0px' },
+            meta: {}, // maybe store raw upload metadata here etc
             ...props.block.properties
         })
 
@@ -96,9 +97,17 @@ export default {
 
         const handleUpload = async () => {
             if (props.onUpload) {
-                const result = await props.onUpload()
-                if (result && result.url) {
-                    localProps.value.url = result.url
+                const result = await props.onUpload({
+                    blockId: props.block.id,
+                    blockType: props.block.type,
+                })
+                if (result) {
+                    if (result?.url) {
+                        localProps.value.url = result.url
+                    }
+                    if (result?.meta) {
+                        localProps.value.meta = result.meta
+                    }
                     emitUpdate()
                 }
             }
