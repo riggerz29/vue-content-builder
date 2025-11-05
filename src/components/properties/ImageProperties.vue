@@ -102,8 +102,8 @@ export default {
             const file = await pickFileOptional() // returns File or null
 
             const result = await props.onUpload(file, {
-                blockId: props.block.id,
-                blockType: props.block.type,
+                id: props.block.id,
+                type: props.block.type,
             })
 
             if (result?.url) localProps.value.url = result.url

@@ -46,6 +46,19 @@ export default {
         const data = ref({ json: {
                 "blocks": [
                     {
+                        "id": 1634567890122,
+                        "type": "image",
+                        "properties": {
+                            "url": "https://dummyimage.com/100x60/cccccc/fff&text=Logo+Here",
+                            "alt": "Featured Image",
+                            "width": "auto",
+                            "height": "auto",
+                            "link": "",
+                            "align": "center",
+                            "margin": { "top": 20, "right": 0, "bottom": 20, "left": 0 }
+                        }
+                    },
+                    {
                         "id": 1634567890123,
                         "type": "heading",
                         "properties": {
@@ -247,6 +260,9 @@ export default {
             // You will receive the block id and type here in-case you need to do some manipulation in your backend
             const blockId = blockData.id
             const blockType = blockData?.type || null
+
+            console.log('File uploaded:', file);
+            console.log('Block Data:', blockData);
 
             // This is where you would implement your upload logic
             // For demo purposes, we'll just return a data URL
