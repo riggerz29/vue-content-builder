@@ -202,7 +202,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import Icon from './common/Icon.vue'
 import ButtonBlock from './blocks/ButtonBlock.vue'
 import DividerBlock from './blocks/DividerBlock.vue'
@@ -265,6 +265,7 @@ export default {
     setup(props, { emit }) {
         const activeTab = ref('content')
         const selectedBlock = ref(null)
+        const isSyncingFromParent = ref(false)
 
         // Defaults used when no JSON is provided via v-model
         const defaultBodySettings = {
@@ -655,7 +656,8 @@ export default {
         }
 
         // When parent updates v-model, sync internal state. If json is empty, use defaults.
-        watch(() => props.modelValue, (newVal) => {
+        watch(() => props.modelValue, async (newVal) => {
+            isSyncingFromParent.value = true
             const incoming = newVal?.json || {}
             const isEmpty = !incoming || Object.keys(incoming).length === 0
             blocks.value = isEmpty ? [] : (incoming.blocks || [])
@@ -663,10 +665,13 @@ export default {
                 ...defaultBodySettings,
                 ...(isEmpty ? {} : (incoming.bodySettings || {}))
             }
+            await nextTick()
+            isSyncingFromParent.value = false
         }, { deep: true })
 
         // Always keep v-model in sync when user edits blocks or body settings
         watch([blocks, bodySettings], () => {
+            if (isSyncingFromParent.value) return
             emitChange()
         }, { deep: true })
 
