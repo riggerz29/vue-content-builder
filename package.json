@@ -1,6 +1,6 @@
 {
   "name": "@riggerz29/content-builder",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A Vue 3 drag-and-drop email builder component",
   "main": "dist/email-builder.umd.js",
   "module": "dist/email-builder.es.js",
@@ -44,5 +44,9 @@
   },
   "dependencies": {
     "lucide-vue-next": "^0.545.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
