@@ -44,5 +44,9 @@
   },
   "dependencies": {
     "lucide-vue-next": "^0.545.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
