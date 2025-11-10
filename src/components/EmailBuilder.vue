@@ -5,12 +5,12 @@
         </button>
         <!-- Top Toolbar -->
         <div class="email-builder__toolbar">
-            <div class="toolbar__actions">
-                <button @click="exportJSON" class="toolbar__btn">
+            <div v-if="!hideToolbarActions" class="toolbar__actions">
+                <button v-if="!hideExportJson" @click="exportJSON" class="toolbar__btn">
                     <Icon name="download" :size="16" />
                     <span>Export JSON</span>
                 </button>
-                <button @click="exportHTML" class="toolbar__btn">
+                <button v-if="!hideExportHtml" @click="exportHTML" class="toolbar__btn">
                     <Icon name="code" :size="16" />
                     <span>Export HTML</span>
                 </button>
@@ -275,6 +275,18 @@ export default {
         },
         // When true, the builder renders as a fullscreen modal overlay that can be controlled with exposed methods
         displayAsModal: {
+            type: Boolean,
+            default: false
+        },
+        hideToolbarActions: {
+            type: Boolean,
+            default: false
+        },
+        hideExportJson: {
+            type: Boolean,
+            default: false
+        },
+        hideExportHtml: {
             type: Boolean,
             default: false
         }

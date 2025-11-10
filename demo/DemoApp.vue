@@ -8,6 +8,7 @@
             @export-json="handleExportJSON"
             @export-html="handleExportHTML"
             @change="handleChange"
+            :hide-export-json="true"
         />
 
         <!-- Modal for JSON/HTML Export -->
