@@ -5,16 +5,18 @@
         </button>
         <!-- Top Toolbar -->
         <div class="email-builder__toolbar">
-            <div v-if="!hideToolbarActions" class="toolbar__actions">
-                <button v-if="!hideExportJson" @click="exportJSON" class="toolbar__btn">
-                    <Icon name="download" :size="16" />
-                    <span>Export JSON</span>
-                </button>
-                <button v-if="!hideExportHtml" @click="exportHTML" class="toolbar__btn">
-                    <Icon name="code" :size="16" />
-                    <span>Export HTML</span>
-                </button>
-            </div>
+            <slot name="actions">
+                <div v-if="!hideToolbarActions" class="toolbar__actions">
+                    <button v-if="!hideExportJson" @click="exportJSON" class="toolbar__btn">
+                        <Icon name="download" :size="16" />
+                        <span>Export JSON</span>
+                    </button>
+                    <button v-if="!hideExportHtml" @click="exportHTML" class="toolbar__btn">
+                        <Icon name="code" :size="16" />
+                        <span>Export HTML</span>
+                    </button>
+                </div>
+            </slot>
         </div>
 
         <div class="email-builder__main">
@@ -302,9 +304,6 @@ export default {
         const open = () => { if (props.displayAsModal) isOpen.value = true }
         const close = () => { if (props.displayAsModal) isOpen.value = false }
         const toggle = () => { if (props.displayAsModal) isOpen.value = !isOpen.value }
-
-        // Expose public methods for parent components using template refs
-        expose({ open, close, toggle })
 
         // Defaults used when no JSON is provided via v-model
         const defaultBodySettings = {
@@ -673,11 +672,13 @@ export default {
                 bodySettings: bodySettings.value
             }
             emit('export-json', data)
+            return data
         }
 
         const exportHTML = () => {
             const html = generateHTML(blocks.value, bodySettings.value)
             emit('export-html', html)
+            return html
         }
 
         const emitChange = () => {
@@ -718,6 +719,9 @@ export default {
         onMounted(() => {
             emitChange()
         })
+
+        // Expose public methods for parent components using template refs
+        expose({ open, close, toggle, exportHTML, exportJSON })
 
         return {
             activeTab,
