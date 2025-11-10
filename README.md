@@ -115,13 +115,16 @@ export default {
 
 ## Props
 
-| Prop           | Type            | Default                                              | Description                                                 |
-|----------------|-----------------|------------------------------------------------------|-------------------------------------------------------------|
-| `modelValue`   | Object          | `{ json: { blocks: [], bodySettings: {} }, html: ''}` | v-model data                                                |
-| `primaryColor` | String          | `'#6b7280'`                                          | Primary colour for the UI (panels, buttons, etc.)           |
-| `onUpload`     | Function        | `null`                                               | Callback function for handling image/video uploads          |
-| `variables`     | [Object, Array] | []                                                   | A list of variables to use in text blocks [{label, format}] | 
- | `displayAsModal` | Boolean | `false` | Display the builder as a modal |
+| Prop               | Type             | Default                                              | Description                                                                                            |
+|--------------------|------------------|------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| `modelValue`       | Object           | `{ json: { blocks: [], bodySettings: {} }, html: ''}` | v-model data                                                                                           |
+| `primaryColor`     | String           | `'#6b7280'`                                          | Primary colour for the UI (panels, buttons, etc.)                                                      |
+| `onUpload`         | Function         | `null`                                               | Callback function for handling image/video uploads                                                     |
+| `variables`        | [Object, Array]  | `[]`                                                 | A list of variables to use in text blocks `[{ label, format }]`                                        |
+| `displayAsModal`   | Boolean          | `false`                                              | Display the builder as a modal                                                                         |
+| `hideToolbarActions` | Boolean        | `false`                                              | Hide the default toolbar actions container (or override with `actions` slot to provide custom content) |
+| `hideExportJson`   | Boolean          | `false`                                              | Hide the default "Export JSON" button (only affects the default toolbar actions)                       |
+| `hideExportHtml`   | Boolean          | `false`                                              | Hide the default "Export HTML" button (only affects the default toolbar actions)                       |
 
 ## Events
 
@@ -131,6 +134,46 @@ export default {
 | `export-html` | `String`                                                         | Emitted when Export HTML is clicked |
 | `change` | `{ blocks: Array, bodySettings: Object }`                        | Emitted whenever the email content changes |
  | `update:modelValue` | `{ json: { blocks: Array, bodySettings: Object }, html: String}` | Emitted whenever the email content changes |
+
+## Slots
+
+| Slot name | Scope | Description |
+|-----------|-------|-------------|
+| `actions` | none  | Replaces the top toolbar actions area. Use to add your own buttons/controls. Combine with `hideToolbarActions`, `hideExportJson`, and `hideExportHtml` to control which default buttons are shown. |
+
+## Exposed Functions
+
+| Function | Description                                            |
+|--------|--------------------------------------------------------|
+| `exportJSON` | Returns the email build JSON and emits export-json     |
+| `exportHTML` | Returns the HTML email content and emits export-html   |
+| `open` | Opens the email modal if displayAsModal prop is true   |
+| `close` | Closes the email modal if displayAsModal prop is true  |
+| `toggle` | Toggles the email modal if displayAsModal prop is true |
+
+### Example: Custom toolbar actions
+
+```vue
+<template>
+  <EmailBuilder
+    v-model="data"
+    :hide-toolbar-actions="true"
+  >
+    <template #actions>
+      <div class="toolbar__actions">
+        <button @click="saveDraft" class="toolbar__btn">
+          <Icon name="save" :size="16" />
+          <span>Save Draft</span>
+        </button>
+        <button @click="preview" class="toolbar__btn">
+          <Icon name="eye" :size="16" />
+          <span>Preview</span>
+        </button>
+      </div>
+    </template>
+  </EmailBuilder>
+</template>
+```
 
 ## Content Blocks
 
