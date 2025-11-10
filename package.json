@@ -1,6 +1,6 @@
 {
   "name": "@riggerz29/content-builder",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "A Vue 3 drag-and-drop email builder component",
   "main": "dist/email-builder.umd.js",
   "module": "dist/email-builder.es.js",
@@ -8,12 +8,19 @@
     ".": {
       "import": "./dist/email-builder.es.js",
       "require": "./dist/email-builder.umd.js"
-    }
+    },
+    "./style.css": "./dist/content-builder.css",
+    "./dist/content-builder.css": "./dist/content-builder.css"
   },
   "files": [
     "dist",
     "src"
   ],
+  "sideEffects": [
+    "*.css",
+    "dist/content-builder.css"
+  ],
+  "style": "dist/content-builder.css",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -40,6 +47,7 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "typescript": "^5.9.3",
     "vite": "^7.1.10",
+    "vite-plugin-css-injected-by-js": "^3.5.1",
     "vue": "^3.5.22"
   },
   "dependencies": {

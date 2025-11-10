@@ -1,12 +1,13 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 export default defineConfig(({ command }) => {
   const isServe = command === 'serve'
 
   return {
-    plugins: [vue()],
+    plugins: isServe ? [vue()] : [vue(), cssInjectedByJsPlugin()],
     root: isServe ? './demo' : '.',
     build: isServe ? {} : {
       lib: {
