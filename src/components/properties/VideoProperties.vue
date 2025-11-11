@@ -93,7 +93,7 @@ export default {
                 type: props.block.type,
             })
 
-            if (result?.url) localProps.value.url = result.url
+            if (result?.url) localProps.value.thumbnailUrl = result.url
             if (result?.meta) localProps.value.meta = result.meta
             emitUpdate()
         }
