@@ -15,6 +15,7 @@
                         <Icon name="code" :size="16" />
                         <span>Export HTML</span>
                     </button>
+                    <slot name="extra-actions"></slot>
                 </div>
             </slot>
         </div>
@@ -700,12 +701,27 @@ export default {
             isSyncingFromParent.value = true
             const incoming = newVal?.json || {}
             const isEmpty = !incoming || Object.keys(incoming).length === 0
+
+            // Apply incoming JSON to internal state (with defaults merged for bodySettings)
             blocks.value = isEmpty ? [] : (incoming.blocks || [])
             bodySettings.value = {
                 ...defaultBodySettings,
                 ...(isEmpty ? {} : (incoming.bodySettings || {}))
             }
+
+            // Wait for DOM/state to settle before any emissions
             await nextTick()
+
+            // If parent provided JSON but html is missing/empty, generate fresh HTML and emit it back
+            if (!isEmpty) {
+                const incomingHtml = typeof newVal?.html === 'string' ? newVal.html : ''
+                if (incomingHtml.trim() === '') {
+                    const html = generateHTML(blocks.value, bodySettings.value)
+                    // Keep parent's JSON as-is to avoid unintended diffs; fill in the HTML only
+                    emit('update:modelValue', { json: newVal.json, html })
+                }
+            }
+
             isSyncingFromParent.value = false
         }, { deep: true })
 
