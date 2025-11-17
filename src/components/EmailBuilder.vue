@@ -195,7 +195,7 @@
                         :variables="variables"
                         @select="selectBlock(block)"
                         @child-select="selectBlock($event)"
-                        @update="updateBlock($event)"
+                        @update="updateBlock"
                         @delete="deleteBlock($event)"
                         @copy="copyBlock($event)"
                         @move-up="moveBlockUp($event)"
