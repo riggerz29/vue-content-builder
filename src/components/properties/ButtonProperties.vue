@@ -33,14 +33,6 @@
         </div>
 
         <div class="properties__group">
-            <label>Font Size</label>
-            <div style="display:flex; gap:8px; align-items:center;">
-                <input v-model="localProps.fontSize" @input="emitUpdate" placeholder="16" type="number" style="flex:1;" />
-                <span>px</span>
-            </div>
-        </div>
-
-        <div class="properties__group">
             <label>Font Family</label>
             <select v-model="localProps.fontFamily" @change="emitUpdate">
                 <option value="Arial, sans-serif">Arial</option>
@@ -53,37 +45,8 @@
         </div>
 
         <div class="properties__group">
-            <label>Font Weight</label>
-            <select v-model="localProps.fontWeight" @change="emitUpdate">
-                <option value="300">Light (300)</option>
-                <option value="400">Normal (400)</option>
-                <option value="500">Medium (500)</option>
-                <option value="600">Semibold (600)</option>
-                <option value="700">Bold (700)</option>
-            </select>
-        </div>
-
-        <div class="properties__group">
-            <label>Text Decoration</label>
-            <select v-model="localProps.textDecoration" @change="emitUpdate">
-                <option value="none">None</option>
-                <option value="underline">Underline</option>
-                <option value="line-through">Line Through</option>
-            </select>
-        </div>
-
-        <div class="properties__group">
             <label>Border Radius</label>
             <input v-model="localProps.borderRadius" @input="emitUpdate" placeholder="4px" />
-        </div>
-
-        <div class="properties__group">
-            <label>Align</label>
-            <select v-model="localProps.align" @change="emitUpdate">
-                <option value="left">Left</option>
-                <option value="center">Center</option>
-                <option value="right">Right</option>
-            </select>
         </div>
 
         <div class="properties__group">

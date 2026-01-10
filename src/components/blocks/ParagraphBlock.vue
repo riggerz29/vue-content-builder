@@ -14,14 +14,14 @@
             @delete="$emit('delete', block.id)"
         />
 
-        <p
+        <div
             v-if="!isEditing"
             class="paragraph-block"
             :style="paragraphStyle"
             @dblclick="startEditing"
             v-html="block.properties.text"
         >
-        </p>
+        </div>
 
         <div v-else class="paragraph-block-editing" ref="editingContainer">
             <div ref="quillEditor" class="quill-editor"></div>
@@ -46,6 +46,10 @@ import { Trash2 } from 'lucide-vue-next'
 import BlockActions from "../common/BlockActions.vue";
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
+
+// Configure Quill to use inline styles for alignment
+const AlignStyle = Quill.import('attributors/style/align')
+Quill.register(AlignStyle, true)
 
 export default {
     name: 'ParagraphBlock',

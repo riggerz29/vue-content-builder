@@ -28,14 +28,6 @@
         </div>
 
         <div class="properties__group">
-            <label>Font Size</label>
-            <div style="display:flex; gap:8px; align-items:center;">
-                <input v-model="localProps.fontSize" @input="emitUpdate" placeholder="16" type="number" style="flex:1;" />
-                <span>px</span>
-            </div>
-        </div>
-
-        <div class="properties__group">
             <label>Font Family</label>
             <select v-model="localProps.fontFamily" @change="emitUpdate">
                 <option value="Arial, sans-serif">Arial</option>
@@ -48,39 +40,8 @@
         </div>
 
         <div class="properties__group">
-            <label>Font Weight</label>
-            <select v-model="localProps.fontWeight" @change="emitUpdate">
-                <option value="300">Light (300)</option>
-                <option value="400">Normal (400)</option>
-                <option value="500">Medium (500)</option>
-                <option value="600">Semibold (600)</option>
-                <option value="700">Bold (700)</option>
-            </select>
-        </div>
-
-        <div class="properties__group">
             <label>Color</label>
             <input v-model="localProps.color" @input="emitUpdate" type="color" />
-        </div>
-
-        <div class="properties__group">
-            <label>Line Height</label>
-            <input v-model="localProps.lineHeight" @input="emitUpdate" placeholder="1.6" />
-        </div>
-
-        <div class="properties__group">
-            <label>Letter Spacing</label>
-            <input v-model="localProps.letterSpacing" @input="emitUpdate" placeholder="0px" />
-        </div>
-
-        <div class="properties__group">
-            <label>Align</label>
-            <select v-model="localProps.align" @change="emitUpdate">
-                <option value="left">Left</option>
-                <option value="center">Center</option>
-                <option value="right">Right</option>
-                <option value="justify">Justify</option>
-            </select>
         </div>
 
         <div class="properties__section">

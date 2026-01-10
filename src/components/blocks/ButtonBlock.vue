@@ -49,6 +49,10 @@ import BlockActions from "../common/BlockActions.vue";
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 
+// Configure Quill to use inline styles for alignment
+const AlignStyle = Quill.import('attributors/style/align')
+Quill.register(AlignStyle, true)
+
 export default {
     name: 'ButtonBlock',
     components: {

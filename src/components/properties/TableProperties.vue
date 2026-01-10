@@ -25,11 +25,6 @@
             <input v-model="localProps.textColor" @input="emitUpdate" type="color" />
         </div>
 
-        <div class="properties__group">
-            <label>Font Size</label>
-            <input v-model="localProps.fontSize" @input="emitUpdate" placeholder="14px" />
-        </div>
-
         <div class="properties__section">
             <h4>Margin</h4>
             <div class="properties__grid">

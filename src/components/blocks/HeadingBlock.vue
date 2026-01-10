@@ -14,15 +14,14 @@
             @delete="$emit('delete', block.id)"
         />
 
-        <component
+        <div
             v-if="!isEditing"
-            :is="block.properties.level"
             class="heading-block"
             :style="headingStyle"
             @dblclick="startEditing"
             v-html="block.properties.text"
         >
-        </component>
+        </div>
 
         <div v-else class="heading-block-editing" ref="editingContainer">
             <div ref="quillEditor" class="quill-editor"></div>
@@ -57,6 +56,10 @@ import BlockActions from "../common/BlockActions.vue";
 import {Trash2} from "lucide-vue-next";
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
+
+// Configure Quill to use inline styles for alignment
+const AlignStyle = Quill.import('attributors/style/align')
+Quill.register(AlignStyle, true)
 
 export default {
     name: 'HeadingBlock',
