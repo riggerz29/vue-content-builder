@@ -2,7 +2,18 @@
     <div class="properties-panel">
         <div class="properties__group">
             <label>Heading Text</label>
-            <input v-model="localProps.text" @input="emitUpdate" />
+            <RichTextEditor
+                v-model="localProps.text"
+                :styles="{
+                    fontSize: localProps.fontSize,
+                    color: localProps.color,
+                    fontFamily: localProps.fontFamily,
+                    fontWeight: localProps.fontWeight,
+                    lineHeight: localProps.lineHeight,
+                    textAlign: localProps.align
+                }"
+                @update:modelValue="emitUpdate"
+            />
         </div>
 
         <div class="properties__group" v-if="variablesList.length">
@@ -30,7 +41,10 @@
 
         <div class="properties__group">
             <label>Font Size</label>
-            <input v-model="localProps.fontSize" @input="emitUpdate" placeholder="24px" />
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input v-model="localProps.fontSize" @input="emitUpdate" placeholder="24" type="number" style="flex:1;" />
+                <span>px</span>
+            </div>
         </div>
 
         <div class="properties__group">
@@ -130,9 +144,13 @@
 
 <script>
 import { ref, watch, computed } from 'vue'
+import RichTextEditor from '../common/RichTextEditor.vue'
 
 export default {
     name: 'HeadingProperties',
+    components: {
+        RichTextEditor
+    },
     props: {
         block: {
             type: Object,
@@ -152,7 +170,7 @@ export default {
         const localProps = ref({
             text: '',
             level: 'h2',
-            fontSize: '24px',
+            fontSize: 24,
             fontFamily: 'Arial, sans-serif',
             fontWeight: '700',
             color: '#111827',
@@ -179,14 +197,18 @@ export default {
         }
 
         const emitUpdate = () => {
-            emit('update', { ...localProps.value })
+            const propsToEmit = { ...localProps.value }
+            if (typeof propsToEmit.fontSize === 'string' && propsToEmit.fontSize.endsWith('px')) {
+                propsToEmit.fontSize = parseInt(propsToEmit.fontSize)
+            }
+            emit('update', propsToEmit)
         }
 
         watch(() => props.block.properties, (newProps) => {
             localProps.value = {
                 text: '',
                 level: 'h2',
-                fontSize: '24px',
+                fontSize: 24,
                 fontFamily: 'Arial, sans-serif',
                 fontWeight: '700',
                 color: '#111827',
@@ -196,6 +218,9 @@ export default {
                 padding: { top: '0px', right: '0px', bottom: '0px', left: '0px' },
                 margin: { top: '0px', right: '0px', bottom: '16px', left: '0px' },
                 ...newProps
+            }
+            if (typeof localProps.value.fontSize === 'string' && localProps.value.fontSize.endsWith('px')) {
+                localProps.value.fontSize = parseInt(localProps.value.fontSize)
             }
         }, { deep: true })
 

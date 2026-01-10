@@ -24,47 +24,35 @@
                 :href="block.properties.url"
                 :style="buttonStyle"
                 class="button-block__link"
+                v-html="block.properties.text"
             >
-                {{ block.properties.text }}
             </a>
         </div>
 
         <div v-else class="button-block" :style="buttonContainerStyle">
-            <div class="inline-toolbar">
-                <select v-model="localProps.fontFamily" class="toolbar-select">
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="Georgia, serif">Georgia</option>
-                    <option value="'Courier New', monospace">Courier</option>
-                    <option value="Verdana, sans-serif">Verdana</option>
-                </select>
-                <input v-model.number="localProps.fontSize" type="number" class="toolbar-input" style="width: 50px" />
-                <button @click="localProps.fontWeight = localProps.fontWeight === 'bold' ? 'normal' : 'bold'" :class="{ active: localProps.fontWeight === 'bold' }">B</button>
-                <button @click="localProps.textDecoration = localProps.textDecoration === 'underline' ? 'none' : 'underline'" :class="{ active: localProps.textDecoration === 'underline' }">U</button>
-                <button @click="finishEditing">✓</button>
-                <button @click.stop="$emit('delete', block.id)">🗑</button>
+            <div class="button-editing-container" ref="editingContainer">
+                <div ref="quillEditor" class="quill-editor"></div>
+                <div class="editing-actions">
+                    <button @click.stop="$emit('delete', block.id)" class="btn-delete">
+                        <Trash2 size="16" />
+                    </button>
+                </div>
             </div>
-            <input
-                ref="editInput"
-                v-model="localProps.text"
-                :style="buttonStyle"
-                class="button-block__input"
-                @blur="finishEditing"
-                @keyup.enter="finishEditing"
-            />
         </div>
     </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue'
-import Icon from '../common/Icon.vue'
+import { ref, computed, nextTick, watch } from 'vue'
+import { Trash2 } from 'lucide-vue-next'
 import BlockActions from "../common/BlockActions.vue";
+import Quill from 'quill'
+import 'quill/dist/quill.snow.css'
 
 export default {
     name: 'ButtonBlock',
     components: {
-        BlockActions,
-        Icon
+        BlockActions
     },
     props: {
         block: { type: Object, required: true },
@@ -74,8 +62,56 @@ export default {
     emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop'],
     setup(props, { emit }) {
         const isEditing = ref(false)
-        const editInput = ref(null)
+        const quillEditor = ref(null)
+        let quill = null
+        const editingContainer = ref(null)
         const localProps = ref({ ...props.block.properties })
+
+        const initQuill = () => {
+            if (!quillEditor.value) return
+
+            quill = new Quill(quillEditor.value, {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        ['clean']
+                    ]
+                }
+            })
+
+            quill.root.innerHTML = localProps.value.text
+
+            // Apply button styles to the editor root
+            const s = { ...buttonStyle.value }
+            if (s.fontSize && !isNaN(parseInt(s.fontSize))) {
+                s.fontSize = `${parseInt(s.fontSize)}px`
+            }
+            Object.assign(quill.root.style, s)
+
+            quill.on('text-change', () => {
+                localProps.value.text = quill.root.innerHTML
+            })
+
+            quill.focus()
+
+            const handleGlobalClick = (e) => {
+                if (editingContainer.value && !editingContainer.value.contains(e.target)) {
+                    finishEditing()
+                    document.removeEventListener('mousedown', handleGlobalClick)
+                }
+            }
+            document.addEventListener('mousedown', handleGlobalClick)
+        }
+
+        watch(isEditing, (newVal) => {
+            if (newVal) {
+                nextTick(() => {
+                    initQuill()
+                })
+            }
+        })
 
         const buttonContainerStyle = computed(() => ({
             textAlign: props.block.properties.align,
@@ -104,11 +140,6 @@ export default {
         const startEditing = () => {
             isEditing.value = true
             localProps.value = { ...props.block.properties }
-            setTimeout(() => {
-                if (editInput.value) {
-                    editInput.value.focus()
-                }
-            }, 10)
         }
 
         const finishEditing = () => {
@@ -122,7 +153,8 @@ export default {
 
         return {
             isEditing,
-            editInput,
+            quillEditor,
+            editingContainer,
             localProps,
             buttonContainerStyle,
             buttonStyle,
@@ -159,45 +191,32 @@ export default {
     text-decoration: none;
 }
 
-.button-block__input {
-    border: 2px dashed #2f4574;
-    text-align: center;
-}
-
-.inline-toolbar {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 8px;
-    padding: 8px;
+.button-editing-container {
+    padding: 10px;
     background: white;
-    border: 1px solid #e5e7eb;
     border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.toolbar-select,
-.toolbar-input {
-    padding: 4px 8px;
-    border: 1px solid #e5e7eb;
-    border-radius: 3px;
-    font-size: 12px;
+.quill-editor {
+    min-height: 40px;
+    margin-bottom: 10px;
 }
 
-.inline-toolbar button {
-    padding: 4px 8px;
-    border: 1px solid #e5e7eb;
-    background: #f9fafb;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 12px;
+.editing-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
 }
 
-.inline-toolbar button:hover {
-    background: #f3f4f6;
-}
-
-.inline-toolbar button.active {
-    background: #2f4574;
+.btn-delete {
+    background: #ef4444;
     color: white;
-    border-color: #2f4574;
+    border: 1px solid #ef4444;
+    border-radius: 3px;
+    padding: 4px 8px;
+    cursor: pointer;
 }
 </style>

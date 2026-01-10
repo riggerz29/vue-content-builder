@@ -2,7 +2,19 @@
     <div class="properties-panel">
         <div class="properties__group">
             <label>Button Text</label>
-            <input v-model="localProps.text" @input="emitUpdate" />
+            <RichTextEditor
+                v-model="localProps.text"
+                :styles="{
+                    fontSize: localProps.fontSize,
+                    color: localProps.textColor,
+                    fontFamily: localProps.fontFamily,
+                    fontWeight: localProps.fontWeight,
+                    textAlign: localProps.align,
+                    textDecoration: localProps.textDecoration
+                }"
+                @update:modelValue="emitUpdate"
+                :toolbar="[['bold', 'italic', 'underline'], [{ 'color': [] }, { 'background': [] }], ['clean']]"
+            />
         </div>
 
         <div class="properties__group">
@@ -22,7 +34,10 @@
 
         <div class="properties__group">
             <label>Font Size</label>
-            <input v-model="localProps.fontSize" @input="emitUpdate" placeholder="16px" />
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input v-model="localProps.fontSize" @input="emitUpdate" placeholder="16" type="number" style="flex:1;" />
+                <span>px</span>
+            </div>
         </div>
 
         <div class="properties__group">
@@ -126,9 +141,13 @@
 
 <script>
 import { ref, watch } from 'vue'
+import RichTextEditor from '../common/RichTextEditor.vue'
 
 export default {
     name: 'ButtonProperties',
+    components: {
+        RichTextEditor
+    },
     props: {
         block: {
             type: Object,
@@ -146,7 +165,7 @@ export default {
             url: '',
             backgroundColor: '#2f4574',
             textColor: '#ffffff',
-            fontSize: '16px',
+            fontSize: 16,
             fontFamily: 'Arial, sans-serif',
             fontWeight: '600',
             textDecoration: 'none',
@@ -159,7 +178,11 @@ export default {
         })
 
         const emitUpdate = () => {
-            emit('update', { ...localProps.value })
+            const propsToEmit = { ...localProps.value }
+            if (typeof propsToEmit.fontSize === 'string' && propsToEmit.fontSize.endsWith('px')) {
+                propsToEmit.fontSize = parseInt(propsToEmit.fontSize)
+            }
+            emit('update', propsToEmit)
         }
 
         watch(() => props.block.properties, (newProps) => {
@@ -168,7 +191,7 @@ export default {
                 url: '',
                 backgroundColor: '#2f4574',
                 textColor: '#ffffff',
-                fontSize: '16px',
+                fontSize: 16,
                 fontFamily: 'Arial, sans-serif',
                 fontWeight: '600',
                 textDecoration: 'none',
@@ -178,6 +201,9 @@ export default {
                 padding: { top: '12px', right: '24px', bottom: '12px', left: '24px' },
                 margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' },
                 ...newProps
+            }
+            if (typeof localProps.value.fontSize === 'string' && localProps.value.fontSize.endsWith('px')) {
+                localProps.value.fontSize = parseInt(localProps.value.fontSize)
             }
         }, { deep: true })
 
