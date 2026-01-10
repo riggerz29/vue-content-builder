@@ -56,7 +56,8 @@ Quill.register(AlignStyle, true)
 export default {
     name: 'ButtonBlock',
     components: {
-        BlockActions
+        BlockActions,
+        Trash2
     },
     props: {
         block: { type: Object, required: true },

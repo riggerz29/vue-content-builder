@@ -1397,7 +1397,7 @@ export default {
             }
         }
 
-        const data = ref({ json: demoData, html: ''})
+        const data = ref({ json: JSON.parse(JSON.stringify(demoData)), html: ''})
 
         const exportModal = ref({
             show: false,
@@ -1482,7 +1482,7 @@ export default {
         ])
 
         const resetDemoData = () => {
-            data.value = { json: demoData, html: '' }
+            data.value = { json: JSON.parse(JSON.stringify(demoData)), html: '' }
         }
 
         return {
