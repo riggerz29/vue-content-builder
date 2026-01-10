@@ -442,7 +442,7 @@ export default {
 
             const defaults = {
                 button: {
-                    text: 'Click Here',
+                    text: '<p style=\"text-align: center;\">Click Here</p>',
                     url: '#',
                     backgroundColor: '#2f4574',
                     textColor: '#ffffff',
@@ -464,7 +464,7 @@ export default {
                     margin: { top: 10, right: 0, bottom: 10, left: 0 }
                 },
                 heading: {
-                    text: 'Heading Text',
+                    text: '<p>Heading Text</p>',
                     level: 'h2',
                     fontSize: 28,
                     fontFamily: 'Arial, sans-serif',
@@ -477,7 +477,7 @@ export default {
                     padding: { top: 0, right: 0, bottom: 0, left: 0 }
                 },
                 paragraph: {
-                    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    text: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>',
                     fontSize: 14,
                     fontFamily: 'Arial, sans-serif',
                     fontWeight: 'normal',
