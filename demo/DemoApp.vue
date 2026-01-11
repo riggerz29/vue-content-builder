@@ -103,7 +103,7 @@ export default {
                     "id": 1634567890124,
                     "type": "paragraph",
                     "properties": {
-                        "text": "<p style=\"text-align: center;\">Thank you for subscribing to our newsletter. We're excited to keep you updated with the latest news and offers.</p>",
+                        "text": "<p style=\"text-align: center;\"><span style=\"font-size: 16px;\">Thank you for subscribing to our newsletter. We're excited to keep you updated with the latest news and offers.</span></p>",
                         "fontSize": 14,
                         "fontFamily": "Arial, sans-serif",
                         "fontWeight": "normal",
@@ -112,10 +112,10 @@ export default {
                         "letterSpacing": 0,
                         "align": "left",
                         "margin": {
-                            "top": 10,
-                            "right": 0,
+                            "top": "10",
+                            "right": "20",
                             "bottom": 10,
-                            "left": 0
+                            "left": "20"
                         },
                         "padding": {
                             "top": 0,
@@ -181,7 +181,7 @@ export default {
                                     "id": 1768054606181.5293,
                                     "type": "paragraph",
                                     "properties": {
-                                        "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                        "text": "<p><span style=\"font-size: 16px;\">Feature one, some text here</span></p>",
                                         "fontSize": 14,
                                         "fontFamily": "Arial, sans-serif",
                                         "fontWeight": "normal",
@@ -239,7 +239,7 @@ export default {
                                     "id": 1768054614037.7444,
                                     "type": "paragraph",
                                     "properties": {
-                                        "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                        "text": "<p><span style=\"font-size: 16px;\">Feature two, some text here</span></p>",
                                         "fontSize": 14,
                                         "fontFamily": "Arial, sans-serif",
                                         "fontWeight": "normal",
@@ -309,7 +309,7 @@ export default {
                                         "id": 1768054606181.5293,
                                         "type": "paragraph",
                                         "properties": {
-                                            "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                            "text": "<p><span style=\"font-size: 16px;\">Feature one, some text here</span></p>",
                                             "fontSize": 14,
                                             "fontFamily": "Arial, sans-serif",
                                             "fontWeight": "normal",
@@ -367,7 +367,7 @@ export default {
                                         "id": 1768054614037.7444,
                                         "type": "paragraph",
                                         "properties": {
-                                            "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                            "text": "<p><span style=\"font-size: 16px;\">Feature two, some text here</span></p>",
                                             "fontSize": 14,
                                             "fontFamily": "Arial, sans-serif",
                                             "fontWeight": "normal",
@@ -437,7 +437,7 @@ export default {
                                             "id": 1768054606181.5293,
                                             "type": "paragraph",
                                             "properties": {
-                                                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                "text": "<p><span style=\"font-size: 16px;\">Feature one, some text here</span></p>",
                                                 "fontSize": 14,
                                                 "fontFamily": "Arial, sans-serif",
                                                 "fontWeight": "normal",
@@ -495,7 +495,7 @@ export default {
                                             "id": 1768054614037.7444,
                                             "type": "paragraph",
                                             "properties": {
-                                                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                "text": "<p><span style=\"font-size: 16px;\">Feature two, some text here</span></p>",
                                                 "fontSize": 14,
                                                 "fontFamily": "Arial, sans-serif",
                                                 "fontWeight": "normal",
@@ -565,7 +565,7 @@ export default {
                                                 "id": 1768054606181.5293,
                                                 "type": "paragraph",
                                                 "properties": {
-                                                    "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                    "text": "<p><span style=\"font-size: 16px;\">Feature one, some text here</span></p>",
                                                     "fontSize": 14,
                                                     "fontFamily": "Arial, sans-serif",
                                                     "fontWeight": "normal",
@@ -623,7 +623,7 @@ export default {
                                                 "id": 1768054614037.7444,
                                                 "type": "paragraph",
                                                 "properties": {
-                                                    "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                    "text": "<p><span style=\"font-size: 16px;\">Feature two, some text here</span></p>",
                                                     "fontSize": 14,
                                                     "fontFamily": "Arial, sans-serif",
                                                     "fontWeight": "normal",
@@ -693,7 +693,7 @@ export default {
                                                     "id": 1768054606181.5293,
                                                     "type": "paragraph",
                                                     "properties": {
-                                                        "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                        "text": "<p><span style=\"font-size: 16px;\">Feature one, some text here</span></p>",
                                                         "fontSize": 14,
                                                         "fontFamily": "Arial, sans-serif",
                                                         "fontWeight": "normal",
@@ -751,7 +751,7 @@ export default {
                                                     "id": 1768054614037.7444,
                                                     "type": "paragraph",
                                                     "properties": {
-                                                        "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                        "text": "<p><span style=\"font-size: 16px;\">Feature two, some text here</span></p>",
                                                         "fontSize": 14,
                                                         "fontFamily": "Arial, sans-serif",
                                                         "fontWeight": "normal",
@@ -821,7 +821,7 @@ export default {
                                                         "id": 1768054606181.5293,
                                                         "type": "paragraph",
                                                         "properties": {
-                                                            "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                            "text": "<p><span style=\"font-size: 16px;\">Feature one, some text here</span></p>",
                                                             "fontSize": 14,
                                                             "fontFamily": "Arial, sans-serif",
                                                             "fontWeight": "normal",
@@ -879,7 +879,7 @@ export default {
                                                         "id": 1768054614037.7444,
                                                         "type": "paragraph",
                                                         "properties": {
-                                                            "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                            "text": "<p><span style=\"font-size: 16px;\">Feature two, some text here</span></p>",
                                                             "fontSize": 14,
                                                             "fontFamily": "Arial, sans-serif",
                                                             "fontWeight": "normal",
@@ -949,7 +949,7 @@ export default {
                                                             "id": 1768054606181.5293,
                                                             "type": "paragraph",
                                                             "properties": {
-                                                                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                "text": "<p><span style=\"font-size: 16px;\">Feature one, some text here</span></p>",
                                                                 "fontSize": 14,
                                                                 "fontFamily": "Arial, sans-serif",
                                                                 "fontWeight": "normal",
@@ -1007,7 +1007,7 @@ export default {
                                                             "id": 1768054614037.7444,
                                                             "type": "paragraph",
                                                             "properties": {
-                                                                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                "text": "<p><span style=\"font-size: 16px;\">Feature two, some text here</span></p>",
                                                                 "fontSize": 14,
                                                                 "fontFamily": "Arial, sans-serif",
                                                                 "fontWeight": "normal",
@@ -1295,6 +1295,780 @@ export default {
                                                             "right": 20,
                                                             "bottom": 20,
                                                             "left": 20
+                                                        },
+                                                        "id": 1634567890126,
+                                                        "type": "row",
+                                                        "columns": [
+                                                            {
+                                                                "width": 50,
+                                                                "blocks": [
+                                                                    {
+                                                                        "id": 1768054623295.0454,
+                                                                        "type": "heading",
+                                                                        "properties": {
+                                                                            "text": "<p>Feature One</p>",
+                                                                            "level": "h2",
+                                                                            "fontSize": 28,
+                                                                            "fontFamily": "Arial, sans-serif",
+                                                                            "fontWeight": "bold",
+                                                                            "color": "#000000",
+                                                                            "lineHeight": 1.4,
+                                                                            "letterSpacing": 0,
+                                                                            "align": "left",
+                                                                            "margin": {
+                                                                                "top": 10,
+                                                                                "right": 0,
+                                                                                "bottom": 10,
+                                                                                "left": 0
+                                                                            },
+                                                                            "padding": {
+                                                                                "top": 0,
+                                                                                "right": 0,
+                                                                                "bottom": 0,
+                                                                                "left": 0
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "id": 1768054606181.5293,
+                                                                        "type": "paragraph",
+                                                                        "properties": {
+                                                                            "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                            "fontSize": 14,
+                                                                            "fontFamily": "Arial, sans-serif",
+                                                                            "fontWeight": "normal",
+                                                                            "color": "#000000",
+                                                                            "lineHeight": 1.6,
+                                                                            "letterSpacing": 0,
+                                                                            "align": "left",
+                                                                            "margin": {
+                                                                                "top": 10,
+                                                                                "right": 0,
+                                                                                "bottom": 10,
+                                                                                "left": 0
+                                                                            },
+                                                                            "padding": {
+                                                                                "top": 0,
+                                                                                "right": 0,
+                                                                                "bottom": 0,
+                                                                                "left": 0
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "width": 50,
+                                                                "blocks": [
+                                                                    {
+                                                                        "id": 1768054641909.8506,
+                                                                        "type": "heading",
+                                                                        "properties": {
+                                                                            "text": "<p>Feature Two</p>",
+                                                                            "level": "h2",
+                                                                            "fontSize": 28,
+                                                                            "fontFamily": "Arial, sans-serif",
+                                                                            "fontWeight": "bold",
+                                                                            "color": "#000000",
+                                                                            "lineHeight": 1.4,
+                                                                            "letterSpacing": 0,
+                                                                            "align": "left",
+                                                                            "margin": {
+                                                                                "top": 10,
+                                                                                "right": 0,
+                                                                                "bottom": 10,
+                                                                                "left": 0
+                                                                            },
+                                                                            "padding": {
+                                                                                "top": 0,
+                                                                                "right": 0,
+                                                                                "bottom": 0,
+                                                                                "left": 0
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "id": 1768054614037.7444,
+                                                                        "type": "paragraph",
+                                                                        "properties": {
+                                                                            "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                            "fontSize": 14,
+                                                                            "fontFamily": "Arial, sans-serif",
+                                                                            "fontWeight": "normal",
+                                                                            "color": "#000000",
+                                                                            "lineHeight": 1.6,
+                                                                            "letterSpacing": 0,
+                                                                            "align": "left",
+                                                                            "margin": {
+                                                                                "top": 10,
+                                                                                "right": 0,
+                                                                                "bottom": 10,
+                                                                                "left": 0
+                                                                            },
+                                                                            "padding": {
+                                                                                "top": 0,
+                                                                                "right": 0,
+                                                                                "bottom": 0,
+                                                                                "left": 0
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ],
+                                                        "properties": {
+                                                            "backgroundColor": "transparent",
+                                                            "padding": {
+                                                                "top": 20,
+                                                                "right": 20,
+                                                                "bottom": 20,
+                                                                "left": 20
+                                                            },
+                                                            "id": 1634567890126,
+                                                            "type": "row",
+                                                            "columns": [
+                                                                {
+                                                                    "width": 50,
+                                                                    "blocks": [
+                                                                        {
+                                                                            "id": 1768054623295.0454,
+                                                                            "type": "heading",
+                                                                            "properties": {
+                                                                                "text": "<p>Feature One</p>",
+                                                                                "level": "h2",
+                                                                                "fontSize": 28,
+                                                                                "fontFamily": "Arial, sans-serif",
+                                                                                "fontWeight": "bold",
+                                                                                "color": "#000000",
+                                                                                "lineHeight": 1.4,
+                                                                                "letterSpacing": 0,
+                                                                                "align": "left",
+                                                                                "margin": {
+                                                                                    "top": 10,
+                                                                                    "right": 0,
+                                                                                    "bottom": 10,
+                                                                                    "left": 0
+                                                                                },
+                                                                                "padding": {
+                                                                                    "top": 0,
+                                                                                    "right": 0,
+                                                                                    "bottom": 0,
+                                                                                    "left": 0
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "id": 1768054606181.5293,
+                                                                            "type": "paragraph",
+                                                                            "properties": {
+                                                                                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                                "fontSize": 14,
+                                                                                "fontFamily": "Arial, sans-serif",
+                                                                                "fontWeight": "normal",
+                                                                                "color": "#000000",
+                                                                                "lineHeight": 1.6,
+                                                                                "letterSpacing": 0,
+                                                                                "align": "left",
+                                                                                "margin": {
+                                                                                    "top": 10,
+                                                                                    "right": 0,
+                                                                                    "bottom": 10,
+                                                                                    "left": 0
+                                                                                },
+                                                                                "padding": {
+                                                                                    "top": 0,
+                                                                                    "right": 0,
+                                                                                    "bottom": 0,
+                                                                                    "left": 0
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "width": 50,
+                                                                    "blocks": [
+                                                                        {
+                                                                            "id": 1768054641909.8506,
+                                                                            "type": "heading",
+                                                                            "properties": {
+                                                                                "text": "<p>Feature Two</p>",
+                                                                                "level": "h2",
+                                                                                "fontSize": 28,
+                                                                                "fontFamily": "Arial, sans-serif",
+                                                                                "fontWeight": "bold",
+                                                                                "color": "#000000",
+                                                                                "lineHeight": 1.4,
+                                                                                "letterSpacing": 0,
+                                                                                "align": "left",
+                                                                                "margin": {
+                                                                                    "top": 10,
+                                                                                    "right": 0,
+                                                                                    "bottom": 10,
+                                                                                    "left": 0
+                                                                                },
+                                                                                "padding": {
+                                                                                    "top": 0,
+                                                                                    "right": 0,
+                                                                                    "bottom": 0,
+                                                                                    "left": 0
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "id": 1768054614037.7444,
+                                                                            "type": "paragraph",
+                                                                            "properties": {
+                                                                                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                                "fontSize": 14,
+                                                                                "fontFamily": "Arial, sans-serif",
+                                                                                "fontWeight": "normal",
+                                                                                "color": "#000000",
+                                                                                "lineHeight": 1.6,
+                                                                                "letterSpacing": 0,
+                                                                                "align": "left",
+                                                                                "margin": {
+                                                                                    "top": 10,
+                                                                                    "right": 0,
+                                                                                    "bottom": 10,
+                                                                                    "left": 0
+                                                                                },
+                                                                                "padding": {
+                                                                                    "top": 0,
+                                                                                    "right": 0,
+                                                                                    "bottom": 0,
+                                                                                    "left": 0
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "properties": {
+                                                                "backgroundColor": "transparent",
+                                                                "padding": {
+                                                                    "top": 20,
+                                                                    "right": 20,
+                                                                    "bottom": 20,
+                                                                    "left": 20
+                                                                },
+                                                                "id": 1634567890126,
+                                                                "type": "row",
+                                                                "columns": [
+                                                                    {
+                                                                        "width": 50,
+                                                                        "blocks": [
+                                                                            {
+                                                                                "id": 1768054623295.0454,
+                                                                                "type": "heading",
+                                                                                "properties": {
+                                                                                    "text": "<p>Feature One</p>",
+                                                                                    "level": "h2",
+                                                                                    "fontSize": 28,
+                                                                                    "fontFamily": "Arial, sans-serif",
+                                                                                    "fontWeight": "bold",
+                                                                                    "color": "#000000",
+                                                                                    "lineHeight": 1.4,
+                                                                                    "letterSpacing": 0,
+                                                                                    "align": "left",
+                                                                                    "margin": {
+                                                                                        "top": 10,
+                                                                                        "right": 0,
+                                                                                        "bottom": 10,
+                                                                                        "left": 0
+                                                                                    },
+                                                                                    "padding": {
+                                                                                        "top": 0,
+                                                                                        "right": 0,
+                                                                                        "bottom": 0,
+                                                                                        "left": 0
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            {
+                                                                                "id": 1768054606181.5293,
+                                                                                "type": "paragraph",
+                                                                                "properties": {
+                                                                                    "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                                    "fontSize": 14,
+                                                                                    "fontFamily": "Arial, sans-serif",
+                                                                                    "fontWeight": "normal",
+                                                                                    "color": "#000000",
+                                                                                    "lineHeight": 1.6,
+                                                                                    "letterSpacing": 0,
+                                                                                    "align": "left",
+                                                                                    "margin": {
+                                                                                        "top": 10,
+                                                                                        "right": 0,
+                                                                                        "bottom": 10,
+                                                                                        "left": 0
+                                                                                    },
+                                                                                    "padding": {
+                                                                                        "top": 0,
+                                                                                        "right": 0,
+                                                                                        "bottom": 0,
+                                                                                        "left": 0
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "width": 50,
+                                                                        "blocks": [
+                                                                            {
+                                                                                "id": 1768054641909.8506,
+                                                                                "type": "heading",
+                                                                                "properties": {
+                                                                                    "text": "<p>Feature Two</p>",
+                                                                                    "level": "h2",
+                                                                                    "fontSize": 28,
+                                                                                    "fontFamily": "Arial, sans-serif",
+                                                                                    "fontWeight": "bold",
+                                                                                    "color": "#000000",
+                                                                                    "lineHeight": 1.4,
+                                                                                    "letterSpacing": 0,
+                                                                                    "align": "left",
+                                                                                    "margin": {
+                                                                                        "top": 10,
+                                                                                        "right": 0,
+                                                                                        "bottom": 10,
+                                                                                        "left": 0
+                                                                                    },
+                                                                                    "padding": {
+                                                                                        "top": 0,
+                                                                                        "right": 0,
+                                                                                        "bottom": 0,
+                                                                                        "left": 0
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            {
+                                                                                "id": 1768054614037.7444,
+                                                                                "type": "paragraph",
+                                                                                "properties": {
+                                                                                    "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                                    "fontSize": 14,
+                                                                                    "fontFamily": "Arial, sans-serif",
+                                                                                    "fontWeight": "normal",
+                                                                                    "color": "#000000",
+                                                                                    "lineHeight": 1.6,
+                                                                                    "letterSpacing": 0,
+                                                                                    "align": "left",
+                                                                                    "margin": {
+                                                                                        "top": 10,
+                                                                                        "right": 0,
+                                                                                        "bottom": 10,
+                                                                                        "left": 0
+                                                                                    },
+                                                                                    "padding": {
+                                                                                        "top": 0,
+                                                                                        "right": 0,
+                                                                                        "bottom": 0,
+                                                                                        "left": 0
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ],
+                                                                "properties": {
+                                                                    "backgroundColor": "transparent",
+                                                                    "padding": {
+                                                                        "top": 20,
+                                                                        "right": 20,
+                                                                        "bottom": 20,
+                                                                        "left": 20
+                                                                    },
+                                                                    "id": 1634567890126,
+                                                                    "type": "row",
+                                                                    "columns": [
+                                                                        {
+                                                                            "width": 50,
+                                                                            "blocks": [
+                                                                                {
+                                                                                    "id": 1768054623295.0454,
+                                                                                    "type": "heading",
+                                                                                    "properties": {
+                                                                                        "text": "<p>Feature One</p>",
+                                                                                        "level": "h2",
+                                                                                        "fontSize": 28,
+                                                                                        "fontFamily": "Arial, sans-serif",
+                                                                                        "fontWeight": "bold",
+                                                                                        "color": "#000000",
+                                                                                        "lineHeight": 1.4,
+                                                                                        "letterSpacing": 0,
+                                                                                        "align": "left",
+                                                                                        "margin": {
+                                                                                            "top": 10,
+                                                                                            "right": 0,
+                                                                                            "bottom": 10,
+                                                                                            "left": 0
+                                                                                        },
+                                                                                        "padding": {
+                                                                                            "top": 0,
+                                                                                            "right": 0,
+                                                                                            "bottom": 0,
+                                                                                            "left": 0
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                {
+                                                                                    "id": 1768054606181.5293,
+                                                                                    "type": "paragraph",
+                                                                                    "properties": {
+                                                                                        "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                                        "fontSize": 14,
+                                                                                        "fontFamily": "Arial, sans-serif",
+                                                                                        "fontWeight": "normal",
+                                                                                        "color": "#000000",
+                                                                                        "lineHeight": 1.6,
+                                                                                        "letterSpacing": 0,
+                                                                                        "align": "left",
+                                                                                        "margin": {
+                                                                                            "top": 10,
+                                                                                            "right": 0,
+                                                                                            "bottom": 10,
+                                                                                            "left": 0
+                                                                                        },
+                                                                                        "padding": {
+                                                                                            "top": 0,
+                                                                                            "right": 0,
+                                                                                            "bottom": 0,
+                                                                                            "left": 0
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "width": 50,
+                                                                            "blocks": [
+                                                                                {
+                                                                                    "id": 1768054641909.8506,
+                                                                                    "type": "heading",
+                                                                                    "properties": {
+                                                                                        "text": "<p>Feature Two</p>",
+                                                                                        "level": "h2",
+                                                                                        "fontSize": 28,
+                                                                                        "fontFamily": "Arial, sans-serif",
+                                                                                        "fontWeight": "bold",
+                                                                                        "color": "#000000",
+                                                                                        "lineHeight": 1.4,
+                                                                                        "letterSpacing": 0,
+                                                                                        "align": "left",
+                                                                                        "margin": {
+                                                                                            "top": 10,
+                                                                                            "right": 0,
+                                                                                            "bottom": 10,
+                                                                                            "left": 0
+                                                                                        },
+                                                                                        "padding": {
+                                                                                            "top": 0,
+                                                                                            "right": 0,
+                                                                                            "bottom": 0,
+                                                                                            "left": 0
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                {
+                                                                                    "id": 1768054614037.7444,
+                                                                                    "type": "paragraph",
+                                                                                    "properties": {
+                                                                                        "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                                        "fontSize": 14,
+                                                                                        "fontFamily": "Arial, sans-serif",
+                                                                                        "fontWeight": "normal",
+                                                                                        "color": "#000000",
+                                                                                        "lineHeight": 1.6,
+                                                                                        "letterSpacing": 0,
+                                                                                        "align": "left",
+                                                                                        "margin": {
+                                                                                            "top": 10,
+                                                                                            "right": 0,
+                                                                                            "bottom": 10,
+                                                                                            "left": 0
+                                                                                        },
+                                                                                        "padding": {
+                                                                                            "top": 0,
+                                                                                            "right": 0,
+                                                                                            "bottom": 0,
+                                                                                            "left": 0
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ],
+                                                                    "properties": {
+                                                                        "backgroundColor": "transparent",
+                                                                        "padding": {
+                                                                            "top": 20,
+                                                                            "right": 20,
+                                                                            "bottom": 20,
+                                                                            "left": 20
+                                                                        },
+                                                                        "id": 1634567890126,
+                                                                        "type": "row",
+                                                                        "columns": [
+                                                                            {
+                                                                                "width": 50,
+                                                                                "blocks": [
+                                                                                    {
+                                                                                        "id": 1768054623295.0454,
+                                                                                        "type": "heading",
+                                                                                        "properties": {
+                                                                                            "text": "<p>Feature One</p>",
+                                                                                            "level": "h2",
+                                                                                            "fontSize": 28,
+                                                                                            "fontFamily": "Arial, sans-serif",
+                                                                                            "fontWeight": "bold",
+                                                                                            "color": "#000000",
+                                                                                            "lineHeight": 1.4,
+                                                                                            "letterSpacing": 0,
+                                                                                            "align": "left",
+                                                                                            "margin": {
+                                                                                                "top": 10,
+                                                                                                "right": 0,
+                                                                                                "bottom": 10,
+                                                                                                "left": 0
+                                                                                            },
+                                                                                            "padding": {
+                                                                                                "top": 0,
+                                                                                                "right": 0,
+                                                                                                "bottom": 0,
+                                                                                                "left": 0
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    {
+                                                                                        "id": 1768054606181.5293,
+                                                                                        "type": "paragraph",
+                                                                                        "properties": {
+                                                                                            "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                                            "fontSize": 14,
+                                                                                            "fontFamily": "Arial, sans-serif",
+                                                                                            "fontWeight": "normal",
+                                                                                            "color": "#000000",
+                                                                                            "lineHeight": 1.6,
+                                                                                            "letterSpacing": 0,
+                                                                                            "align": "left",
+                                                                                            "margin": {
+                                                                                                "top": 10,
+                                                                                                "right": 0,
+                                                                                                "bottom": 10,
+                                                                                                "left": 0
+                                                                                            },
+                                                                                            "padding": {
+                                                                                                "top": 0,
+                                                                                                "right": 0,
+                                                                                                "bottom": 0,
+                                                                                                "left": 0
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            {
+                                                                                "width": 50,
+                                                                                "blocks": [
+                                                                                    {
+                                                                                        "id": 1768054641909.8506,
+                                                                                        "type": "heading",
+                                                                                        "properties": {
+                                                                                            "text": "<p>Feature Two</p>",
+                                                                                            "level": "h2",
+                                                                                            "fontSize": 28,
+                                                                                            "fontFamily": "Arial, sans-serif",
+                                                                                            "fontWeight": "bold",
+                                                                                            "color": "#000000",
+                                                                                            "lineHeight": 1.4,
+                                                                                            "letterSpacing": 0,
+                                                                                            "align": "left",
+                                                                                            "margin": {
+                                                                                                "top": 10,
+                                                                                                "right": 0,
+                                                                                                "bottom": 10,
+                                                                                                "left": 0
+                                                                                            },
+                                                                                            "padding": {
+                                                                                                "top": 0,
+                                                                                                "right": 0,
+                                                                                                "bottom": 0,
+                                                                                                "left": 0
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    {
+                                                                                        "id": 1768054614037.7444,
+                                                                                        "type": "paragraph",
+                                                                                        "properties": {
+                                                                                            "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                                            "fontSize": 14,
+                                                                                            "fontFamily": "Arial, sans-serif",
+                                                                                            "fontWeight": "normal",
+                                                                                            "color": "#000000",
+                                                                                            "lineHeight": 1.6,
+                                                                                            "letterSpacing": 0,
+                                                                                            "align": "left",
+                                                                                            "margin": {
+                                                                                                "top": 10,
+                                                                                                "right": 0,
+                                                                                                "bottom": 10,
+                                                                                                "left": 0
+                                                                                            },
+                                                                                            "padding": {
+                                                                                                "top": 0,
+                                                                                                "right": 0,
+                                                                                                "bottom": 0,
+                                                                                                "left": 0
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                ]
+                                                                            }
+                                                                        ],
+                                                                        "properties": {
+                                                                            "backgroundColor": "transparent",
+                                                                            "padding": {
+                                                                                "top": 20,
+                                                                                "right": 20,
+                                                                                "bottom": 20,
+                                                                                "left": 20
+                                                                            },
+                                                                            "id": 1634567890126,
+                                                                            "type": "row",
+                                                                            "columns": [
+                                                                                {
+                                                                                    "width": 50,
+                                                                                    "blocks": [
+                                                                                        {
+                                                                                            "id": 1768054623295.0454,
+                                                                                            "type": "heading",
+                                                                                            "properties": {
+                                                                                                "text": "<p>Feature One</p>",
+                                                                                                "level": "h2",
+                                                                                                "fontSize": 28,
+                                                                                                "fontFamily": "Arial, sans-serif",
+                                                                                                "fontWeight": "bold",
+                                                                                                "color": "#000000",
+                                                                                                "lineHeight": 1.4,
+                                                                                                "letterSpacing": 0,
+                                                                                                "align": "left",
+                                                                                                "margin": {
+                                                                                                    "top": 10,
+                                                                                                    "right": 0,
+                                                                                                    "bottom": 10,
+                                                                                                    "left": 0
+                                                                                                },
+                                                                                                "padding": {
+                                                                                                    "top": 0,
+                                                                                                    "right": 0,
+                                                                                                    "bottom": 0,
+                                                                                                    "left": 0
+                                                                                                }
+                                                                                            }
+                                                                                        },
+                                                                                        {
+                                                                                            "id": 1768054606181.5293,
+                                                                                            "type": "paragraph",
+                                                                                            "properties": {
+                                                                                                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                                                "fontSize": 14,
+                                                                                                "fontFamily": "Arial, sans-serif",
+                                                                                                "fontWeight": "normal",
+                                                                                                "color": "#000000",
+                                                                                                "lineHeight": 1.6,
+                                                                                                "letterSpacing": 0,
+                                                                                                "align": "left",
+                                                                                                "margin": {
+                                                                                                    "top": 10,
+                                                                                                    "right": 0,
+                                                                                                    "bottom": 10,
+                                                                                                    "left": 0
+                                                                                                },
+                                                                                                "padding": {
+                                                                                                    "top": 0,
+                                                                                                    "right": 0,
+                                                                                                    "bottom": 0,
+                                                                                                    "left": 0
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "width": 50,
+                                                                                    "blocks": [
+                                                                                        {
+                                                                                            "id": 1768054641909.8506,
+                                                                                            "type": "heading",
+                                                                                            "properties": {
+                                                                                                "text": "<p>Feature Two</p>",
+                                                                                                "level": "h2",
+                                                                                                "fontSize": 28,
+                                                                                                "fontFamily": "Arial, sans-serif",
+                                                                                                "fontWeight": "bold",
+                                                                                                "color": "#000000",
+                                                                                                "lineHeight": 1.4,
+                                                                                                "letterSpacing": 0,
+                                                                                                "align": "left",
+                                                                                                "margin": {
+                                                                                                    "top": 10,
+                                                                                                    "right": 0,
+                                                                                                    "bottom": 10,
+                                                                                                    "left": 0
+                                                                                                },
+                                                                                                "padding": {
+                                                                                                    "top": 0,
+                                                                                                    "right": 0,
+                                                                                                    "bottom": 0,
+                                                                                                    "left": 0
+                                                                                                }
+                                                                                            }
+                                                                                        },
+                                                                                        {
+                                                                                            "id": 1768054614037.7444,
+                                                                                            "type": "paragraph",
+                                                                                            "properties": {
+                                                                                                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+                                                                                                "fontSize": 14,
+                                                                                                "fontFamily": "Arial, sans-serif",
+                                                                                                "fontWeight": "normal",
+                                                                                                "color": "#000000",
+                                                                                                "lineHeight": 1.6,
+                                                                                                "letterSpacing": 0,
+                                                                                                "align": "left",
+                                                                                                "margin": {
+                                                                                                    "top": 10,
+                                                                                                    "right": 0,
+                                                                                                    "bottom": 10,
+                                                                                                    "left": 0
+                                                                                                },
+                                                                                                "padding": {
+                                                                                                    "top": 0,
+                                                                                                    "right": 0,
+                                                                                                    "bottom": 0,
+                                                                                                    "left": 0
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            ],
+                                                                            "properties": {
+                                                                                "backgroundColor": "transparent",
+                                                                                "padding": {
+                                                                                    "top": 20,
+                                                                                    "right": 20,
+                                                                                    "bottom": 20,
+                                                                                    "left": 20
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }

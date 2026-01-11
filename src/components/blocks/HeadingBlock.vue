@@ -61,6 +61,11 @@ import 'quill/dist/quill.snow.css'
 const AlignStyle = Quill.import('attributors/style/align')
 Quill.register(AlignStyle, true)
 
+// Configure Quill to use inline styles for font size
+const SizeStyle = Quill.import('attributors/style/size')
+SizeStyle.whitelist = ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '30px', '32px', '36px', '48px', '64px', '72px', '96px']
+Quill.register(SizeStyle, true)
+
 export default {
     name: 'HeadingBlock',
     components: {Trash2, BlockActions},
@@ -85,7 +90,7 @@ export default {
                 theme: 'snow',
                 modules: {
                     toolbar: [
-                        [{ 'font': [] }, { 'size': [] }],
+                        [{ 'font': [] }, { 'size': ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '30px', '32px', '36px', '48px', '64px', '72px', '96px'] }],
                         ['bold', 'italic', 'underline', 'strike'],
                         [{ 'color': [] }, { 'background': [] }],
                         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
@@ -277,6 +282,16 @@ export default {
 .quill-editor {
     min-height: 80px;
     margin-bottom: 10px;
+}
+
+/* Fix for Quill inline sizes in toolbar */
+:deep(.ql-snow .ql-picker.ql-size .ql-picker-label::before),
+:deep(.ql-snow .ql-picker.ql-size .ql-picker-item::before) {
+    content: attr(data-value) !important;
+}
+
+:deep(.ql-snow .ql-picker.ql-size .ql-picker-item[data-value]::before) {
+    content: attr(data-value) !important;
 }
 
 .editing-actions {
