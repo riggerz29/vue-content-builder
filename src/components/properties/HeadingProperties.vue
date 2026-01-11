@@ -40,18 +40,6 @@
         </div>
 
         <div class="properties__group">
-            <label>Font Family</label>
-            <select v-model="localProps.fontFamily" @change="emitUpdate">
-                <option value="Arial, sans-serif">Arial</option>
-                <option value="Helvetica, sans-serif">Helvetica</option>
-                <option value="Georgia, serif">Georgia</option>
-                <option value="'Times New Roman', serif">Times New Roman</option>
-                <option value="'Courier New', monospace">Courier New</option>
-                <option value="Verdana, sans-serif">Verdana</option>
-            </select>
-        </div>
-
-        <div class="properties__group">
             <label>Colour</label>
             <input v-model="localProps.color" @input="emitUpdate" type="color" />
         </div>

@@ -17,13 +17,13 @@
         <div
             v-if="!isEditing"
             class="heading-block"
-            :style="headingStyle"
+            :style="combinedStyle"
             @dblclick="startEditing"
             v-html="block.properties.text"
         >
         </div>
 
-        <div v-else class="heading-block-editing" ref="editingContainer">
+        <div v-else class="heading-block-editing" :style="layoutStyle" ref="editingContainer">
             <div ref="quillEditor" class="quill-editor"></div>
             <div class="editing-actions">
                 <div class="toolbar-group">
@@ -150,6 +150,11 @@ export default {
             }
         }
 
+        const layoutStyle = computed(() => ({
+            margin: `${props.block.properties.margin.top}px ${props.block.properties.margin.right}px ${props.block.properties.margin.bottom}px ${props.block.properties.margin.left}px`,
+            padding: `${props.block.properties.padding.top}px ${props.block.properties.padding.right}px ${props.block.properties.padding.bottom}px ${props.block.properties.padding.left}px`
+        }))
+
         const headingStyle = computed(() => ({
             fontSize: `${props.block.properties.fontSize}px`,
             fontFamily: props.block.properties.fontFamily,
@@ -159,9 +164,7 @@ export default {
             color: props.block.properties.color,
             lineHeight: props.block.properties.lineHeight,
             letterSpacing: `${props.block.properties.letterSpacing}px`,
-            textAlign: props.block.properties.align,
-            margin: `${props.block.properties.margin.top}px ${props.block.properties.margin.right}px ${props.block.properties.margin.bottom}px ${props.block.properties.margin.left}px`,
-            padding: `${props.block.properties.padding.top}px ${props.block.properties.padding.right}px ${props.block.properties.padding.bottom}px ${props.block.properties.padding.left}px`
+            textAlign: props.block.properties.align
         }))
 
         const headingEditStyle = computed(() => {
@@ -217,6 +220,11 @@ export default {
             finishEditing()
         }
 
+        const combinedStyle = computed(() => ({
+            ...layoutStyle.value,
+            ...headingStyle.value
+        }))
+
         return {
             isEditing,
             quillEditor,
@@ -226,8 +234,10 @@ export default {
             selectedVarIdx,
             insertSelectedVariable,
             onKeydown,
+            layoutStyle,
             headingStyle,
             headingEditStyle,
+            combinedStyle,
             startEditing,
             finishEditing,
             handleDrop

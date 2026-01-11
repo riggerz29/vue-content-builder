@@ -473,7 +473,7 @@ export default {
                     lineHeight: 1.4,
                     letterSpacing: 0,
                     align: 'left',
-                    margin: { top: 10, right: 0, bottom: 10, left: 0 },
+                    margin: { top: 10, right: 10, bottom: 10, left: 10 },
                     padding: { top: 0, right: 0, bottom: 0, left: 0 }
                 },
                 paragraph: {
@@ -485,7 +485,7 @@ export default {
                     lineHeight: 1.6,
                     letterSpacing: 0,
                     align: 'left',
-                    margin: { top: 10, right: 0, bottom: 10, left: 0 },
+                    margin: { top: 10, right: 10, bottom: 10, left: 10 },
                     padding: { top: 0, right: 0, bottom: 0, left: 0 }
                 },
                 image: {
