@@ -82,7 +82,7 @@ function generateButtonHTML(block) {
             <tr>
               <td align="center" style="border-radius: ${p.borderRadius}px; background-color: ${p.backgroundColor};">
                 <a href="${p.url}" target="_blank" style="display: inline-block; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.textColor}; text-decoration: ${p.textDecoration}; border-radius: ${p.borderRadius}px;">
-                  ${escapeHtml(p.text)}
+                  ${p.text}
                 </a>
               </td>
             </tr>
@@ -116,9 +116,9 @@ function generateHeadingHTML(block) {
     const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
 
     return `
-    <${p.level} style="margin: ${margin}; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.color}; line-height: ${p.lineHeight}; letter-spacing: ${p.letterSpacing}px; text-align: ${p.align};">
-      ${escapeHtml(p.text)}
-    </${p.level}>`
+    <div style="margin: ${margin}; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.color}; line-height: ${p.lineHeight}; letter-spacing: ${p.letterSpacing}px; text-align: ${p.align};">
+      ${p.text}
+    </div>`
 }
 
 function generateParagraphHTML(block) {
@@ -127,9 +127,9 @@ function generateParagraphHTML(block) {
     const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
 
     return `
-    <p style="margin: ${margin}; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.color}; line-height: ${p.lineHeight}; letter-spacing: ${p.letterSpacing}px; text-align: ${p.align};">
-      ${escapeHtml(p.text)}
-    </p>`
+    <div style="margin: ${margin}; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.color}; line-height: ${p.lineHeight}; letter-spacing: ${p.letterSpacing}px; text-align: ${p.align};">
+      ${p.text}
+    </div>`
 }
 
 function generateImageHTML(block) {

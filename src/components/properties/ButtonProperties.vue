@@ -2,7 +2,19 @@
     <div class="properties-panel">
         <div class="properties__group">
             <label>Button Text</label>
-            <input v-model="localProps.text" @input="emitUpdate" />
+            <RichTextEditor
+                v-model="localProps.text"
+                :styles="{
+                    fontSize: localProps.fontSize,
+                    color: localProps.textColor,
+                    fontFamily: localProps.fontFamily,
+                    fontWeight: localProps.fontWeight,
+                    textAlign: localProps.align,
+                    textDecoration: localProps.textDecoration
+                }"
+                @update:modelValue="emitUpdate"
+                :toolbar="[['bold', 'italic', 'underline'], [{ 'color': [] }, { 'background': [] }], ['clean']]"
+            />
         </div>
 
         <div class="properties__group">
@@ -21,54 +33,8 @@
         </div>
 
         <div class="properties__group">
-            <label>Font Size</label>
-            <input v-model="localProps.fontSize" @input="emitUpdate" placeholder="16px" />
-        </div>
-
-        <div class="properties__group">
-            <label>Font Family</label>
-            <select v-model="localProps.fontFamily" @change="emitUpdate">
-                <option value="Arial, sans-serif">Arial</option>
-                <option value="Helvetica, sans-serif">Helvetica</option>
-                <option value="Georgia, serif">Georgia</option>
-                <option value="'Times New Roman', serif">Times New Roman</option>
-                <option value="'Courier New', monospace">Courier New</option>
-                <option value="Verdana, sans-serif">Verdana</option>
-            </select>
-        </div>
-
-        <div class="properties__group">
-            <label>Font Weight</label>
-            <select v-model="localProps.fontWeight" @change="emitUpdate">
-                <option value="300">Light (300)</option>
-                <option value="400">Normal (400)</option>
-                <option value="500">Medium (500)</option>
-                <option value="600">Semibold (600)</option>
-                <option value="700">Bold (700)</option>
-            </select>
-        </div>
-
-        <div class="properties__group">
-            <label>Text Decoration</label>
-            <select v-model="localProps.textDecoration" @change="emitUpdate">
-                <option value="none">None</option>
-                <option value="underline">Underline</option>
-                <option value="line-through">Line Through</option>
-            </select>
-        </div>
-
-        <div class="properties__group">
             <label>Border Radius</label>
             <input v-model="localProps.borderRadius" @input="emitUpdate" placeholder="4px" />
-        </div>
-
-        <div class="properties__group">
-            <label>Align</label>
-            <select v-model="localProps.align" @change="emitUpdate">
-                <option value="left">Left</option>
-                <option value="center">Center</option>
-                <option value="right">Right</option>
-            </select>
         </div>
 
         <div class="properties__group">
@@ -126,9 +92,13 @@
 
 <script>
 import { ref, watch } from 'vue'
+import RichTextEditor from '../common/RichTextEditor.vue'
 
 export default {
     name: 'ButtonProperties',
+    components: {
+        RichTextEditor
+    },
     props: {
         block: {
             type: Object,
@@ -146,7 +116,7 @@ export default {
             url: '',
             backgroundColor: '#2f4574',
             textColor: '#ffffff',
-            fontSize: '16px',
+            fontSize: 16,
             fontFamily: 'Arial, sans-serif',
             fontWeight: '600',
             textDecoration: 'none',
@@ -159,7 +129,11 @@ export default {
         })
 
         const emitUpdate = () => {
-            emit('update', { ...localProps.value })
+            const propsToEmit = { ...localProps.value }
+            if (typeof propsToEmit.fontSize === 'string' && propsToEmit.fontSize.endsWith('px')) {
+                propsToEmit.fontSize = parseInt(propsToEmit.fontSize)
+            }
+            emit('update', propsToEmit)
         }
 
         watch(() => props.block.properties, (newProps) => {
@@ -168,7 +142,7 @@ export default {
                 url: '',
                 backgroundColor: '#2f4574',
                 textColor: '#ffffff',
-                fontSize: '16px',
+                fontSize: 16,
                 fontFamily: 'Arial, sans-serif',
                 fontWeight: '600',
                 textDecoration: 'none',
@@ -178,6 +152,9 @@ export default {
                 padding: { top: '12px', right: '24px', bottom: '12px', left: '24px' },
                 margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' },
                 ...newProps
+            }
+            if (typeof localProps.value.fontSize === 'string' && localProps.value.fontSize.endsWith('px')) {
+                localProps.value.fontSize = parseInt(localProps.value.fontSize)
             }
         }, { deep: true })
 

@@ -31,8 +31,8 @@ npm install @riggerz29/content-builder
 ```vue
 <template>
   <EmailBuilder
-    :v-model="data"
-    :primary-color="#2f4574"
+    v-model="data"
+    :primary-color="'#2f4574'"
     :on-upload="handleUpload"
     :variables="variables"
     @export-json="handleExportJSON"
@@ -178,15 +178,15 @@ export default {
 ## Content Blocks
 
 ### Button
-- Text, URL, colors, fonts, padding, border radius, alignment
+- Text, URL, colors, padding, border radius, margin, full width
 - Inline editing for text and formatting
 
 ### Heading
-- H1-H6 levels, text, fonts, colors, line height, letter spacing
+- H1-H6 levels, text, colors, padding, margin
 - Inline editing with formatting toolbar
 
 ### Paragraph
-- Text, fonts, colors, line height, letter spacing, alignment
+- Text, colors, padding, margin
 - Inline editing with formatting toolbar including lists
 
 ### Image
@@ -206,7 +206,7 @@ export default {
 - Add/remove icons
 
 ### Table
-- Rows and cells, borders, padding, colors, font size
+- Rows and cells, borders, padding, colors, margin
 
 ## Layout Blocks
 
@@ -228,13 +228,7 @@ Columns can contain any content blocks and support nested layouts.
       "properties": {
         "text": "Welcome!",
         "level": "h2",
-        "fontSize": 28,
-        "fontFamily": "Arial, sans-serif",
-        "fontWeight": "bold",
         "color": "#000000",
-        "lineHeight": 1.4,
-        "letterSpacing": 0,
-        "align": "center",
         "margin": { "top": 20, "right": 0, "bottom": 10, "left": 0 },
         "padding": { "top": 0, "right": 0, "bottom": 0, "left": 0 }
       }

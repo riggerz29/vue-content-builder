@@ -14,67 +14,57 @@
             @delete="$emit('delete', block.id)"
         />
 
-        <component
+        <div
             v-if="!isEditing"
-            :is="block.properties.level"
             class="heading-block"
-            :style="headingStyle"
+            :style="combinedStyle"
             @dblclick="startEditing"
+            v-html="block.properties.text"
         >
-            {{ block.properties.text }}
-        </component>
+        </div>
 
-        <div v-else class="heading-block-editing" ref="editingContainer" @focusout="onFocusOut">
-            <div class="inline-toolbar">
-                <select v-model="localProps.level" class="toolbar-select">
-                    <option value="h1">H1</option>
-                    <option value="h2">H2</option>
-                    <option value="h3">H3</option>
-                    <option value="h4">H4</option>
-                    <option value="h5">H5</option>
-                    <option value="h6">H6</option>
-                </select>
-                <select v-model="localProps.fontFamily" class="toolbar-select">
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="Georgia, serif">Georgia</option>
-                    <option value="'Courier New', monospace">Courier</option>
-                    <option value="Verdana, sans-serif">Verdana</option>
-                    <option value="'Times New Roman', serif">Times New Roman</option>
-                </select>
-                <input v-model.number="localProps.fontSize" type="number" class="toolbar-input" style="width: 50px" />
-                <input v-model="localProps.color" type="color" class="toolbar-color" title="Text Color" />
-                <button @click="toggleBold" :class="{ active: localProps.fontWeight === 'bold' }" title="Bold">B</button>
-                <button @click="toggleItalic" :class="{ active: localProps.fontStyle === 'italic' }" title="Italic">I</button>
-                <button @click="toggleUnderline" :class="{ active: localProps.textDecoration === 'underline' }" title="Underline">U</button>
-                <button @click="setAlign('left')" :class="{ active: localProps.align === 'left' }" title="Align Left">⬅</button>
-                <button @click="setAlign('center')" :class="{ active: localProps.align === 'center' }" title="Align Center">↔</button>
-                <button @click="setAlign('right')" :class="{ active: localProps.align === 'right' }" title="Align Right">➡</button>
-                <div class="toolbar__vars" v-if="variablesList.length">
-                    <select v-model="selectedVarIdx" class="toolbar-select small">
-                        <option v-for="(v, i) in variablesList" :key="i" :value="i">{{ v.name }}</option>
+        <div v-else class="heading-block-editing" :style="layoutStyle" ref="editingContainer">
+            <div ref="quillEditor" class="quill-editor"></div>
+            <div class="editing-actions">
+                <div class="toolbar-group">
+                    <select v-model="localProps.level" class="toolbar-select">
+                        <option value="h1">H1</option>
+                        <option value="h2">H2</option>
+                        <option value="h3">H3</option>
+                        <option value="h4">H4</option>
+                        <option value="h5">H5</option>
+                        <option value="h6">H6</option>
                     </select>
-                    <button @click="insertSelectedVariable" title="Insert variable">+</button>
+                    <div class="toolbar__vars" v-if="variablesList.length">
+                        <select v-model="selectedVarIdx" class="toolbar-select small">
+                            <option v-for="(v, i) in variablesList" :key="i" :value="i">{{ v.name }}</option>
+                        </select>
+                        <button @click="insertSelectedVariable" title="Insert variable" class="btn-var">+</button>
+                    </div>
                 </div>
                 <button @click.stop="$emit('delete', block.id)" class="btn-delete">
                     <Trash2 size="16" />
                 </button>
             </div>
-            <textarea
-                ref="editInput"
-                v-model="localProps.text"
-                :style="headingEditStyle"
-                class="heading-block__textarea"
-                rows="2"
-                @keydown="onKeydown"
-            />
         </div>
     </div>
 </template>
 
 <script>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 import BlockActions from "../common/BlockActions.vue";
 import {Trash2} from "lucide-vue-next";
+import Quill from 'quill'
+import 'quill/dist/quill.snow.css'
+
+// Configure Quill to use inline styles for alignment
+const AlignStyle = Quill.import('attributors/style/align')
+Quill.register(AlignStyle, true)
+
+// Configure Quill to use inline styles for font size
+const SizeStyle = Quill.import('attributors/style/size')
+SizeStyle.whitelist = ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '30px', '32px', '36px', '48px', '64px', '72px', '96px']
+Quill.register(SizeStyle, true)
 
 export default {
     name: 'HeadingBlock',
@@ -88,9 +78,55 @@ export default {
     emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop'],
     setup(props, { emit }) {
         const isEditing = ref(false)
-        const editInput = ref(null)
+        const quillEditor = ref(null)
+        let quill = null
         const editingContainer = ref(null)
         const localProps = ref({ ...props.block.properties })
+
+        const initQuill = () => {
+            if (!quillEditor.value) return
+
+            quill = new Quill(quillEditor.value, {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'font': [] }, { 'size': ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '30px', '32px', '36px', '48px', '64px', '72px', '96px'] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'align': [] }],
+                        ['clean']
+                    ]
+                }
+            })
+
+            quill.root.innerHTML = localProps.value.text
+
+            // Apply heading styles to the editor root
+            Object.assign(quill.root.style, headingEditStyle.value)
+
+            quill.on('text-change', () => {
+                localProps.value.text = quill.root.innerHTML
+            })
+
+            quill.focus()
+
+            const handleGlobalClick = (e) => {
+                if (editingContainer.value && !editingContainer.value.contains(e.target)) {
+                    finishEditing()
+                    document.removeEventListener('mousedown', handleGlobalClick)
+                }
+            }
+            document.addEventListener('mousedown', handleGlobalClick)
+        }
+
+        watch(isEditing, (newVal) => {
+            if (newVal) {
+                nextTick(() => {
+                    initQuill()
+                })
+            }
+        })
 
         // normalize variables to an array of { name, format }
         const variablesList = computed(() => {
@@ -100,26 +136,17 @@ export default {
         })
         const selectedVarIdx = ref(0)
 
-        function insertAtCursor(textarea, text) {
-            if (!textarea) return
-            const start = textarea.selectionStart ?? textarea.value.length
-            const end = textarea.selectionEnd ?? textarea.value.length
-            const before = textarea.value.slice(0, start)
-            const after = textarea.value.slice(end)
-            const newVal = before + text + after
-            const newPos = start + text.length
-            textarea.value = newVal
-            localProps.value.text = newVal
-            nextTick(() => {
-                textarea.focus()
-                textarea.setSelectionRange(newPos, newPos)
-            })
+        function insertAtCursor(text) {
+            if (!quill) return
+            const range = quill.getSelection(true)
+            quill.insertText(range.index, text)
+            quill.setSelection(range.index + text.length)
         }
 
         const insertSelectedVariable = () => {
             const v = variablesList.value[selectedVarIdx.value]
             if (!v) return
-            insertAtCursor(editInput.value, v.format)
+            insertAtCursor(v.format)
         }
 
         const onKeydown = (e) => {
@@ -127,6 +154,11 @@ export default {
                 // placeholder for future variable popup
             }
         }
+
+        const layoutStyle = computed(() => ({
+            margin: `${props.block.properties.margin.top}px ${props.block.properties.margin.right}px ${props.block.properties.margin.bottom}px ${props.block.properties.margin.left}px`,
+            padding: `${props.block.properties.padding.top}px ${props.block.properties.padding.right}px ${props.block.properties.padding.bottom}px ${props.block.properties.padding.left}px`
+        }))
 
         const headingStyle = computed(() => ({
             fontSize: `${props.block.properties.fontSize}px`,
@@ -137,31 +169,27 @@ export default {
             color: props.block.properties.color,
             lineHeight: props.block.properties.lineHeight,
             letterSpacing: `${props.block.properties.letterSpacing}px`,
-            textAlign: props.block.properties.align,
-            margin: `${props.block.properties.margin.top}px ${props.block.properties.margin.right}px ${props.block.properties.margin.bottom}px ${props.block.properties.margin.left}px`,
-            padding: `${props.block.properties.padding.top}px ${props.block.properties.padding.right}px ${props.block.properties.padding.bottom}px ${props.block.properties.padding.left}px`
+            textAlign: props.block.properties.align
         }))
 
-        const headingEditStyle = computed(() => ({
-            fontSize: `${localProps.value.fontSize}px`,
-            fontFamily: localProps.value.fontFamily,
-            fontWeight: localProps.value.fontWeight,
-            fontStyle: localProps.value.fontStyle || 'normal',
-            textDecoration: localProps.value.textDecoration || 'none',
-            color: localProps.value.color,
-            lineHeight: localProps.value.lineHeight,
-            letterSpacing: `${localProps.value.letterSpacing}px`,
-            textAlign: localProps.value.align
-        }))
+        const headingEditStyle = computed(() => {
+            const s = { ...localProps.value }
+            return {
+                fontSize: `${s.fontSize}px`,
+                fontFamily: s.fontFamily,
+                fontWeight: s.fontWeight,
+                fontStyle: s.fontStyle || 'normal',
+                textDecoration: s.textDecoration || 'none',
+                color: s.color,
+                lineHeight: s.lineHeight,
+                letterSpacing: `${s.letterSpacing}px`,
+                textAlign: s.align
+            }
+        })
 
         const startEditing = () => {
             isEditing.value = true
             localProps.value = { ...props.block.properties }
-            setTimeout(() => {
-                if (editInput.value) {
-                    editInput.value.focus()
-                }
-            }, 10)
         }
 
         const finishEditing = () => {
@@ -197,25 +225,27 @@ export default {
             finishEditing()
         }
 
+        const combinedStyle = computed(() => ({
+            ...layoutStyle.value,
+            ...headingStyle.value
+        }))
+
         return {
             isEditing,
-            editInput,
+            quillEditor,
             editingContainer,
             localProps,
             variablesList,
             selectedVarIdx,
             insertSelectedVariable,
             onKeydown,
+            layoutStyle,
             headingStyle,
             headingEditStyle,
+            combinedStyle,
             startEditing,
             finishEditing,
-            toggleBold,
-            toggleItalic,
-            toggleUnderline,
-            setAlign,
-            handleDrop,
-            onFocusOut
+            handleDrop
         }
     }
 }
@@ -246,25 +276,37 @@ export default {
 
 .heading-block-editing {
     padding: 10px;
-}
-
-.heading-block__textarea {
-    width: 100%;
-    border: 2px dashed #2f4574;
-    padding: 8px;
-    resize: vertical;
-    font-family: inherit;
-}
-
-.inline-toolbar {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 8px;
-    padding: 8px;
     background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 4px;
-    flex-wrap: wrap;
+}
+
+.quill-editor {
+    min-height: 80px;
+    margin-bottom: 10px;
+}
+
+/* Fix for Quill inline sizes in toolbar */
+:deep(.ql-snow .ql-picker.ql-size .ql-picker-label::before),
+:deep(.ql-snow .ql-picker.ql-size .ql-picker-item::before) {
+    content: attr(data-value) !important;
+}
+
+:deep(.ql-snow .ql-picker.ql-size .ql-picker-item[data-value]::before) {
+    content: attr(data-value) !important;
+}
+
+.editing-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.toolbar-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
 .toolbar-select,
@@ -276,12 +318,12 @@ export default {
     font-size: 12px;
 }
 
-.toolbar-color {
-    width: 40px;
-    padding: 2px;
+.toolbar__vars {
+    display: flex;
+    gap: 4px;
 }
 
-.inline-toolbar button {
+.btn-var {
     padding: 4px 8px;
     border: 1px solid #e5e7eb;
     background: #f9fafb;
@@ -291,25 +333,12 @@ export default {
     font-weight: bold;
 }
 
-.inline-toolbar button:hover {
-    background: #f3f4f6;
-}
-
-.inline-toolbar button.active {
-    background: #2f4574;
-    color: white;
-    border-color: #2f4574;
-}
-
-.inline-toolbar button.btn-check {
-    background: #10b981;
-    color: white;
-    border-color: #10b981;
-}
-
-.inline-toolbar button.btn-delete {
+.btn-delete {
     background: #ef4444;
     color: white;
-    border-color: #ef4444;
+    border: 1px solid #ef4444;
+    border-radius: 3px;
+    padding: 4px 8px;
+    cursor: pointer;
 }
 </style>
