@@ -27,6 +27,8 @@ export function generateHTML(blocks, bodySettings) {
     @media only screen and (max-width: ${(Number(bodySettings.contentWidth) || 600) + 20}px) {
       .cb-container { width: 100% !important; max-width: 100% !important; }
       .cb-col { display: block !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
+      /* stacked columns would otherwise double the row padding between them */
+      .cb-col + .cb-col { padding-top: 0 !important; }
       img { max-width: 100% !important; height: auto !important; }
 ${mobileAlignCss()}
     }
