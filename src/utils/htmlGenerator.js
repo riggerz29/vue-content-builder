@@ -23,6 +23,13 @@ export function generateHTML(blocks, bodySettings) {
     table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
     img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
     a { color: ${bodySettings.linkColor || '#2f4574'}; text-decoration: underline; }
+    /* Mobile: let the content shrink and stack row columns vertically */
+    @media only screen and (max-width: ${(Number(bodySettings.contentWidth) || 600) + 20}px) {
+      .cb-container { width: 100% !important; max-width: 100% !important; }
+      .cb-col { display: block !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
+      img { max-width: 100% !important; height: auto !important; }
+${mobileAlignCss()}
+    }
   </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: ${bodySettings.backgroundColor}; font-family: ${bodySettings.fontFamily}; font-weight: ${bodySettings.fontWeight || 'normal'}; color: ${bodySettings.textColor || '#000000'};">
@@ -30,7 +37,7 @@ export function generateHTML(blocks, bodySettings) {
   <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: ${bodySettings.backgroundColor};">
     <tr>
       <td align="${contentAlignment}" style="padding: 20px 0;">
-        <table border="0" cellpadding="0" cellspacing="0" width="${bodySettings.contentWidth}" style="max-width: ${bodySettings.contentWidth}px; background-color: #ffffff;">
+        <table class="cb-container" border="0" cellpadding="0" cellspacing="0" width="${bodySettings.contentWidth}" style="width: 100%; max-width: ${bodySettings.contentWidth}px; background-color: #ffffff;">
           <tr>
             <td style="font-family: ${bodySettings.fontFamily}; font-weight: ${bodySettings.fontWeight || 'normal'}; color: ${bodySettings.textColor || '#000000'};">
               ${contentHtml}
@@ -77,7 +84,7 @@ function generateButtonHTML(block) {
     return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin};">
       <tr>
-        <td align="${p.align}">
+        <td align="${p.align}"${mobileAlignClass(p)}>
           <table border="0" cellpadding="0" cellspacing="0">
             <tr>
               <td align="center" style="border-radius: ${p.borderRadius}px; background-color: ${p.backgroundColor};">
@@ -99,7 +106,7 @@ function generateDividerHTML(block) {
     return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin};">
       <tr>
-        <td align="${p.align}">
+        <td align="${p.align}"${mobileAlignClass(p)}>
           <table border="0" cellpadding="0" cellspacing="0" width="${p.width}%">
             <tr>
               <td style="border-top: ${p.height}px solid ${p.color};"></td>
@@ -116,7 +123,7 @@ function generateHeadingHTML(block) {
     const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
 
     return `
-    <div style="margin: ${margin}; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.color}; line-height: ${p.lineHeight}; letter-spacing: ${p.letterSpacing}px; text-align: ${p.align};">
+    <div${mobileAlignClass(p)} style="margin: ${margin}; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.color}; line-height: ${p.lineHeight}; letter-spacing: ${p.letterSpacing}px; text-align: ${p.align};">
       ${p.text}
     </div>`
 }
@@ -127,7 +134,7 @@ function generateParagraphHTML(block) {
     const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
 
     return `
-    <div style="margin: ${margin}; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.color}; line-height: ${p.lineHeight}; letter-spacing: ${p.letterSpacing}px; text-align: ${p.align};">
+    <div${mobileAlignClass(p)} style="margin: ${margin}; padding: ${padding}; font-family: ${p.fontFamily}; font-size: ${p.fontSize}px; font-weight: ${p.fontWeight}; color: ${p.color}; line-height: ${p.lineHeight}; letter-spacing: ${p.letterSpacing}px; text-align: ${p.align};">
       ${p.text}
     </div>`
 }
@@ -143,7 +150,7 @@ function generateImageHTML(block) {
     return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin};">
       <tr>
-        <td align="${p.align}">
+        <td align="${p.align}"${mobileAlignClass(p)}>
           ${content}
         </td>
       </tr>
@@ -157,7 +164,7 @@ function generateVideoHTML(block) {
     return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin};">
       <tr>
-        <td align="${p.align}">
+        <td align="${p.align}"${mobileAlignClass(p)}>
           <a href="${p.url}" target="_blank">
             <img src="${p.thumbnailUrl}" alt="Video" width="${p.width}" style="display: block; max-width: 100%; height: auto;" />
           </a>
@@ -191,7 +198,7 @@ function generateSocialHTML(block) {
     return `
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: ${margin};">
       <tr>
-        <td align="${p.align}">
+        <td align="${p.align}"${mobileAlignClass(p)}>
           ${iconsHtml}
         </td>
       </tr>
@@ -222,21 +229,41 @@ function generateRowHTML(block) {
     const p = block.properties
     const padding = `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`
 
+    // single column rows have nothing to stack
+    const stacks = block.columns.length > 1
+
     const columnsHtml = block.columns.map(column => {
         const columnContent = column.blocks.map(b => generateBlockHTML(b)).join('\n')
         return `
-      <td width="${column.width}%" valign="top" style="padding: ${padding};">
+      <td class="${stacks ? 'cb-col' : ''}" width="${column.width}%" valign="top" style="padding: ${padding};">
         ${columnContent}
       </td>
     `
     }).join('')
 
     return `
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: ${p.backgroundColor};">
+    <table class="cb-row" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: ${p.backgroundColor};">
       <tr>
         ${columnsHtml}
       </tr>
     </table>`
+}
+
+const MOBILE_ALIGNMENTS = ['left', 'center', 'right']
+
+/**
+ * Optional `mobileAlign` block property ('left' | 'center' | 'right'): overrides the block's
+ * alignment on small screens only, e.g. right-aligned content in a column that stacks.
+ */
+function mobileAlignClass(p) {
+    return MOBILE_ALIGNMENTS.includes(p?.mobileAlign) ? ` class="cb-m-${p.mobileAlign}"` : ''
+}
+
+function mobileAlignCss() {
+    const margins = { left: '0 auto 0 0', center: '0 auto', right: '0 0 0 auto' }
+
+    return MOBILE_ALIGNMENTS.map(align => `      .cb-m-${align}, div.cb-m-${align} * { text-align: ${align} !important; text-align: -webkit-${align} !important; }
+      td.cb-m-${align} > table { margin: ${margins[align]} !important; }`).join('\n')
 }
 
 function escapeHtml(text) {
