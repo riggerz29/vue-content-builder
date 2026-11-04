@@ -401,7 +401,6 @@ export default {
             }
 
             draggedBlock = null
-            emitChange()
         }
 
         const handleColumnDrop = (dropInfo) => {
@@ -414,6 +413,15 @@ export default {
             // Create the new block
             const newBlock = createBlock(draggedBlock)
 
+            // Rows can't nest (RowBlock can't render them and the export would be broken), so a
+            // row dropped into a column becomes a new top-level row directly after this one
+            if (newBlock.type === 'row') {
+                const rowIndex = _findBlockIndex(blocks.value, rowBlock.id)
+                blocks.value.splice(rowIndex === -1 ? blocks.value.length : rowIndex + 1, 0, newBlock)
+                draggedBlock = null
+                return
+            }
+
             // Add to the specified column
             const column = rowBlock.columns[dropInfo.columnIndex]
             if (column) {
@@ -425,7 +433,6 @@ export default {
             }
 
             draggedBlock = null
-            emitChange()
         }
 
         const createBlock = (template) => {
@@ -583,14 +590,12 @@ export default {
             const block = _findBlockById(blocks.value, id)
             if (block) {
                 block.properties = { ...block.properties, ...properties }
-                emitChange()
             }
         }
 
         const updateBlockProperties = (properties) => {
             if (selectedBlock.value) {
                 selectedBlock.value.properties = { ...selectedBlock.value.properties, ...properties }
-                emitChange()
             }
         }
 
@@ -606,7 +611,6 @@ export default {
             if (selectedBlock.value && selectedBlock.value.id === id) {
                 selectedBlock.value = null
             }
-            emitChange()
         }
 
         const copyBlock = (id) => {
@@ -616,7 +620,6 @@ export default {
                 copied.id = Date.now() + Math.random()
                 const index = _findBlockIndex(blocks.value, id)
                 blocks.value.splice(index + 1, 0, copied)
-                emitChange()
             }
         }
 
@@ -626,7 +629,6 @@ export default {
                 const temp = blocks.value[index]
                 blocks.value[index] = blocks.value[index - 1]
                 blocks.value[index - 1] = temp
-                emitChange()
             }
         }
 
@@ -636,7 +638,6 @@ export default {
                 const temp = blocks.value[index]
                 blocks.value[index] = blocks.value[index + 1]
                 blocks.value[index + 1] = temp
-                emitChange()
             }
         }
 
@@ -731,7 +732,8 @@ export default {
             isSyncingFromParent.value = false
         }, { deep: true })
 
-        // Always keep v-model in sync when user edits blocks or body settings
+        // The single place edits are emitted from: every handler mutates blocks/bodySettings and this
+        // deep watcher picks it up, so don't also call emitChange() from handlers (that emits twice)
         watch([blocks, bodySettings], () => {
             if (isSyncingFromParent.value) return
             emitChange()
