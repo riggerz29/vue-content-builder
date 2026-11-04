@@ -193,7 +193,7 @@
                         :index="index"
                         :is-selected="selectedBlock && selectedBlock.id === block.id"
                         :selected-block-id="selectedBlock ? selectedBlock.id : null"
-                        :variables="variables"
+                        :variables="acceptsVariables(block?.type) ? variables : undefined"
                         @select="selectBlock(block)"
                         @child-select="selectBlock($event)"
                         @update="updateBlock"
@@ -386,6 +386,9 @@ export default {
 
         const getPropertiesComponent = (type) => BLOCK_TYPES[type]?.properties || null
 
+        // only pass `variables` to blocks that declare it, so it doesn't land on others as a DOM attribute
+        const acceptsVariables = (type) => !!BLOCK_TYPES[type]?.component.props?.variables
+
         const selectBlock = (block) => {
             selectedBlock.value = block
         }
@@ -568,6 +571,7 @@ export default {
             handleColumnDrop,
             getBlockComponent,
             getPropertiesComponent,
+            acceptsVariables,
             selectBlock,
             updateBlock,
             updateBlockProperties,

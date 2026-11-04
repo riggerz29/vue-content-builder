@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { mount } from '@vue/test-utils'
 import EmailBuilder from './EmailBuilder.vue'
+import { createBlock } from '../blocks'
 
 function dataTransfer() {
     const data = {}
@@ -119,6 +120,49 @@ describe('EmailBuilder state changes', () => {
         expect(updates).toBe(before + 1)
         expect(builder.findAll('.block-wrapper')).toHaveLength(1)
 
+        wrapper.unmount()
+    })
+})
+
+describe('EmailBuilder variables', () => {
+    const variables = [{ label: 'First name', format: '$$first_name$$' }]
+
+    async function mountWithRow() {
+        const paragraph = createBlock({ type: 'paragraph' })
+        const image = createBlock({ type: 'image' })
+        const row = createBlock({ type: 'row', columns: [{ width: 50 }, { width: 50 }] })
+        row.columns[0].blocks.push(paragraph)
+        row.columns[1].blocks.push(image)
+
+        const wrapper = mount(EmailBuilder, {
+            attachTo: document.body,
+            props: { variables, modelValue: { json: { blocks: [row, createBlock({ type: 'image' })] }, html: '' } }
+        })
+        await nextTick(); await nextTick()
+        return wrapper
+    }
+
+    it('offers the variable picker for text blocks inside row columns', async () => {
+        const wrapper = await mountWithRow()
+        await wrapper.find('.row-block__column .paragraph-block').trigger('dblclick')
+        await nextTick(); await nextTick()
+
+        const options = wrapper.findAll('.row-block__column .toolbar__vars option')
+        expect(options.map(o => o.text())).toEqual(['First name'])
+
+        await wrapper.find('.row-block__column .btn-var').trigger('click')
+        document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+        await nextTick()
+
+        const [row] = wrapper.emitted('update:modelValue').at(-1)[0].json.blocks
+        expect(row.columns[0].blocks[0].properties.text).toContain('$$first_name$$')
+        wrapper.unmount()
+    })
+
+    it('does not leak variables onto blocks as a DOM attribute', async () => {
+        const wrapper = await mountWithRow()
+
+        expect(wrapper.findAll('.canvas__container [variables]')).toHaveLength(0)
         wrapper.unmount()
     })
 })

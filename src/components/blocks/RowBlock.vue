@@ -34,6 +34,7 @@
                     :block="childBlock"
                     :index="childIndex"
                     :is-selected="selectedBlockId === childBlock.id"
+                    :variables="acceptsVariables(childBlock.type) ? variables : undefined"
                     @select="$emit('child-select', childBlock)"
                     @update="handleChildUpdate"
                     @delete="handleChildDelete"
@@ -62,7 +63,9 @@ export default {
         block: { type: Object, required: true },
         isSelected: { type: Boolean, default: false },
         index: { type: Number, required: true },
-        selectedBlockId: { type: [Number, String], default: null }
+        selectedBlockId: { type: [Number, String], default: null },
+        // passed through to the content blocks in each column (for the variable picker)
+        variables: { type: [Array, Object], default: () => ([]) }
     },
     emits: ['select', 'child-select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop', 'column-drop'],
     setup(props, { emit }) {
@@ -85,6 +88,7 @@ export default {
 
         // Columns only hold content blocks; rows don't nest
         const getBlockComponent = (type) => CONTENT_BLOCK_TYPES[type]?.component || 'div'
+        const acceptsVariables = (type) => !!CONTENT_BLOCK_TYPES[type]?.component.props?.variables
 
         const handleDrop = (event) => {
             emit('drop', event, props.index)
@@ -181,6 +185,7 @@ export default {
             rowStyle,
             getColumnStyle,
             getBlockComponent,
+            acceptsVariables,
             handleDrop,
             handleColumnDrop,
             handleNestedDrop,
