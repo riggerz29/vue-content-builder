@@ -43,20 +43,11 @@
 </template>
 
 <script>
-import { ref, computed, nextTick, watch } from 'vue'
+import { computed } from 'vue'
 import { Trash2 } from 'lucide-vue-next'
-import BlockActions from "../common/BlockActions.vue";
-import Quill from 'quill'
-import 'quill/dist/quill.snow.css'
-
-// Configure Quill to use inline styles for alignment
-const AlignStyle = Quill.import('attributors/style/align')
-Quill.register(AlignStyle, true)
-
-// Configure Quill to use inline styles for font size
-const SizeStyle = Quill.import('attributors/style/size')
-SizeStyle.whitelist = ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '30px', '32px', '36px', '48px', '64px', '72px', '96px']
-Quill.register(SizeStyle, true)
+import BlockActions from '../common/BlockActions.vue'
+import { BASIC_TOOLBAR } from '../../utils/quill'
+import { useInlineEditor } from '../../composables/useInlineEditor'
 
 export default {
     name: 'ButtonBlock',
@@ -71,57 +62,17 @@ export default {
     },
     emits: ['select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop'],
     setup(props, { emit }) {
-        const isEditing = ref(false)
-        const quillEditor = ref(null)
-        let quill = null
-        const editingContainer = ref(null)
-        const localProps = ref({ ...props.block.properties })
-
-        const initQuill = () => {
-            if (!quillEditor.value) return
-
-            quill = new Quill(quillEditor.value, {
-                theme: 'snow',
-                modules: {
-                    toolbar: [
-                        ['bold', 'italic', 'underline'],
-                        [{ 'color': [] }, { 'background': [] }],
-                        ['clean']
-                    ]
+        const editor = useInlineEditor(props, emit, {
+            toolbar: BASIC_TOOLBAR,
+            editorStyle: () => {
+                const s = { ...buttonStyle.value }
+                if (s.fontSize && !isNaN(parseInt(s.fontSize))) {
+                    s.fontSize = `${parseInt(s.fontSize)}px`
                 }
-            })
-
-            quill.root.innerHTML = localProps.value.text
-
-            // Apply button styles to the editor root
-            const s = { ...buttonStyle.value }
-            if (s.fontSize && !isNaN(parseInt(s.fontSize))) {
-                s.fontSize = `${parseInt(s.fontSize)}px`
-            }
-            Object.assign(quill.root.style, s)
-
-            quill.on('text-change', () => {
-                localProps.value.text = quill.root.innerHTML
-            })
-
-            quill.focus()
-
-            const handleGlobalClick = (e) => {
-                if (editingContainer.value && !editingContainer.value.contains(e.target)) {
-                    finishEditing()
-                    document.removeEventListener('mousedown', handleGlobalClick)
-                }
-            }
-            document.addEventListener('mousedown', handleGlobalClick)
-        }
-
-        watch(isEditing, (newVal) => {
-            if (newVal) {
-                nextTick(() => {
-                    initQuill()
-                })
+                return s
             }
         })
+        const { localProps } = editor
 
         const buttonContainerStyle = computed(() => ({
             textAlign: props.block.properties.align,
@@ -129,47 +80,32 @@ export default {
         }))
 
         const buttonStyle = computed(() => {
-            const props = localProps.value
+            const p = localProps.value
             return {
                 display: 'inline-block',
-                backgroundColor: props.backgroundColor,
-                color: props.textColor,
-                fontSize: `${props.fontSize}px`,
-                fontFamily: props.fontFamily,
-                fontWeight: props.fontWeight,
-                textDecoration: props.textDecoration,
-                borderRadius: `${props.borderRadius}px`,
-                padding: `${props.padding.top}px ${props.padding.right}px ${props.padding.bottom}px ${props.padding.left}px`,
+                backgroundColor: p.backgroundColor,
+                color: p.textColor,
+                fontSize: `${p.fontSize}px`,
+                fontFamily: p.fontFamily,
+                fontWeight: p.fontWeight,
+                textDecoration: p.textDecoration,
+                borderRadius: `${p.borderRadius}px`,
+                padding: `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`,
                 border: 'none',
                 cursor: 'pointer',
                 textAlign: 'center',
-                width: props.fullWidth ? '100%' : 'auto'
+                width: p.fullWidth ? '100%' : 'auto'
             }
         })
-
-        const startEditing = () => {
-            isEditing.value = true
-            localProps.value = { ...props.block.properties }
-        }
-
-        const finishEditing = () => {
-            emit('update', props.block.id, localProps.value)
-            isEditing.value = false
-        }
 
         const handleDrop = (event) => {
             emit('drop', event, props.index)
         }
 
         return {
-            isEditing,
-            quillEditor,
-            editingContainer,
-            localProps,
+            ...editor,
             buttonContainerStyle,
             buttonStyle,
-            startEditing,
-            finishEditing,
             handleDrop
         }
     }

@@ -93,6 +93,7 @@
 <script>
 import { ref, watch, computed } from 'vue'
 import RichTextEditor from '../common/RichTextEditor.vue'
+import { normalizeVariables } from '../../utils/variables'
 
 export default {
     name: 'HeadingProperties',
@@ -131,11 +132,7 @@ export default {
         })
 
         // normalize variables to array
-        const variablesList = computed(() => {
-            const vars = props.variables || []
-            if (Array.isArray(vars)) return vars.filter(v => v && (v.name || v.label) && v.format).map(v => ({ name: v.name || v.label, format: v.format }))
-            return Object.values(vars).filter(v => v && (v.name || v.label) && v.format).map(v => ({ name: v.name || v.label, format: v.format }))
-        })
+        const variablesList = computed(() => normalizeVariables(props.variables))
         const selectedVarIdx = ref(0)
         const insertSelectedVariable = () => {
             const v = variablesList.value[selectedVarIdx.value]

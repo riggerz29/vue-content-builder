@@ -6,17 +6,7 @@
 
 <script>
 import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
-import Quill from 'quill'
-import 'quill/dist/quill.snow.css'
-
-// Configure Quill to use inline styles for alignment
-const AlignStyle = Quill.import('attributors/style/align')
-Quill.register(AlignStyle, true)
-
-// Configure Quill to use inline styles for font size
-const SizeStyle = Quill.import('attributors/style/size')
-SizeStyle.whitelist = ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '30px', '32px', '36px', '48px', '64px', '72px', '96px']
-Quill.register(SizeStyle, true)
+import { createQuill, FULL_TOOLBAR } from '../../utils/quill'
 
 export default {
     name: 'RichTextEditor',
@@ -27,14 +17,7 @@ export default {
         },
         toolbar: {
             type: Array,
-            default: () => [
-                [{ 'font': [] }, { 'size': ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '30px', '32px', '36px', '48px', '64px', '72px', '96px'] }],
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ 'color': [] }, { 'background': [] }],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                [{ 'align': [] }],
-                ['clean']
-            ]
+            default: () => FULL_TOOLBAR
         },
         styles: {
             type: Object,
@@ -57,12 +40,7 @@ export default {
         }
 
         onMounted(() => {
-            quill = new Quill(editorContainer.value, {
-                theme: 'snow',
-                modules: {
-                    toolbar: props.toolbar
-                }
-            })
+            quill = createQuill(editorContainer.value, props.toolbar)
 
             quill.root.innerHTML = props.modelValue
             applyStyles()

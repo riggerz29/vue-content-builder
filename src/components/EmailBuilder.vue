@@ -63,7 +63,7 @@
                         <div class="content__items">
                             <div
                                 v-for="block in layoutBlocks"
-                                :key="block.type"
+                                :key="block.label"
                                 class="content__item"
                                 draggable="true"
                                 @dragstart="onDragStart($event, block)"
@@ -193,7 +193,7 @@
                         :index="index"
                         :is-selected="selectedBlock && selectedBlock.id === block.id"
                         :selected-block-id="selectedBlock ? selectedBlock.id : null"
-                        :variables="variables"
+                        :variables="acceptsVariables(block?.type) ? variables : undefined"
                         @select="selectBlock(block)"
                         @child-select="selectBlock($event)"
                         @update="updateBlock"
@@ -213,49 +213,14 @@
 <script>
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import Icon from './common/Icon.vue'
-import ButtonBlock from './blocks/ButtonBlock.vue'
-import DividerBlock from './blocks/DividerBlock.vue'
-import HeadingBlock from './blocks/HeadingBlock.vue'
-import ParagraphBlock from './blocks/ParagraphBlock.vue'
-import ImageBlock from './blocks/ImageBlock.vue'
-import VideoBlock from './blocks/VideoBlock.vue'
-import SocialBlock from './blocks/SocialBlock.vue'
-import TableBlock from './blocks/TableBlock.vue'
-import RowBlock from './blocks/RowBlock.vue'
-import ButtonProperties from './properties/ButtonProperties.vue'
-import DividerProperties from './properties/DividerProperties.vue'
-import HeadingProperties from './properties/HeadingProperties.vue'
-import ParagraphProperties from './properties/ParagraphProperties.vue'
-import ImageProperties from './properties/ImageProperties.vue'
-import VideoProperties from './properties/VideoProperties.vue'
-import SocialProperties from './properties/SocialProperties.vue'
-import TableProperties from './properties/TableProperties.vue'
-import RowProperties from './properties/RowProperties.vue'
+import { CONTENT_BLOCKS, LAYOUT_PRESETS, BLOCK_TYPES, createBlock, createBlockId } from '../blocks'
 import { generateHTML } from '../utils/htmlGenerator'
 import { useInteractiveGuard } from '../composables/useInteractiveGuard'
 
 export default {
     name: 'EmailBuilder',
     components: {
-        Icon,
-        ButtonBlock,
-        DividerBlock,
-        HeadingBlock,
-        ParagraphBlock,
-        ImageBlock,
-        VideoBlock,
-        SocialBlock,
-        TableBlock,
-        RowBlock,
-        ButtonProperties,
-        DividerProperties,
-        HeadingProperties,
-        ParagraphProperties,
-        ImageProperties,
-        VideoProperties,
-        SocialProperties,
-        TableProperties,
-        RowProperties
+        Icon
     },
     props: {
         primaryColor: {
@@ -339,27 +304,9 @@ export default {
             { id: 'body', label: 'Body' }
         ]
 
-        const contentBlocks = [
-            { type: 'button', label: 'Button', icon: 'square' },
-            { type: 'divider', label: 'Divider', icon: 'minus' },
-            { type: 'heading', label: 'Heading', icon: 'type' },
-            { type: 'paragraph', label: 'Paragraph', icon: 'alignLeft' },
-            { type: 'image', label: 'Image', icon: 'image' },
-            { type: 'video', label: 'Video', icon: 'video' },
-            { type: 'social', label: 'Social', icon: 'users' },
-            { type: 'table', label: 'Table', icon: 'table' }
-        ]
-
-        const layoutBlocks = [
-            { type: 'row', label: '1 Column', columns: [{ width: 100 }] },
-            { type: 'row', label: '2 Columns 50/50', columns: [{ width: 50 }, { width: 50 }] },
-            { type: 'row', label: '3 Columns 33/33/33', columns: [{ width: 33.33 }, { width: 33.33 }, { width: 33.34 }] },
-            { type: 'row', label: '4 Columns 25/25/25/25', columns: [{ width: 25 }, { width: 25 }, { width: 25 }, { width: 25 }] },
-            { type: 'row', label: '2 Columns 33/67', columns: [{ width: 33.33 }, { width: 66.67 }] },
-            { type: 'row', label: '2 Columns 67/33', columns: [{ width: 66.67 }, { width: 33.33 }] },
-            { type: 'row', label: '4 Columns 17/33/17/33', columns: [{ width: 17 }, { width: 33 }, { width: 17 }, { width: 33 }] },
-            { type: 'row', label: '4 Columns 33/17/33/17', columns: [{ width: 33 }, { width: 17 }, { width: 33 }, { width: 17 }] }
-        ]
+        // Sidebar items come from the block registry (src/blocks)
+        const contentBlocks = CONTENT_BLOCKS
+        const layoutBlocks = LAYOUT_PRESETS
 
         const cssVars = computed(() => ({
             '--primary-color': props.primaryColor
@@ -401,7 +348,6 @@ export default {
             }
 
             draggedBlock = null
-            emitChange()
         }
 
         const handleColumnDrop = (dropInfo) => {
@@ -414,6 +360,15 @@ export default {
             // Create the new block
             const newBlock = createBlock(draggedBlock)
 
+            // Rows can't nest (RowBlock can't render them and the export would be broken), so a
+            // row dropped into a column becomes a new top-level row directly after this one
+            if (newBlock.type === 'row') {
+                const rowIndex = _findBlockIndex(blocks.value, rowBlock.id)
+                blocks.value.splice(rowIndex === -1 ? blocks.value.length : rowIndex + 1, 0, newBlock)
+                draggedBlock = null
+                return
+            }
+
             // Add to the specified column
             const column = rowBlock.columns[dropInfo.columnIndex]
             if (column) {
@@ -425,155 +380,14 @@ export default {
             }
 
             draggedBlock = null
-            emitChange()
         }
 
-        const createBlock = (template) => {
-            const id = Date.now() + Math.random()
+        const getBlockComponent = (type) => BLOCK_TYPES[type]?.component || 'div'
 
-            if (template.type === 'row') {
-                return {
-                    id,
-                    type: 'row',
-                    columns: template.columns.map(col => ({
-                        width: col.width,
-                        blocks: []
-                    })),
-                    properties: {
-                        backgroundColor: 'transparent',
-                        padding: { top: 10, right: 0, bottom: 10, left: 0 }
-                    }
-                }
-            }
+        const getPropertiesComponent = (type) => BLOCK_TYPES[type]?.properties || null
 
-            const defaults = {
-                button: {
-                    text: '<p style=\"text-align: center;\">Click Here</p>',
-                    url: '#',
-                    backgroundColor: '#2f4574',
-                    textColor: '#ffffff',
-                    fontSize: 16,
-                    fontFamily: 'Arial, sans-serif',
-                    fontWeight: 'normal',
-                    textDecoration: 'none',
-                    borderRadius: 4,
-                    padding: { top: 12, right: 24, bottom: 12, left: 24 },
-                    margin: { top: 10, right: 0, bottom: 10, left: 0 },
-                    align: 'center',
-                    fullWidth: false
-                },
-                divider: {
-                    width: 100,
-                    height: 1,
-                    color: '#e5e7eb',
-                    align: 'center',
-                    margin: { top: 10, right: 0, bottom: 10, left: 0 }
-                },
-                heading: {
-                    text: '<p>Heading Text</p>',
-                    level: 'h2',
-                    fontSize: 28,
-                    fontFamily: 'Arial, sans-serif',
-                    fontWeight: 'bold',
-                    color: '#000000',
-                    lineHeight: 1.4,
-                    letterSpacing: 0,
-                    align: 'left',
-                    margin: { top: 10, right: 10, bottom: 10, left: 10 },
-                    padding: { top: 0, right: 0, bottom: 0, left: 0 }
-                },
-                paragraph: {
-                    text: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>',
-                    fontSize: 14,
-                    fontFamily: 'Arial, sans-serif',
-                    fontWeight: 'normal',
-                    color: '#000000',
-                    lineHeight: 1.6,
-                    letterSpacing: 0,
-                    align: 'left',
-                    margin: { top: 10, right: 10, bottom: 10, left: 10 },
-                    padding: { top: 0, right: 0, bottom: 0, left: 0 }
-                },
-                image: {
-                    url: 'https://dummyimage.com/600x300/cccccc/fff&text=Add+Image/600x300',
-                    alt: 'Image',
-                    width: '100%',
-                    height: 'auto',
-                    link: '',
-                    align: 'center',
-                    margin: { top: 10, right: 0, bottom: 10, left: 0 },
-                    meta: {}
-                },
-                video: {
-                    url: '',
-                    thumbnailUrl: 'https://dummyimage.com/600x300/cccccc/fff&text=Add+Image/600x300',
-                    width: '100%',
-                    align: 'center',
-                    margin: { top: 10, right: 0, bottom: 10, left: 0 }
-                },
-                social: {
-                    icons: [
-                        { platform: 'facebook', url: '#' },
-                        { platform: 'x', url: '#' },
-                        { platform: 'instagram', url: '#' },
-                        { platform: 'linkedin', url: '#' }
-                    ],
-                    iconSize: 32,
-                    iconSpacing: 10,
-                    align: 'center',
-                    margin: { top: 10, right: 0, bottom: 10, left: 0 }
-                },
-                table: {
-                    rows: [
-                        { cells: ['Cell 1', 'Cell 2'] },
-                        { cells: ['Cell 3', 'Cell 4'] }
-                    ],
-                    borderColor: '#e5e7eb',
-                    borderWidth: 1,
-                    cellPadding: 10,
-                    backgroundColor: '#ffffff',
-                    textColor: '#000000',
-                    fontSize: 14,
-                    margin: { top: 10, right: 0, bottom: 10, left: 0 }
-                }
-            }
-
-            return {
-                id,
-                type: template.type,
-                properties: defaults[template.type] || {}
-            }
-        }
-
-        const getBlockComponent = (type) => {
-            const components = {
-                button: 'ButtonBlock',
-                divider: 'DividerBlock',
-                heading: 'HeadingBlock',
-                paragraph: 'ParagraphBlock',
-                image: 'ImageBlock',
-                video: 'VideoBlock',
-                social: 'SocialBlock',
-                table: 'TableBlock',
-                row: 'RowBlock'
-            }
-            return components[type] || 'div'
-        }
-
-        const getPropertiesComponent = (type) => {
-            const components = {
-                button: 'ButtonProperties',
-                divider: 'DividerProperties',
-                heading: 'HeadingProperties',
-                paragraph: 'ParagraphProperties',
-                image: 'ImageProperties',
-                video: 'VideoProperties',
-                social: 'SocialProperties',
-                table: 'TableProperties',
-                row: 'RowProperties'
-            }
-            return components[type] || null
-        }
+        // only pass `variables` to blocks that declare it, so it doesn't land on others as a DOM attribute
+        const acceptsVariables = (type) => !!BLOCK_TYPES[type]?.component.props?.variables
 
         const selectBlock = (block) => {
             selectedBlock.value = block
@@ -583,14 +397,12 @@ export default {
             const block = _findBlockById(blocks.value, id)
             if (block) {
                 block.properties = { ...block.properties, ...properties }
-                emitChange()
             }
         }
 
         const updateBlockProperties = (properties) => {
             if (selectedBlock.value) {
                 selectedBlock.value.properties = { ...selectedBlock.value.properties, ...properties }
-                emitChange()
             }
         }
 
@@ -606,17 +418,15 @@ export default {
             if (selectedBlock.value && selectedBlock.value.id === id) {
                 selectedBlock.value = null
             }
-            emitChange()
         }
 
         const copyBlock = (id) => {
             const block = _findBlockById(blocks.value, id)
             if (block) {
                 const copied = JSON.parse(JSON.stringify(block))
-                copied.id = Date.now() + Math.random()
+                copied.id = createBlockId()
                 const index = _findBlockIndex(blocks.value, id)
                 blocks.value.splice(index + 1, 0, copied)
-                emitChange()
             }
         }
 
@@ -626,7 +436,6 @@ export default {
                 const temp = blocks.value[index]
                 blocks.value[index] = blocks.value[index - 1]
                 blocks.value[index - 1] = temp
-                emitChange()
             }
         }
 
@@ -636,7 +445,6 @@ export default {
                 const temp = blocks.value[index]
                 blocks.value[index] = blocks.value[index + 1]
                 blocks.value[index + 1] = temp
-                emitChange()
             }
         }
 
@@ -731,7 +539,8 @@ export default {
             isSyncingFromParent.value = false
         }, { deep: true })
 
-        // Always keep v-model in sync when user edits blocks or body settings
+        // The single place edits are emitted from: every handler mutates blocks/bodySettings and this
+        // deep watcher picks it up, so don't also call emitChange() from handlers (that emits twice)
         watch([blocks, bodySettings], () => {
             if (isSyncingFromParent.value) return
             emitChange()
@@ -762,6 +571,7 @@ export default {
             handleColumnDrop,
             getBlockComponent,
             getPropertiesComponent,
+            acceptsVariables,
             selectBlock,
             updateBlock,
             updateBlockProperties,

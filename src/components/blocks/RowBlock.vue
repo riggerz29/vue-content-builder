@@ -34,6 +34,7 @@
                     :block="childBlock"
                     :index="childIndex"
                     :is-selected="selectedBlockId === childBlock.id"
+                    :variables="acceptsVariables(childBlock.type) ? variables : undefined"
                     @select="$emit('child-select', childBlock)"
                     @update="handleChildUpdate"
                     @delete="handleChildDelete"
@@ -49,34 +50,22 @@
 
 <script>
 import { computed } from 'vue'
-import ButtonBlock from './ButtonBlock.vue'
-import DividerBlock from './DividerBlock.vue'
-import HeadingBlock from './HeadingBlock.vue'
-import ParagraphBlock from './ParagraphBlock.vue'
-import ImageBlock from './ImageBlock.vue'
-import VideoBlock from './VideoBlock.vue'
-import SocialBlock from './SocialBlock.vue'
-import TableBlock from './TableBlock.vue'
-import BlockActions from "../common/BlockActions.vue";
+import BlockActions from '../common/BlockActions.vue'
+import { CONTENT_BLOCK_TYPES } from '../../blocks/contentBlocks'
+import { createBlockId } from '../../utils/blockId'
 
 export default {
     name: 'RowBlock',
     components: {
-        BlockActions,
-        ButtonBlock,
-        DividerBlock,
-        HeadingBlock,
-        ParagraphBlock,
-        ImageBlock,
-        VideoBlock,
-        SocialBlock,
-        TableBlock
+        BlockActions
     },
     props: {
         block: { type: Object, required: true },
         isSelected: { type: Boolean, default: false },
         index: { type: Number, required: true },
-        selectedBlockId: { type: [Number, String], default: null }
+        selectedBlockId: { type: [Number, String], default: null },
+        // passed through to the content blocks in each column (for the variable picker)
+        variables: { type: [Array, Object], default: () => ([]) }
     },
     emits: ['select', 'child-select', 'update', 'delete', 'copy', 'move-up', 'move-down', 'drop', 'column-drop'],
     setup(props, { emit }) {
@@ -97,19 +86,9 @@ export default {
             }
         }
 
-        const getBlockComponent = (type) => {
-            const components = {
-                button: 'ButtonBlock',
-                divider: 'DividerBlock',
-                heading: 'HeadingBlock',
-                paragraph: 'ParagraphBlock',
-                image: 'ImageBlock',
-                video: 'VideoBlock',
-                social: 'SocialBlock',
-                table: 'TableBlock'
-            }
-            return components[type] || 'div'
-        }
+        // Columns only hold content blocks; rows don't nest
+        const getBlockComponent = (type) => CONTENT_BLOCK_TYPES[type]?.component || 'div'
+        const acceptsVariables = (type) => !!CONTENT_BLOCK_TYPES[type]?.component.props?.variables
 
         const handleDrop = (event) => {
             emit('drop', event, props.index)
@@ -166,7 +145,7 @@ export default {
                 const index = column.blocks.findIndex(b => b.id === childId)
                 if (index !== -1) {
                     const copied = JSON.parse(JSON.stringify(column.blocks[index]))
-                    copied.id = Date.now() + Math.random()
+                    copied.id = createBlockId()
                     column.blocks.splice(index + 1, 0, copied)
                     emit('update', props.block.id, updatedBlock)
                     break
@@ -206,6 +185,7 @@ export default {
             rowStyle,
             getColumnStyle,
             getBlockComponent,
+            acceptsVariables,
             handleDrop,
             handleColumnDrop,
             handleNestedDrop,
