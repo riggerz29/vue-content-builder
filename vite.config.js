@@ -23,10 +23,19 @@ export default defineConfig(({ command, mode }) => {
         fileName: (format) => `email-builder.${format}.js`
       },
       rollupOptions: {
-        external: ['vue'],
+        // Runtime dependencies are installed alongside the package, so don't bundle a second copy.
+        // Quill's stylesheet is the exception: it's inlined with our CSS so no extra import is needed.
+        external: (id) =>
+          id === 'vue' ||
+          id === 'lucide-vue-next' ||
+          ((id === 'quill' || id.startsWith('quill/')) && !id.endsWith('.css')),
         output: {
+          // named + default export: `import EmailBuilder, { generateHTML } from '...'`
+          exports: 'named',
           globals: {
-            vue: 'Vue'
+            vue: 'Vue',
+            quill: 'Quill',
+            'lucide-vue-next': 'LucideVueNext'
           }
         }
       }

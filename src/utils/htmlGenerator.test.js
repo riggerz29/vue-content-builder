@@ -107,3 +107,99 @@ describe('generateHTML stays a normal published email', () => {
         expect(link.getAttribute('target')).toBe('_blank')
     })
 })
+
+function imageBlock(overrides = {}) {
+    return {
+        id: 10,
+        type: 'image',
+        properties: {
+            url: 'https://example.com/image.png',
+            alt: 'Photo',
+            width: '600',
+            height: 'auto',
+            link: '',
+            align: 'center',
+            margin: spacing,
+            ...overrides
+        }
+    }
+}
+
+function render(blocks) {
+    const host = document.createElement('div')
+    host.innerHTML = generateHTML(blocks, bodySettings)
+    return host
+}
+
+describe('generateHTML escapes user-supplied values', () => {
+    it.each([
+        'javascript:alert(1)',
+        'JavaScript:alert(1)',
+        ' java\tscript:alert(1)',
+        'vbscript:msgbox(1)',
+        'data:text/html,<script>alert(1)</script>'
+    ])('replaces unsafe link %j with #', (bad) => {
+        const button = buttonBlock()
+        button.properties.url = bad
+        const host = render([button, imageBlock({ link: bad })])
+
+        for (const a of host.querySelectorAll('a')) {
+            expect(a.getAttribute('href')).toBe('#')
+        }
+    })
+
+    it('keeps safe, relative and merge-tag links', () => {
+        const hrefs = ['https://example.com/?a=1&b=2', '/relative', '#top', '$$unsubscribe_url$$', '{{link}}']
+        const host = render(hrefs.map(href => imageBlock({ link: href })))
+
+        expect([...host.querySelectorAll('a')].map(a => a.getAttribute('href'))).toEqual(hrefs)
+    })
+
+    it('stops quotes in URLs and alt text breaking out of the attribute', () => {
+        const host = render([imageBlock({
+            url: 'https://example.com/x.png" onerror="alert(1)',
+            alt: '"><script>alert(1)</script>',
+            link: 'https://example.com/" onclick="alert(1)'
+        })])
+
+        const img = host.querySelector('img')
+        expect(img.getAttribute('onerror')).toBeNull()
+        expect(img.getAttribute('src')).toBe('https://example.com/x.png" onerror="alert(1)')
+        expect(img.getAttribute('alt')).toBe('"><script>alert(1)</script>')
+        expect(host.querySelector('a').getAttribute('onclick')).toBeNull()
+        expect(host.querySelector('script')).toBeNull()
+    })
+
+    it('allows data:image sources but not data: links', () => {
+        const src = 'data:image/png;base64,iVBORw0KGgo='
+        const host = render([imageBlock({ url: src, link: 'data:image/png;base64,iVBORw0KGgo=' })])
+
+        expect(host.querySelector('img').getAttribute('src')).toBe(src)
+        expect(host.querySelector('a').getAttribute('href')).toBe('#')
+    })
+
+    it('stops style values injecting extra CSS or attributes', () => {
+        const button = buttonBlock()
+        button.properties.backgroundColor = 'red; background-image: url(https://evil.test)" onmouseover="alert(1)'
+        const host = render([button])
+
+        const td = host.querySelector('td[align="center"][style*="background-color"]')
+        expect(td.getAttribute('onmouseover')).toBeNull()
+        expect(td.getAttribute('style')).not.toMatch(/background-color:[^;]*;\s*background-image/)
+    })
+
+    it('only emits known alignments', () => {
+        const host = render([imageBlock({ align: 'center" onclick="alert(1)' })])
+        const td = host.querySelector('img').closest('td')
+
+        expect(td.getAttribute('align')).toBe('left')
+        expect(td.getAttribute('onclick')).toBeNull()
+    })
+
+    it('does not double the px unit on spacing entered with units', () => {
+        const html = generateHTML([imageBlock({ margin: { top: '16px', right: '0px', bottom: 8, left: '' } })], bodySettings)
+
+        expect(html).toContain('margin: 16px 0px 8px 0px;')
+        expect(html).not.toContain('pxpx')
+    })
+})
