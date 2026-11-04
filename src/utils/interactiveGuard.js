@@ -25,6 +25,11 @@
  * - Enter on a focused link or button, and Space on a button, are blocked unless
  *   the same modifier is held. Typing (inputs, textareas, contenteditable, including
  *   Quill) is not intercepted; a form submit from those is cancelled separately.
+ * - Touch and pen (pointerType, not the user agent): holding a guarded control for
+ *   HOLD_TO_ACTIVATE_MS performs the same allowed activation as a modifier click.
+ *   A short tap still only selects. The hold is cancelled if the contact moves more
+ *   than HOLD_MOVE_CANCEL_PX, lifts early, scrolls, or the pointer is cancelled.
+ *   Mouse pointers never start a hold, so Cmd/Ctrl+click is unchanged.
  *
  * Same-origin iframe documents are a separate tree. Nothing in this package renders
  * a preview iframe; call `attachInteractiveGuard` on the iframe document if one is
@@ -58,6 +63,14 @@ const HINT_ATTR = 'data-cb-guard-hint'
 const DETACH_KEY = '__cbInteractiveGuardDetach'
 const DEFAULT_HINT_DELAY = 400
 
+// Long enough to tell a tap from a hold, short of the 1.5s end of the range
+// Richard suggested. One place controls the timer, the ring, and the tests.
+export const HOLD_TO_ACTIVATE_MS = 1200
+export const HOLD_MOVE_CANCEL_PX = 10
+const HOLD_RING_RADIUS = 14
+const HOLD_RING_LENGTH = 2 * Math.PI * HOLD_RING_RADIUS
+const SVG_NS = 'http://www.w3.org/2000/svg'
+
 export function isApplePlatform(nav) {
     const source = nav === undefined
         ? (typeof navigator === 'undefined' ? undefined : navigator)
@@ -76,11 +89,71 @@ export function modifierLabel(apple) {
     return apple ? 'Cmd' : 'Ctrl'
 }
 
-export function activationHint(element, apple) {
-    const key = modifierLabel(!!apple)
+export function activationHint(element, apple, mode) {
     const tag = element && element.tagName
-    if (tag === 'A' || tag === 'AREA') return `${key}+click to follow link`
-    return `${key}+click to activate`
+    const follow = tag === 'A' || tag === 'AREA'
+    if (mode === 'hold') return follow ? 'Hold to follow link' : 'Hold to activate'
+    const key = modifierLabel(!!apple)
+    return follow ? `${key}+click to follow link` : `${key}+click to activate`
+}
+
+export function isHoldPointer(event) {
+    if (!event || event.button !== 0) return false
+    return event.pointerType === 'touch' || event.pointerType === 'pen'
+}
+
+function formOf(interactive) {
+    if (!interactive) return null
+    if (interactive.form) return interactive.form
+    if (typeof interactive.closest === 'function') return interactive.closest('form')
+    return null
+}
+
+/**
+ * Performs the default action of a user click. Used when a hold completes,
+ * because a timer cannot produce a trusted click and browsers ignore the
+ * default action of a synthetic one. Modifier clicks do not use this; the
+ * browser handles those itself.
+ */
+export function followInteractive(interactive, view) {
+    const targetView = view || (typeof window !== 'undefined' ? window : null)
+    if (!interactive || !targetView) return
+    const tag = interactive.tagName
+    if (tag === 'A' || tag === 'AREA') {
+        const raw = interactive.getAttribute('href')
+        if (raw == null) return
+        const href = interactive.href || raw
+        const target = (interactive.getAttribute('target') || '').trim()
+        if (!target || target === '_self') {
+            targetView.location.assign(href)
+            return
+        }
+        if (target === '_top' && targetView.top) {
+            targetView.top.location.assign(href)
+            return
+        }
+        if (target === '_parent' && targetView.parent) {
+            targetView.parent.location.assign(href)
+            return
+        }
+        targetView.open(href, target, 'noopener,noreferrer')
+        return
+    }
+    const form = formOf(interactive)
+    if (isSubmitter(interactive)) {
+        if (!form) return
+        if (typeof form.requestSubmit === 'function') {
+            try {
+                form.requestSubmit(interactive)
+            } catch {
+                form.requestSubmit()
+            }
+        } else {
+            form.submit()
+        }
+        return
+    }
+    if (isResetter(interactive) && form) form.reset()
 }
 
 export function isFollowModifier(event, apple) {
@@ -170,7 +243,7 @@ function suppressInlineHandler(el, prop) {
 
 /**
  * @param {HTMLElement} root Designer root, or a preview root.
- * @param {{ isApple?: boolean|(() => boolean), navigator?: Navigator, contentRoot?: boolean, hintDelay?: number }} [options]
+ * @param {{ isApple?: boolean|(() => boolean), navigator?: Navigator, contentRoot?: boolean, hintDelay?: number, holdDuration?: number }} [options]
  * `contentRoot: true` marks `root` itself as a content surface (a preview that
  * contains only user HTML). The designer leaves this false and marks the canvas
  * with `data-content-surface`; Quill editors are always content surfaces.
@@ -180,6 +253,7 @@ export function attachInteractiveGuard(root, options = {}) {
     if (!root || root.nodeType !== 1) return () => {}
 
     const hintDelay = Number.isFinite(options.hintDelay) ? Math.max(0, options.hintDelay) : DEFAULT_HINT_DELAY
+    const holdDuration = Number.isFinite(options.holdDuration) ? Math.max(0, options.holdDuration) : HOLD_TO_ACTIVATE_MS
     let addedSurface = false
     if (options.contentRoot && !root.hasAttribute('data-content-surface')) {
         root.setAttribute('data-content-surface', '')
@@ -196,6 +270,11 @@ export function attachInteractiveGuard(root, options = {}) {
     let armedSubmit = false
     let armedReset = false
     let disarmTimer = 0
+    let recentTouch = false
+    let recentTouchTimer = 0
+    let hold = null
+    let swallowClick = null
+    const syntheticHolds = new WeakSet()
 
     const tooltip = document.createElement('div')
     tooltip.setAttribute(HINT_ATTR, '')
@@ -220,6 +299,46 @@ export function attachInteractiveGuard(root, options = {}) {
         'white-space:nowrap'
     ].join(';')
     root.appendChild(tooltip)
+
+    const ring = document.createElement('div')
+    ring.setAttribute('data-cb-guard-hold', '')
+    ring.setAttribute('data-builder-chrome', '')
+    ring.setAttribute('aria-hidden', 'true')
+    ring.style.cssText = 'position:fixed;z-index:10002;display:none;pointer-events:none;width:36px;height:36px;margin:0;filter:drop-shadow(0 1px 2px rgba(15,23,42,.35))'
+    const ringSvg = document.createElementNS(SVG_NS, 'svg')
+    ringSvg.setAttribute('viewBox', '0 0 36 36')
+    ringSvg.setAttribute('width', '36')
+    ringSvg.setAttribute('height', '36')
+    const ringDisc = document.createElementNS(SVG_NS, 'circle')
+    ringDisc.setAttribute('cx', '18')
+    ringDisc.setAttribute('cy', '18')
+    ringDisc.setAttribute('r', '16')
+    ringDisc.setAttribute('fill', '#ffffff')
+    const ringTrack = document.createElementNS(SVG_NS, 'circle')
+    ringTrack.setAttribute('cx', '18')
+    ringTrack.setAttribute('cy', '18')
+    ringTrack.setAttribute('r', String(HOLD_RING_RADIUS))
+    ringTrack.setAttribute('fill', 'none')
+    ringTrack.setAttribute('stroke', '#e5e7eb')
+    ringTrack.setAttribute('stroke-width', '3')
+    const ringProgress = document.createElementNS(SVG_NS, 'circle')
+    ringProgress.setAttribute('data-cb-hold-progress', '')
+    ringProgress.setAttribute('cx', '18')
+    ringProgress.setAttribute('cy', '18')
+    ringProgress.setAttribute('r', String(HOLD_RING_RADIUS))
+    ringProgress.setAttribute('fill', 'none')
+    ringProgress.setAttribute('stroke', '#2f4574')
+    ringProgress.setAttribute('stroke-width', '3')
+    ringProgress.setAttribute('stroke-linecap', 'round')
+    ringProgress.setAttribute('transform', 'rotate(-90 18 18)')
+    ringSvg.append(ringDisc, ringTrack, ringProgress)
+    ring.appendChild(ringSvg)
+    root.appendChild(ring)
+
+    const calloutStyle = document.createElement('style')
+    calloutStyle.setAttribute('data-cb-guard-style', '')
+    calloutStyle.textContent = '[data-cb-holding]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}'
+    ;(document.head || root).appendChild(calloutStyle)
 
     function clearHintTimer() {
         if (hintTimer) {
@@ -256,7 +375,7 @@ export function attachInteractiveGuard(root, options = {}) {
         if (!anchor || !anchor.isConnected) return
         clearHintTimer()
         tooltip.setAttribute('aria-hidden', 'false')
-        tooltip.textContent = activationHint(anchor, apple())
+        tooltip.textContent = activationHint(anchor, apple(), recentTouch ? 'hold' : 'modifier')
         placeTooltip(anchor)
     }
 
@@ -284,10 +403,132 @@ export function attachInteractiveGuard(root, options = {}) {
     }
 
     function allow(event, interactive) {
-        if (!isFollowModifier(event, apple())) return false
+        if (!syntheticHolds.has(event) && !isFollowModifier(event, apple())) return false
         armFrom(interactive)
         hideHint()
         return true
+    }
+
+    function markTouch(event) {
+        recentTouch = isHoldPointer(event)
+        if (recentTouchTimer) clearTimeout(recentTouchTimer)
+        if (!recentTouch) return
+        recentTouchTimer = setTimeout(() => {
+            recentTouchTimer = 0
+            recentTouch = false
+        }, 2000)
+    }
+
+    function hideRing() {
+        ring.style.display = 'none'
+    }
+
+    function releaseHoldCapture() {
+        if (!hold) return
+        const captor = hold.interactive
+        if (captor && typeof captor.hasPointerCapture === 'function' && captor.hasPointerCapture(hold.pointerId)) {
+            try { captor.releasePointerCapture(hold.pointerId) } catch { /* already released */ }
+        }
+    }
+
+    function clearHold() {
+        if (!hold) return
+        clearTimeout(hold.timer)
+        releaseHoldCapture()
+        if (hold.interactive) hold.interactive.removeAttribute('data-cb-holding')
+        hold = null
+        hideRing()
+    }
+
+    function cancelHold() {
+        clearHold()
+        hideHint()
+    }
+
+    function startRing(x, y) {
+        ring.style.left = `${x - 18}px`
+        ring.style.top = `${y - 18}px`
+        ring.style.display = 'block'
+        ringProgress.style.transition = 'none'
+        ringProgress.style.strokeDasharray = String(HOLD_RING_LENGTH)
+        ringProgress.style.strokeDashoffset = String(HOLD_RING_LENGTH)
+        // Restart the transition from a full ring to empty over the hold.
+        if (typeof ringProgress.getBoundingClientRect === 'function') ringProgress.getBoundingClientRect()
+        ringProgress.style.transition = `stroke-dashoffset ${holdDuration}ms linear`
+        ringProgress.style.strokeDashoffset = '0'
+    }
+
+    function finishHold() {
+        if (!hold) return
+        const interactive = hold.interactive
+        clearHold()
+        if (!interactive || !interactive.isConnected) return
+        const event = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        })
+        syntheticHolds.add(event)
+        const proceeded = interactive.dispatchEvent(event)
+        // The finger is still down. The browser will emit a real click on
+        // pointerup; swallow that one so the action does not run twice.
+        swallowClick = interactive
+        if (!proceeded) return
+        try { followInteractive(interactive) } catch { /* navigation can throw outside a browser */ }
+    }
+
+    function onPointerDown(event) {
+        markTouch(event)
+        if (!isHoldPointer(event)) return
+        if (hold) return
+        const interactive = findGuardedInteractive(event.target, root)
+        if (!interactive) return
+        swallowClick = null
+        interactive.setAttribute('data-cb-holding', '')
+        const timer = setTimeout(finishHold, holdDuration)
+        hold = {
+            pointerId: event.pointerId,
+            interactive,
+            x: event.clientX,
+            y: event.clientY,
+            timer
+        }
+        startRing(event.clientX, event.clientY)
+        showHint(interactive)
+    }
+
+    function onPointerMove(event) {
+        if (!hold || event.pointerId !== hold.pointerId) return
+        const dx = event.clientX - hold.x
+        const dy = event.clientY - hold.y
+        if ((dx * dx) + (dy * dy) > HOLD_MOVE_CANCEL_PX * HOLD_MOVE_CANCEL_PX) cancelHold()
+    }
+
+    function onPointerUp(event) {
+        if (!hold || event.pointerId !== hold.pointerId) return
+        const interactive = hold.interactive
+        clearHold()
+        showHint(interactive)
+    }
+
+    function onPointerCancel(event) {
+        if (!hold || event.pointerId !== hold.pointerId) return
+        cancelHold()
+    }
+
+    function onContextMenu(event) {
+        const interactive = findGuardedInteractive(event.target, root)
+        if (!interactive) return
+        // Desktop right-click still opens the menu. Touch and pen long-press
+        // would otherwise show the iOS callout or Android menu and steal the hold.
+        if (hold || recentTouch) event.preventDefault()
+    }
+
+    function onSelectStart(event) {
+        if (!hold) return
+        if (hold.interactive === findGuardedInteractive(event.target, root) || hold.interactive.contains(event.target)) {
+            event.preventDefault()
+        }
     }
 
     function block(event, interactive) {
@@ -301,6 +542,13 @@ export function attachInteractiveGuard(root, options = {}) {
     function onClick(event) {
         const interactive = findGuardedInteractive(event.target, root)
         if (!interactive) return
+        if (swallowClick === interactive && !syntheticHolds.has(event)) {
+            swallowClick = null
+            event.preventDefault()
+            event.stopPropagation()
+            suppressInlineHandler(interactive, 'onclick')
+            return
+        }
         if (allow(event, interactive)) return
         block(event, interactive)
     }
@@ -425,16 +673,46 @@ export function attachInteractiveGuard(root, options = {}) {
     for (const [type, handler] of bindings) {
         root.addEventListener(type, handler, true)
     }
-    window.addEventListener('scroll', hideHint, true)
+    function onScroll() {
+        if (hold) cancelHold()
+        else hideHint()
+    }
+
+    const pointerBindings = [
+        ['pointerdown', onPointerDown],
+        ['pointermove', onPointerMove],
+        ['pointerup', onPointerUp],
+        ['pointercancel', onPointerCancel],
+        ['contextmenu', onContextMenu],
+        ['selectstart', onSelectStart]
+    ]
+
+    for (const [type, handler] of pointerBindings) {
+        root.addEventListener(type, handler, true)
+    }
+    window.addEventListener('pointermove', onPointerMove, true)
+    window.addEventListener('pointerup', onPointerUp, true)
+    window.addEventListener('pointercancel', onPointerCancel, true)
+    window.addEventListener('scroll', onScroll, true)
 
     return function detach() {
         for (const [type, handler] of bindings) {
             root.removeEventListener(type, handler, true)
         }
-        window.removeEventListener('scroll', hideHint, true)
+        for (const [type, handler] of pointerBindings) {
+            root.removeEventListener(type, handler, true)
+        }
+        window.removeEventListener('pointermove', onPointerMove, true)
+        window.removeEventListener('pointerup', onPointerUp, true)
+        window.removeEventListener('pointercancel', onPointerCancel, true)
+        window.removeEventListener('scroll', onScroll, true)
+        clearHold()
         clearHintTimer()
         if (disarmTimer) clearTimeout(disarmTimer)
+        if (recentTouchTimer) clearTimeout(recentTouchTimer)
         tooltip.remove()
+        ring.remove()
+        calloutStyle.remove()
         if (addedSurface) root.removeAttribute('data-content-surface')
     }
 }

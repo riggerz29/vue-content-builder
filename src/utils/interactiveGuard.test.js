@@ -1,12 +1,16 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref, withDirectives } from 'vue'
 import { mount } from '@vue/test-utils'
 import { useInteractiveGuard } from '../composables/useInteractiveGuard'
 import {
     activationHint,
     attachInteractiveGuard,
+    followInteractive,
+    HOLD_MOVE_CANCEL_PX,
+    HOLD_TO_ACTIVATE_MS,
     isApplePlatform,
     isFollowModifier,
+    isHoldPointer,
     vInteractiveGuard
 } from './interactiveGuard'
 
@@ -54,6 +58,60 @@ describe('platform modifier', () => {
         expect(activationHint({ tagName: 'A' }, false)).toBe('Ctrl+click to follow link')
         expect(activationHint({ tagName: 'BUTTON' }, true)).toBe('Cmd+click to activate')
         expect(activationHint({ tagName: 'BUTTON' }, false)).toBe('Ctrl+click to activate')
+        expect(activationHint({ tagName: 'A' }, false, 'hold')).toBe('Hold to follow link')
+        expect(activationHint({ tagName: 'BUTTON' }, true, 'hold')).toBe('Hold to activate')
+    })
+
+    it('recognises a primary touch or pen contact, not a mouse', () => {
+        expect(isHoldPointer({ button: 0, pointerType: 'touch' })).toBe(true)
+        expect(isHoldPointer({ button: 0, pointerType: 'pen' })).toBe(true)
+        expect(isHoldPointer({ button: 0, pointerType: 'mouse' })).toBe(false)
+        expect(isHoldPointer({ button: 2, pointerType: 'touch' })).toBe(false)
+        expect(HOLD_TO_ACTIVATE_MS).toBeGreaterThanOrEqual(1000)
+        expect(HOLD_TO_ACTIVATE_MS).toBeLessThanOrEqual(1500)
+    })
+})
+
+describe('followInteractive', () => {
+    it('assigns same-tab links and opens the rest, and submits or resets the owning form', () => {
+        const view = {
+            location: { assign: vi.fn() },
+            open: vi.fn(),
+            top: { location: { assign: vi.fn() } },
+            parent: { location: { assign: vi.fn() } }
+        }
+        const link = document.createElement('a')
+        link.href = 'https://example.com/self'
+        followInteractive(link, view)
+        expect(view.location.assign).toHaveBeenCalledWith('https://example.com/self')
+
+        link.setAttribute('target', '_blank')
+        followInteractive(link, view)
+        expect(view.open).toHaveBeenCalledWith(link.href, '_blank', 'noopener,noreferrer')
+
+        const top = document.createElement('a')
+        top.href = 'https://example.com/top'
+        top.setAttribute('target', '_top')
+        followInteractive(top, view)
+        expect(view.top.location.assign).toHaveBeenCalledWith(top.href)
+
+        const form = document.createElement('form')
+        const submit = document.createElement('button')
+        submit.setAttribute('type', 'submit')
+        const reset = document.createElement('button')
+        reset.setAttribute('type', 'reset')
+        form.append(submit, reset)
+        form.requestSubmit = vi.fn()
+        form.reset = vi.fn()
+        followInteractive(submit, view)
+        expect(form.requestSubmit).toHaveBeenCalledWith(submit)
+        followInteractive(reset, view)
+        expect(form.reset).toHaveBeenCalled()
+
+        const plain = document.createElement('button')
+        plain.setAttribute('type', 'button')
+        followInteractive(plain, view)
+        expect(view.open).toHaveBeenCalledTimes(1)
     })
 })
 
@@ -388,6 +446,206 @@ describe('attachInteractiveGuard', () => {
         expect(root.querySelector('[data-cb-guard-hint]')).toBe(null)
     })
 
+    describe('touch long-press', () => {
+        beforeEach(() => {
+            vi.useFakeTimers()
+        })
+
+        afterEach(() => {
+            detach()
+            detach = () => {}
+            vi.clearAllTimers()
+            vi.useRealTimers()
+            vi.restoreAllMocks()
+        })
+
+        function pointer(target, type, init = {}) {
+            const event = new PointerEvent(type, {
+                bubbles: true,
+                cancelable: true,
+                pointerId: 1,
+                pointerType: 'touch',
+                button: 0,
+                clientX: 20,
+                clientY: 20,
+                isPrimary: true,
+                ...init
+            })
+            target.dispatchEvent(event)
+            return event
+        }
+
+        function holdRing() {
+            return root.querySelector('[data-cb-guard-hold]')
+        }
+
+        function hintText() {
+            return root.querySelector('[data-cb-guard-hint]').textContent
+        }
+
+        it('activates a link when the hold completes and shows a progress ring', () => {
+            mountDesigner(designerHtml)
+            const link = root.querySelector('#link')
+            const open = vi.spyOn(window, 'open').mockReturnValue(null)
+            const seen = []
+            link.addEventListener('click', (event) => seen.push(event))
+
+            pointer(link, 'pointerdown', { clientX: 40, clientY: 48 })
+            expect(link.hasAttribute('data-cb-holding')).toBe(true)
+            expect(holdRing().style.display).toBe('block')
+            expect(hintText()).toBe('Hold to follow link')
+            expect(document.querySelector('[data-cb-guard-style]').textContent).toContain('-webkit-touch-callout:none')
+
+            const menu = new MouseEvent('contextmenu', { bubbles: true, cancelable: true })
+            link.dispatchEvent(menu)
+            expect(menu.defaultPrevented).toBe(true)
+            const selecting = new Event('selectstart', { bubbles: true, cancelable: true })
+            link.dispatchEvent(selecting)
+            expect(selecting.defaultPrevented).toBe(true)
+
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS - 1)
+            expect(open).not.toHaveBeenCalled()
+            expect(link.hasAttribute('data-cb-holding')).toBe(true)
+
+            vi.advanceTimersByTime(1)
+            expect(open).toHaveBeenCalledTimes(1)
+            expect(open).toHaveBeenCalledWith('https://example.com/page', '_blank', 'noopener,noreferrer')
+            expect(seen).toHaveLength(1)
+            expect(seen[0].defaultPrevented).toBe(false)
+            expect(link.hasAttribute('data-cb-holding')).toBe(false)
+            expect(holdRing().style.display).toBe('none')
+
+            const ghost = click(link)
+            expect(ghost.defaultPrevented).toBe(true)
+            expect(open).toHaveBeenCalledTimes(1)
+        })
+
+        it('runs a button action and says hold to activate', () => {
+            mountDesigner(designerHtml)
+            const button = root.querySelector('#content-btn')
+            const ran = vi.fn()
+            button.addEventListener('click', ran)
+
+            pointer(button, 'pointerdown', { pointerType: 'pen' })
+            expect(hintText()).toBe('Hold to activate')
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS)
+            expect(ran).toHaveBeenCalledTimes(1)
+            expect(ran.mock.calls[0][0].defaultPrevented).toBe(false)
+        })
+
+        it('cancels when the contact lifts early', () => {
+            mountDesigner(designerHtml)
+            const link = root.querySelector('#link')
+            const open = vi.spyOn(window, 'open').mockReturnValue(null)
+
+            pointer(link, 'pointerdown')
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS - 1)
+            pointer(link, 'pointerup')
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS)
+            expect(open).not.toHaveBeenCalled()
+            expect(link.hasAttribute('data-cb-holding')).toBe(false)
+            expect(holdRing().style.display).toBe('none')
+            expect(hintText()).toBe('Hold to follow link')
+            expect(click(link).defaultPrevented).toBe(true)
+        })
+
+        it('cancels when the contact moves past the threshold, and keeps a small move', () => {
+            mountDesigner(designerHtml)
+            const link = root.querySelector('#link')
+            const open = vi.spyOn(window, 'open').mockReturnValue(null)
+
+            pointer(link, 'pointerdown', { clientX: 0, clientY: 0 })
+            pointer(window, 'pointermove', { clientX: 4, clientY: 0 })
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS)
+            expect(open).toHaveBeenCalledTimes(1)
+
+            open.mockClear()
+            pointer(link, 'pointerdown', { clientX: 0, clientY: 0 })
+            pointer(window, 'pointermove', { clientX: HOLD_MOVE_CANCEL_PX + 1, clientY: 0 })
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS)
+            expect(open).not.toHaveBeenCalled()
+            expect(link.hasAttribute('data-cb-holding')).toBe(false)
+        })
+
+        it('cancels when the pointer is cancelled or the page scrolls', () => {
+            mountDesigner(designerHtml)
+            const link = root.querySelector('#link')
+            const open = vi.spyOn(window, 'open').mockReturnValue(null)
+
+            pointer(link, 'pointerdown')
+            pointer(link, 'pointercancel')
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS)
+            expect(open).not.toHaveBeenCalled()
+
+            pointer(link, 'pointerdown')
+            window.dispatchEvent(new Event('scroll'))
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS)
+            expect(open).not.toHaveBeenCalled()
+            expect(holdRing().style.display).toBe('none')
+        })
+
+        it('does not activate on a tap', () => {
+            mountDesigner(designerHtml)
+            const link = root.querySelector('#link')
+            const open = vi.spyOn(window, 'open').mockReturnValue(null)
+
+            pointer(link, 'pointerdown')
+            pointer(link, 'pointerup')
+            const tap = click(link)
+            expect(tap.defaultPrevented).toBe(true)
+            expect(open).not.toHaveBeenCalled()
+            expect(hintText()).toBe('Hold to follow link')
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS)
+            expect(open).not.toHaveBeenCalled()
+        })
+
+        it('leaves desktop pointer and modifier clicks unchanged', () => {
+            mountDesigner(designerHtml)
+            const link = root.querySelector('#link')
+            const open = vi.spyOn(window, 'open').mockReturnValue(null)
+
+            pointer(link, 'pointerdown', { pointerType: 'mouse', button: 0 })
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS)
+            expect(open).not.toHaveBeenCalled()
+            expect(link.hasAttribute('data-cb-holding')).toBe(false)
+            expect(holdRing().style.display).toBe('none')
+
+            const plain = click(link)
+            expect(plain.defaultPrevented).toBe(true)
+            expect(hintText()).toBe('Ctrl+click to follow link')
+            expect(click(link, { ctrlKey: true }).defaultPrevented).toBe(false)
+            expect(open).not.toHaveBeenCalled()
+
+            link.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }))
+            vi.advanceTimersByTime(0)
+            expect(hintText()).toBe('Ctrl+click to follow link')
+
+            const menu = new MouseEvent('contextmenu', { bubbles: true, cancelable: true })
+            link.dispatchEvent(menu)
+            expect(menu.defaultPrevented).toBe(false)
+        })
+
+        it('does not hold builder chrome and does not activate after detach', () => {
+            mountDesigner(designerHtml)
+            const copy = root.querySelector('#copy')
+            const link = root.querySelector('#link')
+            const open = vi.spyOn(window, 'open').mockReturnValue(null)
+
+            pointer(copy, 'pointerdown')
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS)
+            expect(copy.hasAttribute('data-cb-holding')).toBe(false)
+            expect(open).not.toHaveBeenCalled()
+
+            pointer(link, 'pointerdown')
+            expect(link.hasAttribute('data-cb-holding')).toBe(true)
+            detach()
+            detach = () => {}
+            vi.advanceTimersByTime(HOLD_TO_ACTIVATE_MS)
+            expect(open).not.toHaveBeenCalled()
+            expect(link.hasAttribute('data-cb-holding')).toBe(false)
+        })
+    })
+
     it('leaves an unguarded render, such as exported HTML, behaving normally', () => {
         const host = document.createElement('div')
         host.innerHTML = '<a href="https://example.com/published" target="_blank">Ada</a><button type="submit">Send</button>'
@@ -472,4 +730,5 @@ describe('Vue integration', () => {
         wrapper.unmount()
         expect(document.querySelector('[data-cb-guard-hint]')).toBe(null)
     })
+
 })

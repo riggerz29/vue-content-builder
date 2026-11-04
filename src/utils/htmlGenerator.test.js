@@ -93,6 +93,8 @@ describe('generateHTML stays a normal published email', () => {
         expect(html).not.toContain('data-builder-chrome')
         expect(html).not.toContain('Ctrl+click')
         expect(html).not.toContain('Cmd+click')
+        expect(html).not.toContain('Hold to follow')
+        expect(html).not.toContain('data-cb-holding')
         expect(html).not.toContain('interactiveGuard')
         expect(html).not.toContain('preventDefault')
 
