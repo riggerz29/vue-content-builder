@@ -118,7 +118,7 @@ export default {
 | Prop               | Type             | Default                                              | Description                                                                                            |
 |--------------------|------------------|------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
 | `modelValue`       | Object           | `{ json: { blocks: [], bodySettings: {} }, html: ''}` | v-model data                                                                                           |
-| `primaryColor`     | String           | `'#6b7280'`                                          | Primary colour for the UI (panels, buttons, etc.)                                                      |
+| `primaryColor`     | String           | `'#2f4574'`                                          | Primary colour for the UI (panels, buttons, etc.)                                                      |
 | `onUpload`         | Function         | `null`                                               | Callback function for handling image/video uploads                                                     |
 | `variables`        | [Object, Array]  | `[]`                                                 | A list of variables to use in text blocks `[{ label, format }]`                                        |
 | `displayAsModal`   | Boolean          | `false`                                              | Display the builder as a modal                                                                         |
@@ -255,6 +255,20 @@ The exported HTML is production-ready with:
 - DOCTYPE and meta tags for proper rendering
 - Responsive images
 - Support for Outlook, Gmail, Apple Mail, etc.
+- Escaped attributes: links only allow `http`, `https`, `mailto`, `tel`, relative URLs and
+  merge tags such as `$$unsubscribe_url$$` (anything else, e.g. `javascript:`, becomes `#`)
+
+### Rendering HTML without the editor
+
+`generateHTML` is exported so you can render saved JSON anywhere, e.g. on a server or in a job:
+
+```js
+import { generateHTML } from '@riggerz29/content-builder'
+
+const html = generateHTML(saved.blocks, saved.bodySettings)
+```
+
+Styles for the editor (including Quill's) are injected automatically when the component is imported; there is no separate CSS file to import.
 
 ## Development
 
