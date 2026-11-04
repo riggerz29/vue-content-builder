@@ -25,7 +25,7 @@
 
         <div v-else class="heading-block-editing" :style="layoutStyle" ref="editingContainer">
             <div ref="quillEditor" class="quill-editor"></div>
-            <div class="editing-actions">
+            <div class="editing-actions" data-builder-chrome>
                 <div class="toolbar-group">
                     <select v-model="localProps.level" class="toolbar-select">
                         <option value="h1">H1</option>

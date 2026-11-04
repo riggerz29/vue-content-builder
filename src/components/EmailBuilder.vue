@@ -1,5 +1,5 @@
 <template>
-    <div class="email-builder" :class="{ 'email-builder--modal': displayAsModal && isOpen }" :style="cssVars" v-show="!displayAsModal || isOpen">
+    <div ref="builderRoot" class="email-builder" :class="{ 'email-builder--modal': displayAsModal && isOpen }" :style="cssVars" v-show="!displayAsModal || isOpen">
         <button v-if="displayAsModal" class="modal__close-btn" @click="close" aria-label="Close editor">
             <Icon name="x" :size="20" />
         </button>
@@ -173,6 +173,7 @@
             <div class="email-builder__canvas" :style="canvasStyle">
                 <div
                     class="canvas__container"
+                    data-content-surface
                     :style="canvasContainerStyle"
                     @drop="onDrop($event, null)"
                     @dragover.prevent
@@ -231,6 +232,7 @@ import SocialProperties from './properties/SocialProperties.vue'
 import TableProperties from './properties/TableProperties.vue'
 import RowProperties from './properties/RowProperties.vue'
 import { generateHTML } from '../utils/htmlGenerator'
+import { useInteractiveGuard } from '../composables/useInteractiveGuard'
 
 export default {
     name: 'EmailBuilder',
@@ -298,6 +300,10 @@ export default {
     setup(props, { emit, expose }) {
         const activeTab = ref('content')
         const selectedBlock = ref(null)
+        // Content links and buttons inside the canvas (and Quill editors) stay
+        // inert unless the platform modifier is held. Exported HTML is unchanged.
+        const builderRoot = ref(null)
+        useInteractiveGuard(builderRoot)
         const isSyncingFromParent = ref(false)
         // Modal state (only relevant when displayAsModal is true)
         const isOpen = ref(false)
@@ -740,6 +746,7 @@ export default {
         expose({ open, close, toggle, exportHTML, exportJSON })
 
         return {
+            builderRoot,
             activeTab,
             selectedBlock,
             blocks,
