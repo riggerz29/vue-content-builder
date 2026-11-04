@@ -13,7 +13,7 @@
                     textDecoration: localProps.textDecoration
                 }"
                 @update:modelValue="emitUpdate"
-                :toolbar="[['bold', 'italic', 'underline'], [{ 'color': [] }, { 'background': [] }], ['clean']]"
+                :toolbar="toolbar"
             />
         </div>
 
@@ -93,6 +93,7 @@
 <script>
 import { ref, watch } from 'vue'
 import RichTextEditor from '../common/RichTextEditor.vue'
+import { BASIC_TOOLBAR } from '../../utils/quill'
 
 export default {
     name: 'ButtonProperties',
@@ -158,7 +159,7 @@ export default {
             }
         }, { deep: true })
 
-        return { localProps, emitUpdate }
+        return { toolbar: BASIC_TOOLBAR, localProps, emitUpdate }
     }
 }
 </script>
