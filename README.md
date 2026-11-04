@@ -17,12 +17,16 @@ builders and features in the future.
 - **Basic Theming** - Customizable primary color for the interface
 - **Upload Callback** - Integrate your own image upload handler
 - **Variables** - Add dynamic variables to your email templates
+- **Safe Link Editing** - Links and buttons on the canvas don't navigate while you design (see [Links in the editor](#links-in-the-editor))
 
 ## Installation
 
 ```bash
 npm install @riggerz29/content-builder
 ```
+
+Requires Vue 3. Quill and lucide-vue-next are installed automatically as dependencies. Styles are injected when the
+component is imported, so there's no CSS file to import.
 
 ## Usage
 
@@ -120,7 +124,7 @@ export default {
 | `modelValue`       | Object           | `{ json: { blocks: [], bodySettings: {} }, html: ''}` | v-model data                                                                                           |
 | `primaryColor`     | String           | `'#2f4574'`                                          | Primary colour for the UI (panels, buttons, etc.)                                                      |
 | `onUpload`         | Function         | `null`                                               | Callback function for handling image/video uploads                                                     |
-| `variables`        | [Object, Array]  | `[]`                                                 | A list of variables to use in text blocks `[{ label, format }]`                                        |
+| `variables`        | [Object, Array]  | `[]`                                                 | Variables offered in heading and paragraph blocks: `[{ name, format }]` (`label` is accepted for `name`) |
 | `displayAsModal`   | Boolean          | `false`                                              | Display the builder as a modal                                                                         |
 | `hideToolbarActions` | Boolean        | `false`                                              | Hide the default toolbar actions container (or override with `actions` slot to provide custom content) |
 | `hideExportJson`   | Boolean          | `false`                                              | Hide the default "Export JSON" button (only affects the default toolbar actions)                       |
@@ -132,14 +136,15 @@ export default {
 |-------|------------------------------------------------------------------|-------------|
 | `export-json` | `{ blocks: Array, bodySettings: Object }`                        | Emitted when Export JSON is clicked |
 | `export-html` | `String`                                                         | Emitted when Export HTML is clicked |
-| `change` | `{ blocks: Array, bodySettings: Object }`                        | Emitted whenever the email content changes |
- | `update:modelValue` | `{ json: { blocks: Array, bodySettings: Object }, html: String}` | Emitted whenever the email content changes |
+| `change` | `{ blocks: Array, bodySettings: Object }`                        | Emitted once per edit to the email content |
+| `update:modelValue` | `{ json: { blocks: Array, bodySettings: Object }, html: String}` | Emitted once per edit, and once on mount with the initial state |
 
 ## Slots
 
 | Slot name | Scope | Description |
 |-----------|-------|-------------|
 | `actions` | none  | Replaces the top toolbar actions area. Use to add your own buttons/controls. Combine with `hideToolbarActions`, `hideExportJson`, and `hideExportHtml` to control which default buttons are shown. |
+| `extra-actions` | none | Adds your own buttons after the default Export JSON / Export HTML buttons, keeping the defaults. |
 
 ## Exposed Functions
 
@@ -160,15 +165,9 @@ export default {
     :hide-toolbar-actions="true"
   >
     <template #actions>
-      <div class="toolbar__actions">
-        <button @click="saveDraft" class="toolbar__btn">
-          <Icon name="save" :size="16" />
-          <span>Save Draft</span>
-        </button>
-        <button @click="preview" class="toolbar__btn">
-          <Icon name="eye" :size="16" />
-          <span>Preview</span>
-        </button>
+      <div class="my-toolbar">
+        <button @click="saveDraft">Save Draft</button>
+        <button @click="preview">Preview</button>
       </div>
     </template>
   </EmailBuilder>
@@ -182,12 +181,13 @@ export default {
 - Inline editing for text and formatting
 
 ### Heading
-- H1-H6 levels, text, colors, padding, margin
-- Inline editing with formatting toolbar
+- H1-H6 level, text, colors, padding, margin
+- Inline editing with formatting toolbar and variable picker
+- The level is saved in the JSON; the exported HTML currently renders every heading as a styled `<div>`
 
 ### Paragraph
 - Text, colors, padding, margin
-- Inline editing with formatting toolbar including lists
+- Inline editing with formatting toolbar including lists, and variable picker
 
 ### Image
 - URL, alt text, dimensions, link, alignment
@@ -201,7 +201,8 @@ export default {
 - Upload callback for thumbnail
 
 ### Social
-- Platform icons (Facebook, x, Instagram, LinkedIn, YouTube, Pinterest)
+- Platform icons (Facebook, X, Instagram, LinkedIn, YouTube, Pinterest, TikTok, GitHub)
+- Icon images are loaded from the flaticon CDN
 - Icon size, spacing, alignment
 - Add/remove icons
 
@@ -215,7 +216,8 @@ export default {
 - **3 Columns** (33/33/33)
 - **4 Columns** (25/25/25/25, 17/33/17/33, 33/17/33/17)
 
-Columns can contain any content blocks and support nested layouts.
+Columns can contain any content block. Rows can't be nested: dropping a layout onto a column adds it as a new row
+directly below. On small screens, multi-column rows stack vertically.
 
 ## JSON Structure
 
@@ -247,6 +249,8 @@ Columns can contain any content blocks and support nested layouts.
 }
 ```
 
+Spacing values (`margin`, `padding`) are numbers in pixels.
+
 ## HTML Export
 
 The exported HTML is production-ready with:
@@ -268,7 +272,28 @@ import { generateHTML } from '@riggerz29/content-builder'
 const html = generateHTML(saved.blocks, saved.bodySettings)
 ```
 
-Styles for the editor (including Quill's) are injected automatically when the component is imported; there is no separate CSS file to import.
+### CommonJS and script tags
+
+The package has a default export (the component) and named exports (`EmailBuilder`, `generateHTML`). ES module
+imports work as shown above. With CommonJS or the UMD build, use the named export:
+
+```js
+const { EmailBuilder, generateHTML } = require('@riggerz29/content-builder')
+```
+
+The UMD build (`dist/email-builder.umd.js`) expects `Vue`, `Quill` and `LucideVueNext` to be loaded as globals first,
+and exposes `window.EmailBuilder.EmailBuilder` and `window.EmailBuilder.generateHTML`.
+
+## Links in the editor
+
+So you can click around a design without leaving the page, links and buttons on the canvas (and in the rich text
+editors) don't activate on a normal click, tap or Enter. Clicking selects the block as usual. To follow or trigger one:
+
+- **macOS / iOS:** Cmd+click
+- **Windows / Linux:** Ctrl+click
+- **Touch and pen:** press and hold for about a second (a ring shows the progress)
+
+The builder's own toolbars and buttons aren't affected, and none of this is included in the exported HTML.
 
 ## Development
 
@@ -278,6 +303,9 @@ npm install
 
 # Run demo in development mode
 npm run dev
+
+# Run the tests
+npm test
 
 # Build the package
 npm run build
