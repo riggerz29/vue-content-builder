@@ -1,5 +1,5 @@
 <template>
-    <div class="block-actions" v-if="isSelected">
+    <div class="block-actions" data-builder-chrome v-if="isSelected">
         <slot name="common">
             <button @click.stop="$emit('copy')" title="Copy">
                 <Icon name="copy" :size="14" />

@@ -25,7 +25,7 @@
 
         <div v-else class="paragraph-block-editing" :style="layoutStyle" ref="editingContainer">
             <div ref="quillEditor" class="quill-editor"></div>
-            <div class="editing-actions">
+            <div class="editing-actions" data-builder-chrome>
                 <div class="toolbar__vars" v-if="variablesList.length">
                     <select v-model="selectedVarIdx" class="toolbar-select small">
                         <option v-for="(v, i) in variablesList" :key="i" :value="i">{{ v.name }}</option>

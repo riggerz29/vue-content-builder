@@ -32,7 +32,7 @@
         <div v-else class="button-block" :style="buttonContainerStyle">
             <div class="button-editing-container" ref="editingContainer">
                 <div ref="quillEditor" class="quill-editor"></div>
-                <div class="editing-actions">
+                <div class="editing-actions" data-builder-chrome>
                     <button @click.stop="$emit('delete', block.id)" class="btn-delete">
                         <Trash2 size="16" />
                     </button>
